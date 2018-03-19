@@ -5,9 +5,13 @@
 
 Участники:
 Владислав Соколов github.com/Falcon22
+
 Константин Митраков github.com/ConstaConst
+
 Сергей Ломачев github.com/Silvman
+
 Илья Тюнькин github.com/tyunkinilya
+
 
 Напоминание команде:
 Создайте свои ветки! 
