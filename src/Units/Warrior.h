@@ -1,0 +1,10 @@
+#ifndef TEMPPROJECT_WARRIOR_H
+#define TEMPPROJECT_WARRIOR_H
+
+
+class Warrior {
+
+};
+
+
+#endif //TEMPPROJECT_WARRIOR_H
