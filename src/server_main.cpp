@@ -6,19 +6,15 @@
 #include "server.hpp"
 
 int main () {
-    // TODO чтение ip и порта из конфигов
-
-    std::string     ip;
-    unsigned short  port;
-
-    std::cout << "[ip]: ";
-    std::cin >> ip;
-
-    std::cout << "[port]: ";
-    std::cin >> port;
+    // TODO чтение порта из конфигов
+//
+//    unsigned short  port;
+//
+//    std::cout << "[port]: ";
+//    std::cin >> port;
 
     try {
-        server::worker worker(ip, port);
+        server::worker worker(constants::port);
         worker.work();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

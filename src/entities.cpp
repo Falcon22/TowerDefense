@@ -2,6 +2,7 @@
 // Created by silvman on 08.04.18.
 //
 
+#include <iostream>
 #include "entities.hpp"
 
 
@@ -13,24 +14,57 @@ void server::entity::setId(int id) {
     entity::id = id;
 }
 
-server::entity::entity(int id = 0): id(id) { }
+server::entity::entity(int id): id(id) { }
 
 
-server::player::player(sf::TcpSocket &&socket, int id = 0)
-        : socket(std::move(socket)), entity(id), isConnected(true) { }
+server::player::player() : connected(true) { }
+
+server::player::player(sf::TcpSocket &&socket, int id)
+        : socket(std::move(socket)), entity(id), connected(true) { }
 
 sf::TcpSocket& server::player::getSocket() const {
     return socket;
 }
 
 void server::player::disconnect() {
-    isConnected = false;
+    connected = false;
 }
 
 void server::player::reconnect() {
-    isConnected = true; // TODO не так просто
+    connected = true; // TODO не так просто
 }
 
 server::player::~player() {
     socket.disconnect();
+}
+
+bool server::player::isConnected() const {
+    return connected;
+}
+
+server::event server::player::getNewEvent() {
+    sf::Packet packet;
+    if (socket.receive(packet) == sf::Socket::Done) {
+        // TODO распарсить ответ
+        std::cout << "[success] get event from " << getId() << '\n';
+        return server::event();
+    } else {
+        throw std::logic_error("[fail] can't recieve event");
+    }
+}
+
+server::player& server::game::getPlayerOne() const {
+    return player_one;
+}
+
+server::player& server::game::getPlayerSecond() const {
+    return player_second;
+}
+
+void server::game::addEvent(const server::event &event) {
+    events.push_back(event);
+}
+
+std::vector<server::event> &server::game::getEvents() const {
+    return events;
 }

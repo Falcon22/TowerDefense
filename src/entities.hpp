@@ -8,6 +8,13 @@
 #include <SFML/Network.hpp>
 
 namespace server {
+    class event {
+        // placeholder
+    public:
+        void execute();
+    };
+
+
     class entity {
     protected:
         int id;
@@ -24,27 +31,35 @@ namespace server {
     class player : public entity {
     private:
         sf::TcpSocket socket;
-        bool isConnected;
+        bool connected;
 
     public:
-        player() = default;
+        player();
         explicit player(sf::TcpSocket&& socket, int id = 0);
         ~player();
 
 
         sf::TcpSocket& getSocket() const;
+        event getNewEvent();
 
         void disconnect();
         void reconnect();
+        bool isConnected() const;
     };
-
 
     class game : public entity {
     private:
         player player_one;
         player player_second;
+        std::vector<event> events;
 
     public:
+        player &getPlayerOne() const;
+        player &getPlayerSecond() const;
+
+        void addEvent(const event& event);
+        std::vector<event>& getEvents() const;
+
     };
 }
 

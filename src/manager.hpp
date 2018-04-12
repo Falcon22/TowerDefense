@@ -15,6 +15,8 @@ namespace server {
         std::list<T> entities;
 
     public:
+        virtual std::list<T>& getEntities();
+
         virtual T& get_by_id(int id) = 0;
         virtual void add(T&& entity) = 0;
         virtual void remove(int id) = 0;

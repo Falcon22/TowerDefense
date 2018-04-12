@@ -4,6 +4,11 @@
 
 #include "manager.hpp"
 
+template<typename T>
+std::list<T>& server::manager<T>::getEntities() {
+    return entities;
+}
+
 server::player_manager::player_manager(): manager(), next_id(1) { }
 
 server::player &server::player_manager::get_by_id(int id) {
@@ -56,5 +61,5 @@ void server::game_manager::remove(int id) {
         if (it->getId() == id)
             entities.erase(it);
 
-    throw std::logic_error("[game_manager::remove] id not foundplayer");
+    throw std::logic_error("[game_manager::remove] id not found");
 }

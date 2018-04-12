@@ -8,6 +8,15 @@
 #include <SFML/Network.hpp>
 #include "manager.hpp"
 
+class constants {
+public:
+    static sf::Time waitTime() {
+        return sf::milliseconds(50);
+    }
+
+    static const unsigned short port = 55001;
+};
+
 namespace server {
     class worker { // TODO singleton?
     private:
@@ -15,16 +24,23 @@ namespace server {
         sf::SocketSelector  selector;
         game_manager        pool_games;
         player_manager      pool_players;
+        std::vector<event>  players_input_events;
+        std::vector<event>  players_output_events;
+        bool                running;
 
-        bool running;
+        void tryNewConnection();
+        void recievePlayerEvents();
+        void recieveGamesEvents();
+        void proceedEvents();
+        void proceedGames();
+        void sendPlayerEvents();
+        void sendGamesEvents();
 
     public:
-        worker(const sf::IpAddress& ip, unsigned short port);
+        worker(unsigned short port);
         ~worker();
 
         void work();
-
-        void try_new_connection();
     };
 }
 

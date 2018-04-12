@@ -5,7 +5,7 @@
 #include <iostream>
 #include "server.hpp"
 
-server::worker::worker(const sf::IpAddress &ip, unsigned short port): running(true) {
+server::worker::worker(unsigned short port): running(true) {
     listener.listen(port);
     selector.add(listener);
 }
@@ -15,28 +15,102 @@ server::worker::~worker() {
 }
 
 void server::worker::work() {
-    std::cout << "[run]" << std::endl;
+    std::cout << "[run]" << '\n';
     while (running) {
-        if (selector.wait(sf::seconds(0.1))) {
+        if (selector.wait(constants::waitTime())) {
             if (selector.isReady(listener)) {
-                try_new_connection();
+                tryNewConnection();
             } else {
-                // прием данных от игроков
+                recievePlayerEvents();
+                recieveGamesEvents();
             }
         } else {
-            // отправка данных игрокам
+            proceedEvents();
+            proceedGames();
+            sendPlayerEvents();
+            sendGamesEvents();
         }
     }
 }
 
-void server::worker::try_new_connection() {
-    player new_player; // TODO RAII (unique ptrs)
+void server::worker::tryNewConnection() {
+    // TODO Так не заработает, надо создавать в poolPlayers нового игрока, и затем брать у него сокет
+
+    player new_player;
     if (listener.accept(new_player.getSocket()) == sf::Socket::Done) {
         selector.add(new_player.getSocket());
         pool_players.add(std::move(new_player));
-        std::cout << "[success] connected player" << std::endl;
+        std::cout << "[success] connected player" << '\n';
     } else {
-        std::cout << "[fail] didn't connect player" << std::endl;
+        std::cout << "[fail] didn't connect player" << '\n';
+    }
+}
+
+void server::worker::recievePlayerEvents() {
+    auto players = pool_players.getEntities();
+    for (auto &&player : players) {
+        try {
+            if(player.isConnected() && selector.isReady(player.getSocket())) {
+                event new_events = player.getNewEvent();
+                // TODO вероятно будем передавать контейнер эвентов, нужно будет поменять
+                players_input_events.push_back(new_events);
+            }
+
+        } catch (const std::exception& e) {
+            std::cout << e.what() << '\n';
+            player.disconnect();
+        }
+    }
+}
+
+void server::worker::recieveGamesEvents() {
+    auto games = pool_games.getEntities();
+    for (auto &&game : games) {
+        auto& one = game.getPlayerOne();
+        auto& sec = game.getPlayerSecond();
+
+        event one_events, sec_events;
+
+        try {
+            if(one.isConnected() && selector.isReady(one.getSocket())) {
+                one_events = one.getNewEvent();
+                game.addEvent(one_events);
+            }
+
+        } catch (const std::exception& e) {
+            std::cout << e.what() << '\n';
+            one.disconnect();
+        }
+
+        try {
+            if(sec.isConnected() && selector.isReady(sec.getSocket())) {
+                sec_events = sec.getNewEvent();
+                game.addEvent(sec_events);
+            }
+
+        } catch (const std::exception& e) {
+            std::cout << e.what() << '\n';
+            sec.disconnect();
+        }
+    }
+
+}
+
+void server::worker::proceedEvents() {
+    for (auto &&item : players_input_events) {
+        // TODO
+        event ready_event;
+        players_output_events.push_back(ready_event);
+    }
+}
+
+void server::worker::proceedGames() {
+    // TODO Under construction
+}
+
+void server::worker::sendPlayerEvents() {
+    for (auto &&outputEvent : players_output_events) {
+        outputEvent.execute();
     }
 }
 
