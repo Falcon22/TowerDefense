@@ -1,0 +1,10 @@
+#ifndef TOWERDEFENSE_MENUSTATE_H
+#define TOWERDEFENSE_MENUSTATE_H
+
+
+class MenuState {
+
+};
+
+
+#endif //TOWERDEFENSE_MENUSTATE_H

@@ -1,0 +1,10 @@
+#ifndef TOWERDEFENSE_PAUSESTATE_H
+#define TOWERDEFENSE_PAUSESTATE_H
+
+
+class PauseState {
+
+};
+
+
+#endif //TOWERDEFENSE_PAUSESTATE_H
