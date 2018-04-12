@@ -18,7 +18,7 @@ namespace server {
         virtual std::list<T>& getEntities();
 
         virtual T& get_by_id(int id) = 0;
-        virtual void add(T&& entity) = 0;
+//        virtual void add(T&& entity) = 0;
         virtual void remove(int id) = 0;
     };
 
@@ -32,7 +32,8 @@ namespace server {
         ~player_manager();
 
         player& get_by_id(int id) override;
-        void add(player &&entity) override;
+        // void add(player &&entity) override;
+        player& create();
         void remove(int id) override;
     };
 
@@ -45,7 +46,7 @@ namespace server {
         game_manager();
 
         game &get_by_id(int id) override;
-        void add(game &&entity) override;
+//        void add(game &&entity) override;
         void remove(int id) override;
     };
 

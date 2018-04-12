@@ -19,13 +19,6 @@ server::player &server::player_manager::get_by_id(int id) {
     throw std::logic_error("[player_manager::get_by_id] id not found");
 }
 
-void server::player_manager::add(server::player &&entity) {
-    entity.setId(next_id);
-    next_id++;
-
-    entities.push_back(entity);
-}
-
 void server::player_manager::remove(int id) {
     for (auto it = entities.begin(); it != entities.end(); ++it)
         if (it->getId() == id)
@@ -41,6 +34,13 @@ server::player_manager::~player_manager() {
     }
 }
 
+server::player &server::player_manager::create() {
+    entities.emplace_back(next_id);
+    next_id++;
+
+    return entities.back();
+}
+
 
 server::game_manager::game_manager(): manager() { }
 
@@ -50,10 +50,6 @@ server::game &server::game_manager::get_by_id(int id) {
             return game;
 
     throw std::logic_error("[game_manager::get_by_id] id not found");
-}
-
-void server::game_manager::add(server::game &&entity) {
-    entities.push_back(entity);
 }
 
 void server::game_manager::remove(int id) {

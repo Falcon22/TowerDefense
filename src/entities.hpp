@@ -35,11 +35,11 @@ namespace server {
 
     public:
         player();
-        explicit player(sf::TcpSocket&& socket, int id = 0);
+        explicit player(int id = 0);
         ~player();
 
 
-        sf::TcpSocket& getSocket() const;
+        sf::TcpSocket& getSocket();
         event getNewEvent();
 
         void disconnect();
@@ -54,11 +54,11 @@ namespace server {
         std::vector<event> events;
 
     public:
-        player &getPlayerOne() const;
-        player &getPlayerSecond() const;
+        player &getPlayerOne();
+        player &getPlayerSecond();
 
         void addEvent(const event& event);
-        std::vector<event>& getEvents() const;
+        std::vector<event>& getEvents();
 
     };
 }

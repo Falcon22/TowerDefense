@@ -19,10 +19,10 @@ server::entity::entity(int id): id(id) { }
 
 server::player::player() : connected(true) { }
 
-server::player::player(sf::TcpSocket &&socket, int id)
-        : socket(std::move(socket)), entity(id), connected(true) { }
+server::player::player(int id)
+        : entity(id), connected(true) { }
 
-sf::TcpSocket& server::player::getSocket() const {
+sf::TcpSocket& server::player::getSocket() {
     return socket;
 }
 
@@ -53,11 +53,11 @@ server::event server::player::getNewEvent() {
     }
 }
 
-server::player& server::game::getPlayerOne() const {
+server::player& server::game::getPlayerOne() {
     return player_one;
 }
 
-server::player& server::game::getPlayerSecond() const {
+server::player& server::game::getPlayerSecond() {
     return player_second;
 }
 
@@ -65,6 +65,10 @@ void server::game::addEvent(const server::event &event) {
     events.push_back(event);
 }
 
-std::vector<server::event> &server::game::getEvents() const {
+std::vector<server::event> &server::game::getEvents() {
     return events;
+}
+
+void server::event::execute() {
+    // placeholder
 }

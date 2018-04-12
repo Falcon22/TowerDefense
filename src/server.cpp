@@ -36,10 +36,10 @@ void server::worker::work() {
 void server::worker::tryNewConnection() {
     // TODO Так не заработает, надо создавать в poolPlayers нового игрока, и затем брать у него сокет
 
-    player new_player;
+    player& new_player = pool_players.create();
     if (listener.accept(new_player.getSocket()) == sf::Socket::Done) {
         selector.add(new_player.getSocket());
-        pool_players.add(std::move(new_player));
+//        pool_players.add(std::move(new_player));
         std::cout << "[success] connected player" << '\n';
     } else {
         std::cout << "[fail] didn't connect player" << '\n';
@@ -47,7 +47,7 @@ void server::worker::tryNewConnection() {
 }
 
 void server::worker::recievePlayerEvents() {
-    auto players = pool_players.getEntities();
+    auto& players = pool_players.getEntities();
     for (auto &&player : players) {
         try {
             if(player.isConnected() && selector.isReady(player.getSocket())) {
@@ -64,7 +64,7 @@ void server::worker::recievePlayerEvents() {
 }
 
 void server::worker::recieveGamesEvents() {
-    auto games = pool_games.getEntities();
+    auto& games = pool_games.getEntities();
     for (auto &&game : games) {
         auto& one = game.getPlayerOne();
         auto& sec = game.getPlayerSecond();
@@ -110,8 +110,12 @@ void server::worker::proceedGames() {
 
 void server::worker::sendPlayerEvents() {
     for (auto &&outputEvent : players_output_events) {
-        outputEvent.execute();
+//        outputEvent.execute();
     }
+}
+
+void server::worker::sendGamesEvents() {
+    // placeholder
 }
 
 
