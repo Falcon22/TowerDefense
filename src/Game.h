@@ -26,7 +26,6 @@ private:
 
     TextureHolder textureHolder;
     FontHolder fontHolder;
-    int color;
     sf::Font font;
     sf::Sprite cursor;
     sf::RenderWindow window;

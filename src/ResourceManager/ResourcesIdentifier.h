@@ -8,6 +8,36 @@ namespace sf {
 
 namespace Textures {
     enum id {
+        cursor = 0,
+        panel,
+        button,
+        map,
+        target,
+        towerOneBase,
+        towerOneTop,
+        towerTwoBase,
+        towerTwoTop,
+        enemyOne,
+        enemyTwo,
+        bulletOne,
+        bulletTwo,
+        explosion,
+        gold,
+        star,
+        lives,
+        pauseOn,
+        pauseOff,
+        forwardOn,
+        forwardOff,
+        fastForwardOn,
+        fastForwardOff,
+        fight,
+        play,
+        audioOff,
+        audioOn,
+        musicOff,
+        musicOn,
+        exit,
     };
 }
 
