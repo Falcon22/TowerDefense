@@ -8,6 +8,8 @@
 
 #include "State.h"
 #include "Graphics/Gui.h"
+#include "Map.h"
+
 
 class GameState : public State {
 public:
@@ -21,7 +23,8 @@ public:
 private:
     Player::GameData gameData;
     gui::Gui containter;
-
+    Map map;
+    std::vector<sf::IntRect> roadRect;
 };
 
 

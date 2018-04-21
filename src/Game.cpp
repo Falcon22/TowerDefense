@@ -35,7 +35,23 @@ void Game::input() {
 }
 
 void Game::loadAllResources() {
-    fontHolder.load(Fonts::font1, "../Resources/sansation.ttf");
+    fontHolder.load(Fonts::font1, "Resources/sansation.ttf");
+
+    textureHolder.load(Textures::cursor, "Resources/cursor.png");
+    textureHolder.load(Textures::panel, "Resources/panel.png");
+    textureHolder.load(Textures::button, "Resources/button.png");
+    textureHolder.load(Textures::map, "Resources/map.png");
+    textureHolder.load(Textures::target, "Resources/target.png");
+    textureHolder.load(Textures::gold, "Resources/diamond.png");
+    textureHolder.load(Textures::star, "Resources/star.png");
+    textureHolder.load(Textures::exit, "Resources/exit.png");
+    textureHolder.load(Textures::lives, "Resources/heart.png");
+    textureHolder.load(Textures::pauseOn, "Resources/pauseOn.png");
+    textureHolder.load(Textures::pauseOff, "Resources/PauseOff.png");
+    textureHolder.load(Textures::audioOff, "Resources/audioOff.png");
+    textureHolder.load(Textures::audioOn, "Resources/audioOn.png");
+    textureHolder.load(Textures::musicOff, "Resources/musicOff.png");
+    textureHolder.load(Textures::musicOn, "Resources/musicOn.png");
 }
 
 
