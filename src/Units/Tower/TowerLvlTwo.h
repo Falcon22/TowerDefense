@@ -1,0 +1,10 @@
+#ifndef TOWERDEFENSE_TOWERLVLTWO_H
+#define TOWERDEFENSE_TOWERLVLTWO_H
+
+
+class TowerLvlTwo {
+
+};
+
+
+#endif //TOWERDEFENSE_TOWERLVLTWO_H

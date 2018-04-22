@@ -232,3 +232,7 @@ void Map::draw() {
     f.setFillColor(sf::Color::Black);
     window.draw(f);
 }
+
+const Map::LogicMap &Map::getRoadRect() const {
+    return roadRect;
+}
