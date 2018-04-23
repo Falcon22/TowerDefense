@@ -14,8 +14,6 @@ public:
     static const unsigned int kPrice_ = 1000;
     constexpr static const float kAttackRange_ = 10000 * TILE_SIZE;
     static const int kAttackCooldown_ = 10;
-
-    const Type type_ = Type ::lvlOne;
 };
 
 

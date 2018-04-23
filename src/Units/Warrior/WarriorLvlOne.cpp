@@ -2,4 +2,4 @@
 
 
 WarriorLvlOne::WarriorLvlOne(const sf::Vector2f &position, const Map::LogicMap &logicMap)
-    : Warrior(type_, position, logicMap, kCost_, kVelocity_, kHp_) {}
+    : Warrior(Type::lvlOne, position, logicMap, kCost_, kVelocity_, kHp_) {}

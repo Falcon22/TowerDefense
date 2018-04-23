@@ -17,7 +17,7 @@ public:
 protected:
     Bullet(Type type, const sf::Vector2f& position, Warrior& target, int damage, float velocity, float angle);
     virtual void damage();
-private:
+
     bool checkCollisionWithTarget();
 
     Warrior& target_;

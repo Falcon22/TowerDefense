@@ -11,8 +11,6 @@ public:
     static const unsigned int kCost_ = 300;
     constexpr static const float kVelocity_ = 30;
     static const int kHp_ = 1000;
-
-    const Type type_ = Type ::lvlTwo;
 };
 
 

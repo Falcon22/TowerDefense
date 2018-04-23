@@ -14,6 +14,8 @@ public:
 
     void update(const sf::Time& dTime) override;
 
+    static void upgrade(Tower*& tower);
+
     float getAngle() const;
 
 protected:

@@ -8,6 +8,7 @@ enum class Type {
     lvlZero,
     lvlOne,
     lvlTwo,
+    lvlThree,
 };
 
 namespace sf {
