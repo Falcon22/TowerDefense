@@ -19,7 +19,7 @@ public:
     void draw();
     void analyze();
 
-    typedef enum Direction {
+    enum Direction {
         UP,
         DOWN,
         LEFT,
@@ -34,6 +34,10 @@ public:
 private:
 
     LogicMap roadRect;
+public:
+    const LogicMap &getRoadRect() const;
+
+private:
     sf::RenderWindow &window;
     sf::Texture texture;
     std::vector<std::vector<Tile>> map;

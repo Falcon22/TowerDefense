@@ -9,7 +9,11 @@
 #include "State.h"
 #include "Graphics/Gui.h"
 #include "Map.h"
+#include "Units/Warrior/Warrior.h"
+#include "Units/UnitsGraphics/GraphicsUnit.h"
 
+class Tower;
+class Bullet;
 
 class GameState : public State {
 public:
@@ -25,6 +29,12 @@ private:
     gui::Gui containter;
     Map map;
     std::vector<sf::IntRect> roadRect;
+    std::vector<Warrior*> warriors;
+    GraphicsUnit graphicsUnit;
+    Tower* tower;
+    std::vector<Bullet*> bullets;
+    sf::Sprite towerSprite;
+    sf::Sprite bulletSprite;
 };
 
 

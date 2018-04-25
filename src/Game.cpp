@@ -13,7 +13,7 @@ Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
 }
 
 void Game::run() {
-    const sf::Time frameTime = sf::seconds(1.f / 30.f);
+    const sf::Time frameTime = sf::seconds(1.f / 60.f);
     sf::Clock clock;
     sf::Time passedTIme = sf::Time::Zero;
 
@@ -47,11 +47,18 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::exit, "Resources/exit.png");
     textureHolder.load(Textures::lives, "Resources/heart.png");
     textureHolder.load(Textures::pauseOn, "Resources/pauseOn.png");
-    textureHolder.load(Textures::pauseOff, "Resources/PauseOff.png");
+    textureHolder.load(Textures::pauseOff, "Resources/pauseOff.png");
     textureHolder.load(Textures::audioOff, "Resources/audioOff.png");
     textureHolder.load(Textures::audioOn, "Resources/audioOn.png");
     textureHolder.load(Textures::musicOff, "Resources/musicOff.png");
     textureHolder.load(Textures::musicOn, "Resources/musicOn.png");
+    textureHolder.load(Textures::warriorLvlOne, "Resources/enemyOne.png");
+    textureHolder.load(Textures::warriorLvlTwo, "Resources/enemy.png");
+    textureHolder.load(Textures::towerOneTop, "Resources/towerOneTop.png");
+    textureHolder.load(Textures::towerTwoTop, "Resources/towerTopTwo.png");
+    textureHolder.load(Textures::towerOneBase, "Resources/towerOneBase.png");
+    textureHolder.load(Textures::towerTwoBase, "Resources/towerBaseTwo.png");
+    textureHolder.load(Textures::bulletTwo, "Resources/bulletTwo.png");
 }
 
 
