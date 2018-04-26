@@ -42,7 +42,7 @@ server::player &server::player_manager::create() {
 }
 
 
-server::game_manager::game_manager(): manager() { }
+server::game_manager::game_manager(): manager(), next_id(1) { }
 
 server::game &server::game_manager::get_by_id(int id) {
     for (auto &&game : entities)

@@ -34,15 +34,13 @@ void server::worker::work() {
 }
 
 void server::worker::tryNewConnection() {
-    // TODO Так не заработает, надо создавать в poolPlayers нового игрока, и затем брать у него сокет
-
     player& new_player = pool_players.create();
     if (listener.accept(new_player.getSocket()) == sf::Socket::Done) {
         selector.add(new_player.getSocket());
-//        pool_players.add(std::move(new_player));
-        std::cout << "[success] connected player" << '\n';
+        std::cout << "[success] connected player " << new_player.getId() << '\n';
     } else {
         std::cout << "[fail] didn't connect player" << '\n';
+        pool_players.remove(new_player.getId());
     }
 }
 
