@@ -2,15 +2,11 @@ cmake_minimum_required(VERSION 3.6)
 set(CMAKE_CXX_STANDARD 17)
 
 project(server)
-project(client)
 project(TowerDefense)
 
 #add_subdirectory(src)
 
-add_executable(client src/client_main.cpp)
-add_executable(server src/server_main.cpp src/server.cpp src/entities.cpp src/manager.cpp)
-
-
+add_executable(server src/server_main.cpp src/Server/Server.cpp src/Server/Entities.cpp src/Server/Manager.cpp)
 add_executable(TowerDefense  src/main.cpp src/Game.cpp src/Game.h src/ResourceManager/ResourcesHolder.h
         src/ResourceManager/ResourcesIdentifier.h src/Graphics/Button.cpp src/Graphics/Button.h src/GameContext.h
         src/GameState.cpp src/GameState.h src/GameStates.h src/Graphics/Gui.cpp src/Graphics/Gui.h src/Graphics/HUD.cpp src/Graphics/HUD.h
@@ -23,7 +19,7 @@ add_executable(TowerDefense  src/main.cpp src/Game.cpp src/Game.h src/ResourceMa
         src/Units/GameUnit.cpp src/Units/GameUnit.h src/Units/Tower/TowerLvlZero.cpp src/Units/Tower/TowerLvlZero.h
         src/Units/Tower/TowerLvlOne.cpp src/Units/Tower/TowerLvlOne.h src/Units/Tower/TowerLvlTwo.cpp src/Units/Tower/TowerLvlTwo.h
         src/Units/Bullet/Bullet.cpp src/Units/Bullet/Bullet.h src/Units/Bullet/BulletLvlOne.cpp src/Units/Bullet/BulletLvlOne.h
-        src/Units/Bullet/BulletLvlTwo.h src/Units/Bullet/BulletLvlTwo.cpp src/Units/Tower/TowerLvlThree.cpp src/Units/Tower/TowerLvlThree.h)
+        src/Units/Bullet/BulletLvlTwo.h src/Units/Bullet/BulletLvlTwo.cpp src/Units/Tower/TowerLvlThree.cpp src/Units/Tower/TowerLvlThree.h src/Server/Client.cpp src/Server/Client.h)
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 FIND_PACKAGE(SFML 2 REQUIRED system window graphics network audio)
@@ -31,5 +27,6 @@ FIND_PACKAGE(SFML 2 REQUIRED system window graphics network audio)
 #INCLUDE(FindPkgConfig)
 #PKG_SEARCH_MODULE(SFML REQUIRED sfml)
 INCLUDE_DIRECTORIES(${SFML_INCLUDE_DIR})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SFML_LIBRARIES})
+TARGET_LINK_LIBRARIES(server ${SFML_LIBRARIES})
+TARGET_LINK_LIBRARIES(TowerDefense ${SFML_LIBRARIES})
 file(COPY Resources DESTINATION .)

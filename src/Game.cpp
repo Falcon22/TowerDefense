@@ -6,19 +6,30 @@
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0, false}),
                context(window, font, textureHolder, fontHolder, cursor),
-               stateManager(context) {
+               stateManager(context),
+               client("0.0.0.0")
+{
+    window.setVerticalSyncEnabled(true);
     loadAllResources();
     registerStates();
     stateManager.pushState(States::ID::Game);
 }
 
 void Game::run() {
-    const sf::Time frameTime = sf::seconds(1.f / 60.f);
+    const sf::Time frameTime = sf::seconds(1.f / 30.f);
     sf::Clock clock;
     sf::Time passedTIme = sf::Time::Zero;
 
     while (window.isOpen()) {
         input();
+
+        try {
+            client.sendEvents();
+            client.askEvents();
+        } catch (const std::exception& e) {
+            std::cout << e.what() << std::endl;
+        }
+
         update(frameTime);
         draw();
     }

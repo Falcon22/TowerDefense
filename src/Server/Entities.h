@@ -7,7 +7,7 @@
 
 #include <SFML/Network.hpp>
 
-namespace server {
+namespace mp {
     class event {
         // placeholder
     public:

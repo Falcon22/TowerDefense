@@ -8,6 +8,7 @@
 #include "GameContext.h"
 #include "ResourceManager/ResourcesHolder.h"
 #include "ResourceManager/ResourcesIdentifier.h"
+#include "Server/Client.h"
 
 
 class Game {
@@ -31,6 +32,8 @@ private:
     sf::RenderWindow window;
     States::Context context;
     StateManager stateManager;
+
+    mp::Client client;
 };
 
 

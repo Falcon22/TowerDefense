@@ -27,10 +27,12 @@ public:
 private:
     Player::GameData gameData;
     gui::Gui containter;
+
+
     Map map;
     std::vector<sf::IntRect> roadRect;
-    std::vector<Warrior*> warriors;
-    GraphicsUnit graphicsUnit;
+    std::vector<Warrior *> warriors;
+    std::vector<GraphicsUnit *> gUnits;
     Tower* tower;
     std::vector<Bullet*> bullets;
     sf::Sprite towerSprite;

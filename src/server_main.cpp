@@ -3,18 +3,13 @@
 //
 
 #include <iostream>
-#include "server.hpp"
+#include "Server/Server.h"
 
 int main () {
     // TODO чтение порта из конфигов
-//
-//    unsigned short  port;
-//
-//    std::cout << "[port]: ";
-//    std::cin >> port;
 
     try {
-        server::worker worker(constants::port);
+        mp::simple_worker worker(constants::port);
         worker.work();
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;

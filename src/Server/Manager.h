@@ -5,10 +5,10 @@
 #ifndef TOWERDEFENSE_MANAGER_HPP
 #define TOWERDEFENSE_MANAGER_HPP
 
-#include "entities.hpp"
+#include "Entities.h"
 #include <list>
 
-namespace server {
+namespace mp {
     template<typename T>
     class manager {
     protected:

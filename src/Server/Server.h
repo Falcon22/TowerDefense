@@ -6,18 +6,18 @@
 #define TOWERDEFENSE_SERVER_HPP
 
 #include <SFML/Network.hpp>
-#include "manager.hpp"
+#include "Manager.h"
 
 class constants {
 public:
-    static sf::Time waitTime() {
+    static inline sf::Time waitTime() {
         return sf::milliseconds(50);
     }
 
     static const unsigned short port = 55001;
 };
 
-namespace server {
+namespace mp {
     class worker { // TODO singleton?
     private:
         sf::TcpListener     listener;
@@ -39,6 +39,22 @@ namespace server {
     public:
         worker(unsigned short port);
         ~worker();
+
+        void work();
+    };
+
+    class simple_worker {
+        sf::TcpListener     listener_;
+        sf::SocketSelector  selector_;
+        bool                running_;
+
+        player              first_;
+        player              second_;
+
+        void tryConnect(player& player);
+
+    public:
+        explicit simple_worker(unsigned short port = 55001);
 
         void work();
     };

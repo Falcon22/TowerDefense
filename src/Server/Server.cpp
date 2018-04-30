@@ -3,18 +3,18 @@
 //
 
 #include <iostream>
-#include "server.hpp"
+#include "Server.h"
 
-server::worker::worker(unsigned short port): running(true) {
+mp::worker::worker(unsigned short port): running(true) {
     listener.listen(port);
     selector.add(listener);
 }
 
-server::worker::~worker() {
+mp::worker::~worker() {
     listener.close(); // TODO Нужно?
 }
 
-void server::worker::work() {
+void mp::worker::work() {
     std::cout << "[run]" << '\n';
     while (running) {
         if (selector.wait(constants::waitTime())) {
@@ -33,7 +33,7 @@ void server::worker::work() {
     }
 }
 
-void server::worker::tryNewConnection() {
+void mp::worker::tryNewConnection() {
     player& new_player = pool_players.create();
     if (listener.accept(new_player.getSocket()) == sf::Socket::Done) {
         selector.add(new_player.getSocket());
@@ -44,7 +44,7 @@ void server::worker::tryNewConnection() {
     }
 }
 
-void server::worker::recievePlayerEvents() {
+void mp::worker::recievePlayerEvents() {
     auto& players = pool_players.getEntities();
     for (auto &&player : players) {
         try {
@@ -61,7 +61,7 @@ void server::worker::recievePlayerEvents() {
     }
 }
 
-void server::worker::recieveGamesEvents() {
+void mp::worker::recieveGamesEvents() {
     auto& games = pool_games.getEntities();
     for (auto &&game : games) {
         auto& one = game.getPlayerOne();
@@ -94,7 +94,7 @@ void server::worker::recieveGamesEvents() {
 
 }
 
-void server::worker::proceedEvents() {
+void mp::worker::proceedEvents() {
     for (auto &&item : players_input_events) {
         // TODO
         event ready_event;
@@ -102,18 +102,87 @@ void server::worker::proceedEvents() {
     }
 }
 
-void server::worker::proceedGames() {
+void mp::worker::proceedGames() {
     // TODO Under construction
 }
 
-void server::worker::sendPlayerEvents() {
+void mp::worker::sendPlayerEvents() {
     for (auto &&outputEvent : players_output_events) {
 //        outputEvent.execute();
     }
 }
 
-void server::worker::sendGamesEvents() {
+void mp::worker::sendGamesEvents() {
     // placeholder
 }
 
 
+
+
+
+
+mp::simple_worker::simple_worker(unsigned short port) : first_(1), second_(2) {
+    listener_.listen(port);
+    selector_.add(listener_);
+
+}
+
+void mp::simple_worker::work() {
+    std::cout << "[run] simple server" << '\n';
+    while (running_) {
+        if (selector_.wait(constants::waitTime())) {
+            if (selector_.isReady(listener_)) {
+                if (!first_.isConnected()) {
+                    tryConnect(first_);
+                    first_.reconnect(); // помечает, что подключено
+
+                    sf::Packet pkt;
+                    std::string msg("1");
+                    pkt.append(msg.c_str(), msg.size());
+
+                    if (first_.getSocket().send(pkt) == sf::Socket::Done) {
+                        std::cout << "[success] send id to 1" << std::endl;
+                    } else {
+                        std::cout << "[error] send 1"<< std::endl;
+                    }
+
+                } else {
+                    tryConnect(second_);
+                    second_.reconnect();
+                    sf::Packet pkt;
+                    std::string msg("2");
+                    pkt.append(msg.c_str(), msg.size());
+
+                    if (second_.getSocket().send(pkt) == sf::Socket::Done) {
+                        std::cout << "[success] send id to 2" << std::endl;
+                    } else {
+                        std::cout << "[error] send 2"<< std::endl;
+                    }
+
+                    if (first_.getSocket().send(pkt) == sf::Socket::Done) {
+                        std::cout << "[success] send id 2 to 1" << std::endl;
+                    } else {
+                        std::cout << "[error] send 2 to 1"<< std::endl;
+                    }
+                }
+            } else {
+
+            }
+        } else {
+//            proceedEvents();
+//            proceedGames();
+//            sendPlayerEvents();
+//            sendGamesEvents();
+        }
+    }
+}
+
+void mp::simple_worker::tryConnect(mp::player &player) {
+    if (listener_.accept(player.getSocket()) == sf::Socket::Done) {
+        selector_.add(player.getSocket());
+        // TODO Send ID
+        std::cout << "[success] connected player " << player.getId() << '\n';
+    } else {
+        std::cout << "[fail] didn't connect player" << '\n';
+    }
+}
