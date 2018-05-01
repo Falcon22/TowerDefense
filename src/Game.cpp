@@ -21,7 +21,7 @@ void Game::run() {
     sf::Time passedTIme = sf::Time::Zero;
 
     while (window.isOpen()) {
-        input();
+        input(client.outcoming);
 
         try {
             client.sendEvents();
@@ -35,12 +35,18 @@ void Game::run() {
     }
 }
 
-void Game::input() {
+void Game::input(std::vector<std::string> &events) {
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
             window.close();
         }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Mouse::getPosition(window).x < 10 && sf::Mouse::getPosition(window).y < 10) {
+            events.push_back("w 11 203");
+            events.push_back("t 1 5");
+        }
+        
         stateManager.processEvents(event);
     }
 }

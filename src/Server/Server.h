@@ -18,6 +18,8 @@ public:
 };
 
 namespace mp {
+
+/*
     class worker { // TODO singleton?
     private:
         sf::TcpListener     listener;
@@ -42,6 +44,7 @@ namespace mp {
 
         void work();
     };
+*/
 
     class simple_worker {
         sf::TcpListener     listener_;
@@ -50,8 +53,6 @@ namespace mp {
 
         player              first_;
         player              second_;
-
-        void tryConnect(player& player);
 
     public:
         explicit simple_worker(unsigned short port = 55001);

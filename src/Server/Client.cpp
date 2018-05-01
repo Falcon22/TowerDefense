@@ -56,11 +56,13 @@ bool mp::Client::askEvents() {
         if (socket_.receive(packet) == sf::Socket::Done) {
             //  парсинг пакета на отдельные эвенты
             std::string data = (char *)packet.getData();
-            std::string other_player_id = std::to_string(data[0]);
+            std::string other_player_id;
+            other_player_id += data[0];
+            
             std::string str_num_events;
 
             int j;
-            for(j = 0; data[j] != ' '; j++)
+            for(j = 2; data[j] != ' '; j++)
                 str_num_events += data[j];
             j++;
 
@@ -68,7 +70,7 @@ bool mp::Client::askEvents() {
 
             int read_events = 0;
             while (read_events != num_events) {
-                std::string current_event;
+                std::string current_event(other_player_id + " ");
                 bool got_event = false;
                 int read_fields = 0;
                 while(!got_event) {
@@ -86,9 +88,15 @@ bool mp::Client::askEvents() {
                 incoming.push_back(current_event);
             }
 
+            for (auto &&item : incoming) {
+                std::cout << item << std::endl;
+            }
+
+            incoming.clear();
+
             return true;
         } else {
-            throw std::logic_error(msg::error_receiving_events);
+            throw std::logic_error(msg::error_accepting_events);
         }
     }
 
@@ -96,20 +104,27 @@ bool mp::Client::askEvents() {
 }
 
 bool mp::Client::sendEvents() {
+    if (outcoming.empty())
+        return false;
+
     sf::Packet packet;
     std::string message;
 
-    message.append(std::to_string(player_id_) + " " + std::to_string(outcoming.size()));
+    message.append(std::to_string(player_id_) + " " + std::to_string(outcoming.size()) + " ");
 
     //  сборка сообщения, включающего все эвенты
     for (auto &&e : outcoming) {
         message.append(e + " ");
     }
 
+    std::cout << message << std::endl;
+
     packet.append(message.c_str(), message.size());
 
-    if (socket_.send(packet) == sf::Socket::Done)
+    if (socket_.send(packet) == sf::Socket::Done) {
+        outcoming.clear();
         return true;
-    else
+    } else {
         throw std::logic_error(msg::error_sending_events);
+    }
 }

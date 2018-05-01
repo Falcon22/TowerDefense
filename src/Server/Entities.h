@@ -33,17 +33,25 @@ namespace mp {
         sf::TcpSocket socket;
         bool connected;
 
+        sf::TcpSocket& getSocket();
+
     public:
         player();
         explicit player(int id = 0);
         ~player();
 
 
-        sf::TcpSocket& getSocket();
-        event getNewEvent();
+        std::string getEvents(sf::SocketSelector &selector);
+        void sendEvents(const std::string& events);
+        void getReady();
+
+        bool isReady(sf::SocketSelector& selector);
 
         void disconnect();
         void reconnect();
+
+        void connect(sf::TcpListener &listener, sf::SocketSelector &selector);
+
         bool isConnected() const;
     };
 

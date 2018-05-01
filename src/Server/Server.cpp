@@ -5,6 +5,8 @@
 #include <iostream>
 #include "Server.h"
 
+/*
+
 mp::worker::worker(unsigned short port): running(true) {
     listener.listen(port);
     selector.add(listener);
@@ -49,7 +51,7 @@ void mp::worker::recievePlayerEvents() {
     for (auto &&player : players) {
         try {
             if(player.isConnected() && selector.isReady(player.getSocket())) {
-                event new_events = player.getNewEvent();
+                event new_events = player.getEvents(<#initializer#>);
                 // TODO вероятно будем передавать контейнер эвентов, нужно будет поменять
                 players_input_events.push_back(new_events);
             }
@@ -71,7 +73,7 @@ void mp::worker::recieveGamesEvents() {
 
         try {
             if(one.isConnected() && selector.isReady(one.getSocket())) {
-                one_events = one.getNewEvent();
+                one_events = one.getEvents(<#initializer#>);
                 game.addEvent(one_events);
             }
 
@@ -82,7 +84,7 @@ void mp::worker::recieveGamesEvents() {
 
         try {
             if(sec.isConnected() && selector.isReady(sec.getSocket())) {
-                sec_events = sec.getNewEvent();
+                sec_events = sec.getEvents(<#initializer#>);
                 game.addEvent(sec_events);
             }
 
@@ -117,72 +119,38 @@ void mp::worker::sendGamesEvents() {
 }
 
 
-
-
-
+*/
 
 mp::simple_worker::simple_worker(unsigned short port) : first_(1), second_(2) {
-    listener_.listen(port);
+    while (listener_.listen(port) != sf::Socket::Status::Done);
+
     selector_.add(listener_);
 
 }
 
 void mp::simple_worker::work() {
     std::cout << "[run] simple server" << '\n';
+
     while (running_) {
         if (selector_.wait(constants::waitTime())) {
             if (selector_.isReady(listener_)) {
                 if (!first_.isConnected()) {
-                    tryConnect(first_);
-                    first_.reconnect(); // помечает, что подключено
-
-                    sf::Packet pkt;
-                    std::string msg("1");
-                    pkt.append(msg.c_str(), msg.size());
-
-                    if (first_.getSocket().send(pkt) == sf::Socket::Done) {
-                        std::cout << "[success] send id to 1" << std::endl;
-                    } else {
-                        std::cout << "[error] send 1"<< std::endl;
-                    }
-
+                    first_.connect(listener_, selector_);
                 } else {
-                    tryConnect(second_);
-                    second_.reconnect();
-                    sf::Packet pkt;
-                    std::string msg("2");
-                    pkt.append(msg.c_str(), msg.size());
-
-                    if (second_.getSocket().send(pkt) == sf::Socket::Done) {
-                        std::cout << "[success] send id to 2" << std::endl;
-                    } else {
-                        std::cout << "[error] send 2"<< std::endl;
-                    }
-
-                    if (first_.getSocket().send(pkt) == sf::Socket::Done) {
-                        std::cout << "[success] send id 2 to 1" << std::endl;
-                    } else {
-                        std::cout << "[error] send 2 to 1"<< std::endl;
-                    }
+                    second_.connect(listener_, selector_);
+                    first_.getReady();
                 }
             } else {
+                if (first_.isReady(selector_)) {
+                    second_.sendEvents(first_.getEvents(selector_));
+                }
 
+                if (second_.isReady(selector_)) {
+                    first_.sendEvents(second_.getEvents(selector_));
+                }
             }
         } else {
-//            proceedEvents();
-//            proceedGames();
-//            sendPlayerEvents();
-//            sendGamesEvents();
+            // TODO validation
         }
-    }
-}
-
-void mp::simple_worker::tryConnect(mp::player &player) {
-    if (listener_.accept(player.getSocket()) == sf::Socket::Done) {
-        selector_.add(player.getSocket());
-        // TODO Send ID
-        std::cout << "[success] connected player " << player.getId() << '\n';
-    } else {
-        std::cout << "[fail] didn't connect player" << '\n';
     }
 }

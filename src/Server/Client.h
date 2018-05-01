@@ -14,7 +14,7 @@ namespace mp {
         struct msg {
             static constexpr const char *waiting_connection = "[process] connecting to server";
             static constexpr const char *error_sending_events = "[fail] server didn't accept events";
-            static constexpr const char *error_receiving_events = "[fail] can't accept events";
+            static constexpr const char *error_accepting_events = "[fail] can't accept events";
         };
 
         sf::TcpSocket       socket_;
