@@ -83,7 +83,7 @@ void mp::worker::recieveGamesEvents() {
         }
 
         try {
-            if(sec.isConnected() && selector.isReady(sec.getSocket())) {
+            if(sec.isAvailable() && selector.isReady(sec.getSocket())) {
                 sec_events = sec.getEvents(<#initializer#>);
                 game.addEvent(sec_events);
             }
@@ -132,6 +132,9 @@ void mp::simple_worker::work() {
     std::cout << "[run] simple server" << '\n';
 
     while (running_) {
+        if (!first_.isAvailable() && !second_.isAvailable())
+            running_ = false;
+        
         if (selector_.wait(constants::waitTime())) {
             if (selector_.isReady(listener_)) {
                 if (!first_.isConnected()) {
@@ -141,16 +144,44 @@ void mp::simple_worker::work() {
                     first_.getReady();
                 }
             } else {
-                if (first_.isReady(selector_)) {
-                    second_.sendEvents(first_.getEvents(selector_));
+                if (first_.hasNewData(selector_)) {
+                    try {
+                        first_.getEvents();
+                    } catch (const std::exception& e) {
+                        selector_.remove(first_.getSocket());
+                    }
                 }
 
-                if (second_.isReady(selector_)) {
-                    first_.sendEvents(second_.getEvents(selector_));
+                if (second_.hasNewData(selector_)) {
+                    try {
+                        second_.getEvents();
+                    } catch (const std::exception& e) {
+                        selector_.remove(second_.getSocket());
+                    }
                 }
             }
         } else {
-            // TODO validation
+            // TODO validation:
+            // здесь происходит вызов Game.servRun(player &first, player &second);
+
+
+
+            first_.to_send = second_.from_client;
+            if (!second_.isAvailable())
+                first_.to_send.emplace_back(0, 's', "stop", sf::microseconds(0)); // системный вызов, завершающий игру
+
+            second_.from_client.clear(); // в Game этот вектор после обработки должен быть очищен!
+
+
+            second_.to_send = first_.from_client;
+            if (!first_.isAvailable())
+                second_.to_send.emplace_back(0, 's', "stop", sf::microseconds(0)); // системный вызов, завершающий игру
+
+            first_.from_client.clear(); // в Game этот вектор после обработки должен быть очищен!
+
+
+            first_.sendEvents();
+            second_.sendEvents();
         }
     }
 }

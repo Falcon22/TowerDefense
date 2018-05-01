@@ -8,12 +8,19 @@
 #include <SFML/Network.hpp>
 
 namespace mp {
-    class event {
-        // placeholder
-    public:
-        void execute();
+
+    struct Event {
+        int         id;
+        char        type;
+        std::string value;
+        sf::Time    time;
+
+        Event(int id, char type, const std::string &value, sf::Time time);
+        Event(const std::string &sId, const std::string &sType, const std::string &value, const std::string &sTime);
     };
 
+    void parseEventString(const std::string& sEvents, std::vector<mp::Event>& vEvents);
+    void encodeEventsToString(std::string& sEvents, std::vector<mp::Event>& vEvents);
 
     class entity {
     protected:
@@ -28,47 +35,60 @@ namespace mp {
     };
 
 
+
     class player : public entity {
-    private:
-        sf::TcpSocket socket;
-        bool connected;
-
-        sf::TcpSocket& getSocket();
-
     public:
+        enum player_state {
+            notConnected = 0,
+            connected,
+            notAvailable
+        };
+
         player();
         explicit player(int id = 0);
         ~player();
 
+        sf::TcpSocket& getSocket();
 
-        std::string getEvents(sf::SocketSelector &selector);
-        void sendEvents(const std::string& events);
-        void getReady();
 
-        bool isReady(sf::SocketSelector& selector);
+        void getEvents();
+        void sendEvents();
+//        void resendEvents(player& to_who);
+
+        void getReady(); // вызывается у первого игрока для уведомления о начале игры
+        bool hasNewData(sf::SocketSelector &selector);
 
         void disconnect();
         void reconnect();
 
         void connect(sf::TcpListener &listener, sf::SocketSelector &selector);
 
+        bool isAvailable() const;
         bool isConnected() const;
-    };
 
-    class game : public entity {
+        std::vector<mp::Event> from_client;
+        std::vector<mp::Event> to_send;
+
+
     private:
-        player player_one;
-        player player_second;
-        std::vector<event> events;
-
-    public:
-        player &getPlayerOne();
-        player &getPlayerSecond();
-
-        void addEvent(const event& event);
-        std::vector<event>& getEvents();
-
+        sf::TcpSocket socket_;
+        player_state state_;
     };
+
+//    class game : public entity {
+//    private:
+//        player player_one;
+//        player player_second;
+//        std::vector<event> events;
+//
+//    public:
+//        player &getPlayerOne();
+//        player &getPlayerSecond();
+//
+//        void addEvent(const event& event);
+//        std::vector<event>& getEvents();
+//
+//    };
 }
 
 #endif //TOWERDEFENSE_PLAYER_HPP

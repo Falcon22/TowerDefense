@@ -56,45 +56,14 @@ bool mp::Client::askEvents() {
         if (socket_.receive(packet) == sf::Socket::Done) {
             //  парсинг пакета на отдельные эвенты
             std::string data = (char *)packet.getData();
-            auto iterator = data.begin();
+            parseEventString(data, incoming);
 
-            std::string str_num_events;
-            for (; *iterator != ' '; ++iterator)
-                str_num_events += *iterator;
-            iterator++;
-
-            int num_events = atoi(str_num_events.c_str());
-
-            for (int i = 0; i < num_events; ++i) {
-                std::string sId;
-                std::string sType;
-                std::string sValue;
-                std::string sTime;
-
-                for (; *iterator != ' '; ++iterator)
-                    sId += *iterator;
-                ++iterator;
-
-                for (; *iterator != ' '; ++iterator)
-                    sType += *iterator;
-                ++iterator;
-
-                for (; *iterator != ' '; ++iterator)
-                    sValue += *iterator;
-                ++iterator;
-
-                for (; *iterator != ' '; ++iterator)
-                    sTime += *iterator;
-                ++iterator;
-
-                incoming.emplace_back(sId, sType, sValue, sTime);
-            }
-
-            for (auto &&item : incoming) {
-                std::cout << item.id << " " << item.type << " " << item.value << " " << item.time.asMicroseconds() << std::endl;
-            }
-
-            incoming.clear();
+            // Отладочный вывод
+//            for (auto &&item : incoming) {
+//                std::cout << item.id << " " << item.type << " " << item.value << " " << item.time.asMicroseconds() << std::endl;
+//            }
+//
+//            incoming.clear();
 
             return true;
         } else {
@@ -111,13 +80,7 @@ bool mp::Client::sendEvents() {
 
     sf::Packet packet;
     std::string message;
-
-    message.append(std::to_string(outcoming.size()) + " ");
-
-    //  сборка сообщения, включающего все эвенты
-    for (auto &&e : outcoming) {
-        message.append(std::to_string(e.id) + " " + e.type + " " + e.value + " " + std::to_string(e.time.asMicroseconds()) + " ");
-    }
+    encodeEventsToString(message, outcoming);
 
     std::cout << message << std::endl;
     packet.append(message.c_str(), message.size());
@@ -129,3 +92,4 @@ bool mp::Client::sendEvents() {
         throw std::logic_error(msg::error_sending_events);
     }
 }
+

@@ -38,17 +38,17 @@ namespace mp {
     };
 
 
-    class game_manager: public manager<game> {
-    private:
-        int next_id;
-
-    public:
-        game_manager();
-
-        game &get_by_id(int id) override;
-//        void add(game &&entity) override;
-        void remove(int id) override;
-    };
+//    class game_manager: public manager<game> {
+//    private:
+//        int next_id;
+//
+//    public:
+//        game_manager();
+//
+//        game &get_by_id(int id) override;
+////        void add(game &&entity) override;
+//        void remove(int id) override;
+//    };
 
 }
 

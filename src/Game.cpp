@@ -31,6 +31,14 @@ void Game::run() {
             std::cout << e.what() << std::endl;
         }
 
+        for (auto &&item : client.incoming) {
+            if (item.type == 's' && item.value == "stop")
+                window.close();
+        
+        }
+        
+        client.incoming.clear();
+
         update(frameTime);
         draw();
     }
