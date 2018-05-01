@@ -209,24 +209,24 @@ void Map::draw() {
         }
     }
 
-    for (int i = 9; i >= 0; i--) {
-        sf::RectangleShape r(sf::Vector2f(roadRect.road[i].first.width, roadRect.road[i].first.height));
-        r.setPosition(roadRect.road[i].first.left, roadRect.road[i].first.top);
-        r.setOutlineColor(sf::Color::Black);
-        r.setOutlineThickness(0.5);
-        if (roadRect.road[i].second == UP) {
-            r.setFillColor(sf::Color::Red);
-        } else if (roadRect.road[i].second == DOWN) {
-            r.setFillColor(sf::Color::Green);
-        } else if (roadRect.road[i].second == LEFT) {
-            r.setFillColor(sf::Color::Blue);
-        } else if (roadRect.road[i].second == RIGHT) {
-            r.setFillColor(sf::Color::White);
-        }
-
-            //sf::Rect r(i.left, i.top, i.width, i.height);
-        window.draw(r);
-    }
+//    for (int i = 9; i >= 0; i--) {
+//        sf::RectangleShape r(sf::Vector2f(roadRect.road[i].first.width, roadRect.road[i].first.height));
+//        r.setPosition(roadRect.road[i].first.left, roadRect.road[i].first.top);
+//        r.setOutlineColor(sf::Color::Black);
+//        r.setOutlineThickness(0.5);
+//        if (roadRect.road[i].second == UP) {
+//            r.setFillColor(sf::Color::Red);
+//        } else if (roadRect.road[i].second == DOWN) {
+//            r.setFillColor(sf::Color::Green);
+//        } else if (roadRect.road[i].second == LEFT) {
+//            r.setFillColor(sf::Color::Blue);
+//        } else if (roadRect.road[i].second == RIGHT) {
+//            r.setFillColor(sf::Color::White);
+//        }
+//
+//            //sf::Rect r(i.left, i.top, i.width, i.height);
+//        window.draw(r);
+//    }
     sf::RectangleShape f(sf::Vector2f(roadRect.finish.width, roadRect.finish.height));
     f.setPosition(roadRect.finish.left, roadRect.finish.top);
     f.setFillColor(sf::Color::Black);

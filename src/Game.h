@@ -18,7 +18,7 @@ public:
     void run();
 
 private:
-    void input(std::vector<std::string> &events);
+    void input(std::vector<mp::Event> &events);
     void update(sf::Time frameTime);
     void draw();
 

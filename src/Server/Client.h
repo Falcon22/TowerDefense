@@ -6,9 +6,41 @@
 #define TOWERDEFENSE_CLIENT_H
 
 #include <SFML/Network.hpp>
+#include <utility>
 
 
 namespace mp {
+    struct Event {
+        int         id;
+        char        type;
+        std::string value;
+        sf::Time    time;
+
+        Event(int id, char type, const std::string &value, sf::Time time) :
+                id(id),
+                type(type),
+                value(value),
+                time(time) { }
+
+        Event(const std::string &sId, const std::string &sType, const std::string &value, const std::string &sTime) :
+                id(0),
+                type('\0'),
+                value(value),
+                time()
+        {
+            id = atoi(sId.c_str());
+            type = sType[0];
+
+            unsigned long long temp_time = 0;
+            for (auto &&digit : sTime) {
+                temp_time *= 10;
+                temp_time += digit - '0';
+            }
+
+            time = sf::microseconds(temp_time);
+        }
+    };
+
     class Client {
     private:
         struct msg {
@@ -33,8 +65,8 @@ namespace mp {
         bool sendEvents();
 
         // эвенты
-        std::vector<std::string> incoming;
-        std::vector<std::string> outcoming;
+        std::vector<mp::Event> incoming;
+        std::vector<mp::Event> outcoming;
 
     };
 

@@ -2,12 +2,13 @@
 #include "MenuState.h"
 #include "PauseState.h"
 #include "GameState.h"
+#include "Server/Server.h"
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0, false}),
                context(window, font, textureHolder, fontHolder, cursor),
                stateManager(context),
-               client("0.0.0.0")
+               client(constants::ip)
 {
     window.setVerticalSyncEnabled(true);
     loadAllResources();
@@ -35,7 +36,7 @@ void Game::run() {
     }
 }
 
-void Game::input(std::vector<std::string> &events) {
+void Game::input(std::vector<mp::Event> &events) {
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
@@ -43,10 +44,10 @@ void Game::input(std::vector<std::string> &events) {
         }
 
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Mouse::getPosition(window).x < 10 && sf::Mouse::getPosition(window).y < 10) {
-            events.push_back("w 11 203");
-            events.push_back("t 1 5");
+            events.emplace_back(1, 'w', "101001010", sf::microseconds(100500));
+            events.emplace_back(1, 't', "98", sf::microseconds(100501));
         }
-        
+
         stateManager.processEvents(event);
     }
 }

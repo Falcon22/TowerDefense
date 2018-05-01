@@ -56,40 +56,42 @@ bool mp::Client::askEvents() {
         if (socket_.receive(packet) == sf::Socket::Done) {
             //  парсинг пакета на отдельные эвенты
             std::string data = (char *)packet.getData();
-            std::string other_player_id;
-            other_player_id += data[0];
-            
-            std::string str_num_events;
+            auto iterator = data.begin();
 
-            int j;
-            for(j = 2; data[j] != ' '; j++)
-                str_num_events += data[j];
-            j++;
+            std::string str_num_events;
+            for (; *iterator != ' '; ++iterator)
+                str_num_events += *iterator;
+            iterator++;
 
             int num_events = atoi(str_num_events.c_str());
 
-            int read_events = 0;
-            while (read_events != num_events) {
-                std::string current_event(other_player_id + " ");
-                bool got_event = false;
-                int read_fields = 0;
-                while(!got_event) {
-                    current_event += data[j++];
-                    if (data[j] == ' ') {
-                        read_fields++;
-                        if (read_fields == 3) {
-                            got_event = true;
-                            read_fields = 0;
-                            read_events++;
-                            j++;
-                        }
-                    }
-                }
-                incoming.push_back(current_event);
+            for (int i = 0; i < num_events; ++i) {
+                std::string sId;
+                std::string sType;
+                std::string sValue;
+                std::string sTime;
+
+                for (; *iterator != ' '; ++iterator)
+                    sId += *iterator;
+                ++iterator;
+
+                for (; *iterator != ' '; ++iterator)
+                    sType += *iterator;
+                ++iterator;
+
+                for (; *iterator != ' '; ++iterator)
+                    sValue += *iterator;
+                ++iterator;
+
+                for (; *iterator != ' '; ++iterator)
+                    sTime += *iterator;
+                ++iterator;
+
+                incoming.emplace_back(sId, sType, sValue, sTime);
             }
 
             for (auto &&item : incoming) {
-                std::cout << item << std::endl;
+                std::cout << item.id << " " << item.type << " " << item.value << " " << item.time.asMicroseconds() << std::endl;
             }
 
             incoming.clear();
@@ -110,15 +112,14 @@ bool mp::Client::sendEvents() {
     sf::Packet packet;
     std::string message;
 
-    message.append(std::to_string(player_id_) + " " + std::to_string(outcoming.size()) + " ");
+    message.append(std::to_string(outcoming.size()) + " ");
 
     //  сборка сообщения, включающего все эвенты
     for (auto &&e : outcoming) {
-        message.append(e + " ");
+        message.append(std::to_string(e.id) + " " + e.type + " " + e.value + " " + std::to_string(e.time.asMicroseconds()) + " ");
     }
 
     std::cout << message << std::endl;
-
     packet.append(message.c_str(), message.size());
 
     if (socket_.send(packet) == sf::Socket::Done) {

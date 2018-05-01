@@ -11,10 +11,11 @@
 class constants {
 public:
     static inline sf::Time waitTime() {
-        return sf::milliseconds(50);
+        return sf::milliseconds(5);
     }
 
     static const unsigned short port = 55001;
+    static constexpr const char * ip = "0.0.0.0";
 };
 
 namespace mp {
