@@ -3,168 +3,164 @@
 //
 
 #include <iostream>
+#include <unistd.h>
 #include "Server.h"
 
-/*
-
-mp::worker::worker(unsigned short port): running(true) {
-    listener.listen(port);
-    selector.add(listener);
+mp::master::master(unsigned short port): running_(true) {
+    listener_.listen(port);
+    selector_.add(listener_);
 }
 
-mp::worker::~worker() {
-    listener.close(); // TODO Нужно?
+mp::master::~master() {
+    listener_.close(); // TODO Нужно?
+}
+
+void mp::master::work() {
+    std::cout << "[run]" << '\n';
+    while (running_) {
+        if (selector_.wait(constants::waitTime())) {
+            if (selector_.isReady(listener_)) {
+                // добавление игрока в список
+                player& new_player = pool_players_.create();
+                try {
+                    new_player.connect(listener_, selector_);
+                } catch (const std::exception& e) {
+                    pool_players_.remove(new_player.getId()); // TODO перенести в реализацию метода
+                }
+
+            } else {
+                for (auto &&player : pool_players_.getEntities()) {
+                    if (!player.isInGame() && selector_.isReady(player.getSocket())) {
+                        try {
+                            player.getEvents();
+                        } catch (const std::exception& e) {
+                            selector_.remove(player.getSocket());
+                        }
+
+                        // TODO вынести в отдельный метод
+                        for (auto &&event : player.from_client) {
+                            if (event.type == 'j') {
+                                int pending_game_id = atoi(event.value.c_str());
+
+                                try {
+                                    pool_games_.at(pending_game_id).join(player.getId());
+                                } catch (const std::exception& e) {
+                                    std::cout << e.what() << std::endl;
+                                    break;
+                                }
+
+                                player.setInGame();
+
+                                std::cout << player.getId() << " join'd game " << pending_game_id << std::endl;
+
+                                // TODO подключение по именам
+//                                    for (auto &&game : pool_games_) {
+//                                        if (game.getName() == pending_game_name) { // ID - индекс в
+//                                            game.join(player);
+//                                            break;
+//                                        }
+//                                    }
+                            } else if (event.type == 'n') {
+                                pool_games_.emplace_back(event.value); // name - имя игры
+
+                                player.to_send.emplace_back(0, 's', std::to_string(pool_games_.size() - 1),
+                                                                     sf::microseconds(0));
+
+                                std::cout << "add game " + event.value << std::endl;
+
+                                player.sendEvents();
+                            }
+                        }
+
+                        player.from_client.clear();
+                    }
+                }
+            }
+        } else {
+            for (auto &&game : pool_games_) {
+
+                if (game.isReady() && !game.isStarted()) {
+                    pid_t pid = fork();
+
+                    switch (pid) {
+                        case 0: {
+                            game.start();
+                            selector_.remove(pool_players_.get_by_id(game.getFirstId()).getSocket());
+                            selector_.remove(pool_players_.get_by_id(game.getSecondId()).getSocket());
+                            std::cout << "master: success " << pid << std::endl;
+                            break;
+                        } // возможно, действия, связанные с обеспечением безопасности игры
+
+                        case -1: {
+                            std::cout << "error!" << std::endl;
+                            break;
+                        }
+
+                        default: {
+                            running_ = false;
+
+                            std::cout << "child: success " << pid << std::endl;
+                            worker worker(pool_players_.get_by_id(game.getFirstId()), pool_players_.get_by_id(game.getSecondId()));
+                            worker.work();
+
+                            return;
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
+
+    std::cout << "end" << std::endl;
+}
+
+
+mp::worker::worker(player &first, player &second) : first_(first), second_(second), running_(false) {
+    selector_.add(first.getSocket());
+    selector_.add(second.getSocket());
+
+
+    first_.setId(1);
+    second_.setId(2);
 }
 
 void mp::worker::work() {
-    std::cout << "[run]" << '\n';
-    while (running) {
-        if (selector.wait(constants::waitTime())) {
-            if (selector.isReady(listener)) {
-                tryNewConnection();
-            } else {
-                recievePlayerEvents();
-                recieveGamesEvents();
-            }
-        } else {
-            proceedEvents();
-            proceedGames();
-            sendPlayerEvents();
-            sendGamesEvents();
-        }
-    }
-}
-
-void mp::worker::tryNewConnection() {
-    player& new_player = pool_players.create();
-    if (listener.accept(new_player.getSocket()) == sf::Socket::Done) {
-        selector.add(new_player.getSocket());
-        std::cout << "[success] connected player " << new_player.getId() << '\n';
-    } else {
-        std::cout << "[fail] didn't connect player" << '\n';
-        pool_players.remove(new_player.getId());
-    }
-}
-
-void mp::worker::recievePlayerEvents() {
-    auto& players = pool_players.getEntities();
-    for (auto &&player : players) {
-        try {
-            if(player.isConnected() && selector.isReady(player.getSocket())) {
-                event new_events = player.getEvents(<#initializer#>);
-                // TODO вероятно будем передавать контейнер эвентов, нужно будет поменять
-                players_input_events.push_back(new_events);
-            }
-
-        } catch (const std::exception& e) {
-            std::cout << e.what() << '\n';
-            player.disconnect();
-        }
-    }
-}
-
-void mp::worker::recieveGamesEvents() {
-    auto& games = pool_games.getEntities();
-    for (auto &&game : games) {
-        auto& one = game.getPlayerOne();
-        auto& sec = game.getPlayerSecond();
-
-        event one_events, sec_events;
-
-        try {
-            if(one.isConnected() && selector.isReady(one.getSocket())) {
-                one_events = one.getEvents(<#initializer#>);
-                game.addEvent(one_events);
-            }
-
-        } catch (const std::exception& e) {
-            std::cout << e.what() << '\n';
-            one.disconnect();
-        }
-
-        try {
-            if(sec.isAvailable() && selector.isReady(sec.getSocket())) {
-                sec_events = sec.getEvents(<#initializer#>);
-                game.addEvent(sec_events);
-            }
-
-        } catch (const std::exception& e) {
-            std::cout << e.what() << '\n';
-            sec.disconnect();
-        }
-    }
-
-}
-
-void mp::worker::proceedEvents() {
-    for (auto &&item : players_input_events) {
-        // TODO
-        event ready_event;
-        players_output_events.push_back(ready_event);
-    }
-}
-
-void mp::worker::proceedGames() {
-    // TODO Under construction
-}
-
-void mp::worker::sendPlayerEvents() {
-    for (auto &&outputEvent : players_output_events) {
-//        outputEvent.execute();
-    }
-}
-
-void mp::worker::sendGamesEvents() {
-    // placeholder
-}
-
-
-*/
-
-mp::simple_worker::simple_worker(unsigned short port) : first_(1), second_(2) {
-    while (listener_.listen(port) != sf::Socket::Status::Done);
-
-    selector_.add(listener_);
-
-}
-
-void mp::simple_worker::work() {
     std::cout << "[run] simple server" << '\n';
+
+    // TODO отослать сообщения о начале игры
+    try {
+        first_.startGame();
+        second_.startGame();
+        running_ = true;
+    } catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+    }
 
     while (running_) {
         if (!first_.isAvailable() && !second_.isAvailable())
-            running_ = false;
+            return;
         
         if (selector_.wait(constants::waitTime())) {
-            if (selector_.isReady(listener_)) {
-                if (!first_.isConnected()) {
-                    first_.connect(listener_, selector_);
-                } else {
-                    second_.connect(listener_, selector_);
-                    first_.getReady();
+            if (first_.hasNewData(selector_)) {
+                try {
+                    first_.getEvents();
+                } catch (const std::exception &e) {
+                    selector_.remove(first_.getSocket());
                 }
-            } else {
-                if (first_.hasNewData(selector_)) {
-                    try {
-                        first_.getEvents();
-                    } catch (const std::exception& e) {
-                        selector_.remove(first_.getSocket());
-                    }
-                }
+            }
 
-                if (second_.hasNewData(selector_)) {
-                    try {
-                        second_.getEvents();
-                    } catch (const std::exception& e) {
-                        selector_.remove(second_.getSocket());
-                    }
+            if (second_.hasNewData(selector_)) {
+                try {
+                    second_.getEvents();
+                } catch (const std::exception &e) {
+                    selector_.remove(second_.getSocket());
                 }
             }
         } else {
             // TODO validation:
             // здесь происходит вызов Game.servRun(player &first, player &second);
-
-
 
             first_.to_send = second_.from_client;
             if (!second_.isAvailable())

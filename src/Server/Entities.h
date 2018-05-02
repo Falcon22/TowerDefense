@@ -38,13 +38,12 @@ namespace mp {
 
     class player : public entity {
     public:
-        enum player_state {
+        enum connection_state {
             notConnected = 0,
             connected,
             notAvailable
         };
 
-        player();
         explicit player(int id = 0);
         ~player();
 
@@ -63,8 +62,14 @@ namespace mp {
 
         void connect(sf::TcpListener &listener, sf::SocketSelector &selector);
 
+        void startGame();
+
         bool isAvailable() const;
         bool isConnected() const;
+
+        bool isInGame() const;
+        void setInGame();
+
 
         std::vector<mp::Event> from_client;
         std::vector<mp::Event> to_send;
@@ -72,23 +77,38 @@ namespace mp {
 
     private:
         sf::TcpSocket socket_;
-        player_state state_;
+        connection_state state_;
+        bool in_game_;
     };
 
-//    class game : public entity {
-//    private:
-//        player player_one;
-//        player player_second;
-//        std::vector<event> events;
-//
-//    public:
-//        player &getPlayerOne();
-//        player &getPlayerSecond();
-//
-//        void addEvent(const event& event);
-//        std::vector<event>& getEvents();
-//
-//    };
+
+
+    class game : public entity {
+    private:
+        std::string     name_;
+        int             player_id_first_;
+        int             player_id_second_;
+
+        bool            first_connected_;
+        bool            second_connected_;
+
+        bool            is_started_;
+
+    public:
+        explicit game(const std::string& name);
+
+        bool isReady() const;
+        void join(int player_id);
+        const std::string& getName() const;
+
+        int getFirstId() const;
+
+        int getSecondId() const;
+
+
+        bool isStarted() const;
+        void start();
+    };
 }
 
 #endif //TOWERDEFENSE_PLAYER_HPP

@@ -20,43 +20,31 @@ public:
 
 namespace mp {
 
-/*
-    class worker { // TODO singleton?
-    private:
-        sf::TcpListener     listener;
-        sf::SocketSelector  selector;
-        game_manager        pool_games;
-        player_manager      pool_players;
-        std::vector<event>  players_input_events;
-        std::vector<event>  players_output_events;
-        bool                running;
 
-        void tryNewConnection();
-        void recievePlayerEvents();
-        void recieveGamesEvents();
-        void proceedEvents();
-        void proceedGames();
-        void sendPlayerEvents();
-        void sendGamesEvents();
+    class master { // TODO singleton?
+    private:
+        sf::TcpListener         listener_;
+        sf::SocketSelector      selector_;
+        std::vector<mp::game>   pool_games_;
+        player_manager          pool_players_;
+        bool                    running_;
 
     public:
-        worker(unsigned short port);
-        ~worker();
+        explicit master(unsigned short port = 55001);
+        ~master();
 
         void work();
     };
-*/
 
-    class simple_worker {
-        sf::TcpListener     listener_;
+    class worker {
         sf::SocketSelector  selector_;
         bool                running_;
 
-        player              first_;
-        player              second_;
+        player &            first_;
+        player &            second_;
 
     public:
-        explicit simple_worker(unsigned short port = 55001);
+        explicit worker(player &first, player &second);
 
         void work();
     };

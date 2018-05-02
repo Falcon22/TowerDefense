@@ -20,6 +20,45 @@ void Game::run() {
     const sf::Time frameTime = sf::seconds(1.f / 30.f);
     sf::Clock clock;
     sf::Time passedTIme = sf::Time::Zero;
+    
+    // TODO мультиплеерная мутота
+    while (true) {
+        char operation;
+        std::cin >> operation;
+        switch (operation) {
+            case 'n': {
+                std::string game_name;
+                std::cin >> game_name;
+                client.outcoming.emplace_back(0, 'n', game_name, sf::microseconds(0)); //
+                break;
+            }
+
+            case 'j': {
+                std::string game_id;
+                std::cin >> game_id;
+                client.outcoming.emplace_back(0, 'j', game_id, sf::microseconds(0)); // Просим пустить в игру
+                break;
+            }
+
+            default: break;
+        }
+
+        client.sendEvents();
+
+        if (operation == 'j')
+            break;
+
+        client.askEvents();
+        if (!client.incoming.empty()) {
+            std::cout << client.incoming[0].value << std::endl;
+        }
+        client.incoming.clear();
+    }
+
+    while (client.incoming.empty()) // тут мы запрашиваем айдишник
+        client.askEvents();
+
+    client.incoming.clear();
 
     while (window.isOpen()) {
         input(client.outcoming);

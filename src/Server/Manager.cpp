@@ -21,8 +21,10 @@ mp::player &mp::player_manager::get_by_id(int id) {
 
 void mp::player_manager::remove(int id) {
     for (auto it = entities.begin(); it != entities.end(); ++it)
-        if (it->getId() == id)
+        if (it->getId() == id) {
             entities.erase(it);
+            return;;
+        }
 
     throw std::logic_error("[player_manager::remove] id not found");
 }
