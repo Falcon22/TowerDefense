@@ -80,10 +80,10 @@ namespace mp {
             static constexpr const char *not_get_events = "[player:error] can't recieve events";
             static constexpr const char *send_id = "[player:success] send id to ";
             static constexpr const char *not_send_id = "[player:error] send id to";
-            static constexpr const char *connect_player = "[success] connected player " ;
-            static constexpr const char *not_connect_player = "[fail] didn't connect player" ;
-            static constexpr const char *send_events = "[success] send events to " ;
-            static constexpr const char *not_send_events = "[error] can't send events to " ;
+            static constexpr const char *connect_player = "[player:success] connected player " ;
+            static constexpr const char *not_connect_player = "[player:error] didn't connect player" ;
+            static constexpr const char *send_events = "[player:success] send events to " ;
+            static constexpr const char *not_send_events = "[player:error] can't send events to " ;
         };
 
         sf::TcpSocket       socket_;
@@ -96,7 +96,7 @@ namespace mp {
     class game : public entity {
     private:
         struct msg {
-            static constexpr const char *game_running = "[error] game already running" ;
+            static constexpr const char *game_running = "[game:fail] game already running" ;
         };
 
         std::string     name_;
