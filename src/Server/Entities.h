@@ -54,11 +54,10 @@ namespace mp {
         void sendEvents();
 //        void resendEvents(player& to_who);
 
-        void getReady(); // вызывается у первого игрока для уведомления о начале игры
+        // вызывается у первого игрока для уведомления о начале игры
         bool hasNewData(sf::SocketSelector &selector);
 
         void disconnect();
-        void reconnect();
 
         void connect(sf::TcpListener &listener, sf::SocketSelector &selector);
 
@@ -76,15 +75,30 @@ namespace mp {
 
 
     private:
-        sf::TcpSocket socket_;
-        connection_state state_;
-        bool in_game_;
+        struct msg {
+            static constexpr const char *get_events = "[player:success] get events from ";
+            static constexpr const char *not_get_events = "[player:error] can't recieve events";
+            static constexpr const char *send_id = "[player:success] send id to ";
+            static constexpr const char *not_send_id = "[player:error] send id to";
+            static constexpr const char *connect_player = "[success] connected player " ;
+            static constexpr const char *not_connect_player = "[fail] didn't connect player" ;
+            static constexpr const char *send_events = "[success] send events to " ;
+            static constexpr const char *not_send_events = "[error] can't send events to " ;
+        };
+
+        sf::TcpSocket       socket_;
+        connection_state    state_;
+        bool                in_game_;
     };
 
 
 
     class game : public entity {
     private:
+        struct msg {
+            static constexpr const char *game_running = "[error] game already running" ;
+        };
+
         std::string     name_;
         int             player_id_first_;
         int             player_id_second_;

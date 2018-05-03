@@ -22,7 +22,7 @@ add_executable(TowerDefense  src/main.cpp src/Game.cpp src/Graphics/Button.cpp
         src/Server/Entities.cpp)
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-FIND_PACKAGE(SFML 2 REQUIRED system window graphics network audio)
+FIND_PACKAGE(SFML 2.4.2 REQUIRED system window graphics network audio)
 
 #INCLUDE(FindPkgConfig)
 #PKG_SEARCH_MODULE(SFML REQUIRED sfml)

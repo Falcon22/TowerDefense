@@ -15,9 +15,10 @@ namespace mp {
     class Client {
     private:
         struct msg {
-            static constexpr const char *waiting_connection = "[process] connecting to server";
-            static constexpr const char *error_sending_events = "[fail] server didn't accept events";
-            static constexpr const char *error_accepting_events = "[fail] can't accept events";
+            static constexpr const char *waiting_connection = "[client:process] connecting to server";
+            static constexpr const char *error_sending_events = "[client:fail] server didn't accept events";
+            static constexpr const char *error_accepting_events = "[client:fail] can't accept events";
+            static constexpr const char *connected = "[client:success] connected to server";
         };
 
         sf::TcpSocket       socket_;

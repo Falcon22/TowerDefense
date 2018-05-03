@@ -18,17 +18,12 @@ mp::entity::entity(int id): id(id) { }
 
 
 
-
 mp::player::player(int id)
         : entity(id), state_(notConnected) { }
 
 
 void mp::player::disconnect() {
     state_ = notConnected;
-}
-
-void mp::player::reconnect() {
-    state_ = connected; // TODO не так просто
 }
 
 mp::player::~player() {
@@ -42,15 +37,14 @@ bool mp::player::isAvailable() const {
 void mp::player::getEvents() try {
     sf::Packet packet;
     if (socket_.receive(packet) == sf::Socket::Done) {
-        std::cout << "[success] get events from " << getId() << '\n';
+        std::cout << msg::get_events << id << std::endl;
         std::string data = (char *)packet.getData();
 
         parseEventString(data, from_client);
     } else {
-        throw std::logic_error("[fail] can't recieve events");
+        throw std::logic_error(msg::not_get_events);
     }
 } catch (const std::exception& e) {
-    std::cout << e.what() << std::endl;
     state_ = notAvailable;
     throw;
 }
@@ -62,9 +56,9 @@ void mp::player::startGame() {
     packet_id.append(str_id.c_str(), str_id.size() + 1);
 
     if (socket_.send(packet_id) == sf::Socket::Done) {
-        std::cout << "[success] send id to " << id << std::endl;
+        std::cout << msg::send_id << id << std::endl;
     } else {
-        std::cout << "[error] send " << id << std::endl;
+        std::cout << msg::not_send_id << id << std::endl;
     }
 }
 
@@ -74,29 +68,14 @@ void mp::player::connect(sf::TcpListener &listener, sf::SocketSelector &selector
         selector.add(socket_);
         state_ = connected; // помечает, что подключено
 
-        std::cout << "[success] connected player " << id << std::endl;
+        std::cout << msg::connect_player << id << std::endl;
 
     } else {
-        throw std::logic_error("[fail] didn't connect player");
+        throw std::logic_error(msg::not_connect_player);
     }
 } catch (const std::exception& e) {
-    std::cout << e.what() << std::endl;
     state_ = notAvailable;
     throw;
-}
-
-void mp::player::getReady() try {
-    sf::Packet packet;
-    std::string msg("2");
-    packet.append(msg.c_str(), msg.size());
-    if (socket_.send(packet) == sf::Socket::Done) {
-        std::cout << "[success] send id 2 to " << id << std::endl;
-    } else {
-        throw std::logic_error("[error] send id 2 to " + id);
-    }
-} catch (const std::exception& e) {
-    std::cout << e.what() << std::endl;
-    state_ = notAvailable;
 }
 
 bool mp::player::hasNewData(sf::SocketSelector &selector) {
@@ -112,12 +91,12 @@ void mp::player::sendEvents() try {
     std::string sEvents;
     encodeEventsToString(sEvents, to_send);
 
-    packet.append(sEvents.c_str(), sEvents.size());
+    packet.append(sEvents.c_str(), sEvents.size() + 1);
     if (socket_.send(packet) == sf::Socket::Done) { // блокирующий вызов, может стать причиной медленной пересылки эвентов
         to_send.clear();
-        std::cout << "[success] send events to " << id << std::endl;
+        std::cout << msg::send_events << id << std::endl;
     } else {
-        throw std::logic_error("[error] send events to " + id);
+        throw std::logic_error(msg::not_send_events + id);
     }
 
 } catch (const std::exception& e) {
@@ -140,20 +119,6 @@ bool mp::player::isInGame() const {
 void mp::player::setInGame() {
     in_game_ = true;
 }
-
-
-
-
-
-//mp::player& mp::game::getPlayerOne() {
-//    return player_one;
-//}
-//
-//mp::player& mp::game::getPlayerSecond() {
-//    return player_second;
-//}
-
-
 
 
 
@@ -233,7 +198,7 @@ bool mp::game::isReady() const {
 
 void mp::game::join(int player_id) {
     if (is_started_)
-        throw std::logic_error("game already running");
+        throw std::logic_error(msg::game_running);
 
     if (!first_connected_) {
         player_id_first_ = player_id;

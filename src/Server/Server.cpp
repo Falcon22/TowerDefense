@@ -16,16 +16,18 @@ mp::master::~master() {
 }
 
 void mp::master::work() {
-    std::cout << "[run]" << '\n';
+    std::cout << msg::run << std::endl;
     while (running_) {
         if (selector_.wait(constants::waitTime())) {
-            if (selector_.isReady(listener_)) {
-                // добавление игрока в список
-                player& new_player = pool_players_.create();
+            if (selector_.isReady(listener_)) { // подключение нового игрока
+                player& new_player = pool_players_.create(); // добавление игрока в список
+
                 try {
                     new_player.connect(listener_, selector_);
                 } catch (const std::exception& e) {
-                    pool_players_.remove(new_player.getId()); // TODO перенести в реализацию метода
+                    // если ошибка при подключении
+                    std::cout << e.what();
+                    pool_players_.remove(new_player.getId());
                 }
 
             } else {
@@ -34,102 +36,106 @@ void mp::master::work() {
                         try {
                             player.getEvents();
                         } catch (const std::exception& e) {
+                            // сюда попадаем при проблемах с подключением игрока. Пока что просто удаляем его, в дальнейшем можно было бы обработать
+                            std::cout << e.what() << std::endl;
                             selector_.remove(player.getSocket());
                         }
 
-                        // TODO вынести в отдельный метод
-                        for (auto &&event : player.from_client) {
-                            if (event.type == 'j') {
-                                int pending_game_id = atoi(event.value.c_str());
-
-                                try {
-                                    pool_games_.at(pending_game_id).join(player.getId());
-                                } catch (const std::exception& e) {
-                                    std::cout << e.what() << std::endl;
-                                    break;
-                                }
-
-                                player.setInGame();
-
-                                std::cout << player.getId() << " join'd game " << pending_game_id << std::endl;
-
-                                // TODO подключение по именам
-//                                    for (auto &&game : pool_games_) {
-//                                        if (game.getName() == pending_game_name) { // ID - индекс в
-//                                            game.join(player);
-//                                            break;
-//                                        }
-//                                    }
-                            } else if (event.type == 'n') {
-                                pool_games_.emplace_back(event.value); // name - имя игры
-
-                                player.to_send.emplace_back(0, 's', std::to_string(pool_games_.size() - 1),
-                                                                     sf::microseconds(0));
-
-                                std::cout << "add game " + event.value << std::endl;
-
-                                player.sendEvents();
-                            }
-                        }
-
+                        // обрабатываем создание новых игр и подключение к ним
+                        proceedEvents(player);
                         player.from_client.clear();
                     }
                 }
             }
         } else {
             for (auto &&game : pool_games_) {
-
                 if (game.isReady() && !game.isStarted()) {
-                    pid_t pid = fork();
-
-                    switch (pid) {
-                        case 0: {
-                            game.start();
-                            selector_.remove(pool_players_.get_by_id(game.getFirstId()).getSocket());
-                            selector_.remove(pool_players_.get_by_id(game.getSecondId()).getSocket());
-                            std::cout << "master: success " << pid << std::endl;
-                            break;
-                        } // возможно, действия, связанные с обеспечением безопасности игры
-
-                        case -1: {
-                            std::cout << "error!" << std::endl;
-                            break;
-                        }
-
-                        default: {
-                            running_ = false;
-
-                            std::cout << "child: success " << pid << std::endl;
-                            worker worker(pool_players_.get_by_id(game.getFirstId()), pool_players_.get_by_id(game.getSecondId()));
-                            worker.work();
-
-                            return;
-                        }
-
-                    }
+                    startWorker(game);
                 }
-
             }
         }
     }
 
-    std::cout << "end" << std::endl;
+    std::cout << msg::end << std::endl;
+}
+
+void mp::master::proceedEvents(player &player) {
+    for (auto &&event : player.from_client) {
+        if (event.type == 'j') {
+            int pending_game_id = atoi(event.value.c_str());
+
+            try {
+                pool_games_.at(pending_game_id).join(player.getId());
+            } catch (const std::exception& e) {
+                std::cout << e.what() << std::endl;
+                break;
+            }
+
+            player.setInGame();
+            std::cout << msg::join << player.getId() << " " << pending_game_id << std::endl;
+
+            // TODO подключение по именам
+        } else if (event.type == 'n') {
+            pool_games_.emplace_back(event.value); // name - имя игры
+
+            player.to_send.emplace_back(0, 's', std::to_string(pool_games_.size() - 1),
+                                        sf::microseconds(0));
+
+            std::cout << msg::add_game << event.value << std::endl;
+
+            player.sendEvents();
+        }
+    }
+
+}
+
+void mp::master::startWorker(mp::game &game) {
+    pid_t pid = fork();
+
+    switch (pid) {
+        case 0: {
+            game.start();
+            selector_.remove(pool_players_.get_by_id(game.getFirstId()).getSocket());
+            selector_.remove(pool_players_.get_by_id(game.getSecondId()).getSocket());
+            std::cout << msg::success << pid << std::endl;
+            break;
+        } // возможно, действия, связанные с обеспечением безопасности игры
+
+        case -1: {
+            std::cout << msg::error << std::endl;
+            break;
+        }
+
+        default: {
+            running_ = false; // worker не должен продолжать цикл master
+
+            worker worker(pool_players_.get_by_id(game.getFirstId()), pool_players_.get_by_id(game.getSecondId()), pid);
+            worker.work();
+
+            return;
+        }
+
+    }
 }
 
 
-mp::worker::worker(player &first, player &second) : first_(first), second_(second), running_(false) {
+mp::worker::worker(player &first, player &second, pid_t pid)
+        : first_(first), second_(second), pid_(pid), running_(false) {
+
+
+    std::cout << msg::success << pid << std::endl;
+
     selector_.add(first.getSocket());
     selector_.add(second.getSocket());
-
 
     first_.setId(1);
     second_.setId(2);
 }
 
 void mp::worker::work() {
-    std::cout << "[run] simple server" << '\n';
+    std::cout << msg::run << pid_ << std::endl;
 
-    // TODO отослать сообщения о начале игры
+    // Отсылаем сообщения о начале игры (включает в себя айдишники)
     try {
         first_.startGame();
         second_.startGame();
@@ -180,4 +186,7 @@ void mp::worker::work() {
             second_.sendEvents();
         }
     }
+
+    std::cout << msg::end << std::endl;
+
 }
