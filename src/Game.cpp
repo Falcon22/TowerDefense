@@ -61,6 +61,8 @@ void Game::run() {
 
         player_id_ = atoi(client.incoming[0].value.c_str());
 
+        context.id = player_id_;
+
         std::cout << "my id " << player_id_ << std::endl;
 
         client.incoming.clear();
