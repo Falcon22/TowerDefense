@@ -8,6 +8,7 @@
 #include "GameContext.h"
 #include "ResourceManager/ResourcesHolder.h"
 #include "ResourceManager/ResourcesIdentifier.h"
+#include "Server/Client.h"
 
 
 class Game {
@@ -17,7 +18,7 @@ public:
     void run();
 
 private:
-    void input();
+    void input(std::vector<mp::Event> &events);
     void update(sf::Time frameTime);
     void draw();
 
@@ -31,6 +32,9 @@ private:
     sf::RenderWindow window;
     States::Context context;
     StateManager stateManager;
+
+    mp::Client client;
+    int player_id_;
 };
 
 
