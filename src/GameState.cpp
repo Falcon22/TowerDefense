@@ -19,11 +19,14 @@ GameState::GameState(StateManager &stack, States::Context context) :
     map.analyze(towers1, towers2);
     player1->setEnemy(player2);
     player2->setEnemy(player1);
-    bulletSprite.setTexture((*context.textureHolder).get(Textures::star));
+    bulletSprite.setTexture((*context.textureHolder).get(Textures::bulletOne));
     bulletSprite.setOrigin(bulletSprite.getTextureRect().width / 2, bulletSprite.getTextureRect().height / 2);
-    warriorSprite1.setTexture((*context.textureHolder).get(Textures::bulletOne));
+    warriorSprite1.setTexture((*context.textureHolder).get(Textures::star));
+    warriorSprite1.setTextureRect(sf::IntRect(0, 0, TILE_SIZE, TILE_SIZE));
     warriorSprite1.setOrigin(warriorSprite1.getTextureRect().width / 2, warriorSprite1.getTextureRect().height / 2);
-    warriorSprite2.setTexture((*context.textureHolder).get(Textures::bulletTwo));
+    warriorSprite2.setTexture((*context.textureHolder).get(Textures::star));
+    //warriorSprite2.setScale({0.5, 0.5});
+    warriorSprite2.setTextureRect(sf::IntRect(0, 0, TILE_SIZE, TILE_SIZE));
     warriorSprite2.setOrigin(warriorSprite2.getTextureRect().width / 2, warriorSprite2.getTextureRect().height / 2);
     initTower();
 }
@@ -34,42 +37,46 @@ void GameState::initTower() {
     sf::Vector2f p;
     for (int i = 0; i < towers1.size(); i++) {
         player1->addTower(towers1[i], player2->getWarriors(), bullets);
-        auto bt = std::make_shared<gui::Button>();
-        bt->setTexture(b);
-        bt->setTextureRect(rect);
-        p = towers1[i];
-        p.x -= TILE_SIZE / 2;
-        p.y -= TILE_SIZE / 2;
-        bt->setPosition(p);
-        bt->setInd(i);
-        bt->setCallback([this](int ind) {
-            if (player1->getGold() > player1->getTowers().at(ind)->getPrice() &&
+        if (getContext().id == 1) {
+            auto bt = std::make_shared<gui::Button>();
+            bt->setTexture(b);
+            bt->setTextureRect(rect);
+            p = towers1[i];
+            p.x -= TILE_SIZE / 2;
+            p.y -= TILE_SIZE / 2;
+            bt->setPosition(p);
+            bt->setInd(i);
+            bt->setCallback([this](int ind) {
+                if (player1->getGold() > player1->getTowers().at(ind)->getPrice() &&
                     player1->getWeaponsLvl() != Type::lvlTwo) {
-                events.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
-                std::cout << ind << std::endl;
+                    events.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                    std::cout << ind << std::endl;
+                }
+            });
+            container.addWidget(bt);
         }
-        });
-        container.addWidget(bt);
     }
 
     for (int i = 0; i < towers2.size(); i++) {
         player2->addTower(towers2[i], player1->getWarriors(), bullets);
         auto bt = std::make_shared<gui::Button>();
-        bt->setTexture(b);
-        bt->setTextureRect(rect);
-        p = towers2[i];
-        p.x -= TILE_SIZE / 2;
-        p.y -= TILE_SIZE / 2;
-        bt->setPosition(p);
-        bt->setInd(i);
-        bt->setCallback([this](int ind) {
-            if (player2->getGold() > player2->getTowers().at(ind)->getPrice() &&
+        if (getContext().id == 2) {
+            bt->setTexture(b);
+            bt->setTextureRect(rect);
+            p = towers2[i];
+            p.x -= TILE_SIZE / 2;
+            p.y -= TILE_SIZE / 2;
+            bt->setPosition(p);
+            bt->setInd(i);
+            bt->setCallback([this](int ind) {
+                if (player2->getGold() > player2->getTowers().at(ind)->getPrice() &&
                     (player2->getWeaponsLvl() != Type::lvlTwo)) {
-                events.emplace_back(2, 't', std::to_string(ind), clock + sf::milliseconds(2000));
-                std::cout << ind << std::endl;
-            }
-        });
-        container.addWidget(bt);
+                    events.emplace_back(2, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                    std::cout << ind << std::endl;
+                }
+            });
+            container.addWidget(bt);
+        }
     }
 
     towerSprite.setTexture(getContext().textureHolder->get(Textures::towerOneTop));
@@ -130,17 +137,25 @@ bool GameState::update(sf::Time dt) {
 
 void GameState::draw() {
     map.draw();
+    
+    for (auto bullet: bullets) {
+        bulletSprite.setRotation(bullet->getAngle());
+        bulletSprite.setPosition(bullet->getPosition());
+        getContext().window->draw(bulletSprite);
+    }
 
     for (auto tower: player1->getTowers()) {
         towerSprite.setRotation(tower->getAngle());
         towerSprite.setPosition(tower->getPosition());
         getContext().window->draw(towerSprite);
     }
+
     for (auto tower: player2->getTowers()) {
         towerSprite2.setRotation(tower->getAngle());
         towerSprite2.setPosition(tower->getPosition());
         getContext().window->draw(towerSprite2);
     }
+
     for (auto warrior: player1->getWarriors()) {
         switch (warrior->getType()) {
             case Type::lvlOne:
@@ -155,11 +170,7 @@ void GameState::draw() {
                 break;
         }
     }
-    for (auto bullet: bullets) {
-        bulletSprite.setRotation(bullet->getAngle());
-        bulletSprite.setPosition(bullet->getPosition());
-        getContext().window->draw(bulletSprite);
-    }
+
 }
 
 void GameState::manageEvents() {

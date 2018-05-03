@@ -40,7 +40,7 @@ public:
 private:
     static const int kInitGold_ = 1000;
     static const int kInitHealth_ = 1000;
-    static const int kWaveDuration_ = 1000;//mseconds
+    static const int kWaveDuration_ = 2000;//mseconds
 
     int gold_;
     int health_;

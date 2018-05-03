@@ -7,7 +7,7 @@
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0, false}),
-               context(window, font, textureHolder, fontHolder, cursor),
+               context(window, font, textureHolder, fontHolder, cursor, 2),
                stateManager(context) {
     loadAllResources();
     registerStates();
@@ -67,6 +67,7 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::towerTwoBase, "Resources/towerBaseTwo.png");
     textureHolder.load(Textures::bulletOne, "Resources/bulletOne.png");
     textureHolder.load(Textures::bulletTwo, "Resources/bulletTwo.png");
+    textureHolder.load(Textures::warriorLvlOne, "Resources/enemyOne.png");
 }
 
 
