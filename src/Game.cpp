@@ -7,10 +7,10 @@
 #include "Server/Server.h"
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
-        sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0, false}),
-               context(window, font, textureHolder, fontHolder, cursor, 2),
-               stateManager(context),
-               client(constants::ip) {
+        sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
+               client(constants::ip),
+               context(window, font, textureHolder, fontHolder, cursor, 2, client.incoming, client.outcoming),
+               stateManager(context) {
     loadAllResources();
     registerStates();
     stateManager.pushState(States::ID::Menu);
@@ -69,6 +69,7 @@ void Game::run() {
         std::cout << "no server connection" << std::endl;
     }
 
+//    context.incoming_events.emplace_back(1, 'u', "ksdfkjgksdfgjsdhfg", sf::microseconds(0));
 
     while (window.isOpen()) {
         /*

@@ -113,6 +113,17 @@ bool GameState::handleEvent(const sf::Event& event) {
 }
 
 bool GameState::update(sf::Time dt) {
+    std::cout << getContext().incoming_events.size() << std::endl;
+    std::cout << getContext().outcoming_events.size() << std::endl;
+
+    for (auto &&item : getContext().incoming_events) {
+//        events.emplace_back(item);
+    }
+
+    for (auto &&event : getContext().outcoming_events) {
+//        events.emplace_back(event);
+    }
+
     //сгенерировать событие отправки волны!!!
     clock += dt;
     //std::cout << clock.asSeconds() << " " << waveTimer << std::endl;
