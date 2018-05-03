@@ -5,7 +5,7 @@
 #include "Server/Server.h"
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
-        sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0, false}),
+        sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
                context(window, font, textureHolder, fontHolder, cursor),
                stateManager(context),
                client(constants::ip)
@@ -20,50 +20,60 @@ void Game::run() {
     const sf::Time frameTime = sf::seconds(1.f / 30.f);
     sf::Clock clock;
     sf::Time passedTIme = sf::Time::Zero;
-    
-    // TODO мультиплеерная мутота
-    while (true) {
-        char operation;
-        std::cin >> operation;
-        switch (operation) {
-            case 'n': {
-                std::string game_name;
-                std::cin >> game_name;
-                client.outcoming.emplace_back(0, 'n', game_name, sf::microseconds(0)); //
-                break;
+
+    if (client.isConnected()) {
+        // TODO мультиплеерная мутота
+        while (true) {
+            char operation;
+            std::cin >> operation;
+            switch (operation) {
+                case 'n': {
+                    std::string game_name;
+                    std::cin >> game_name;
+                    client.outcoming.emplace_back(0, 'n', game_name, sf::microseconds(0)); //
+                    break;
+                }
+
+                case 'j': {
+                    std::string game_id;
+                    std::cin >> game_id;
+                    client.outcoming.emplace_back(0, 'j', game_id, sf::microseconds(0)); // Просим пустить в игру
+                    break;
+                }
+
+                default: break;
             }
 
-            case 'j': {
-                std::string game_id;
-                std::cin >> game_id;
-                client.outcoming.emplace_back(0, 'j', game_id, sf::microseconds(0)); // Просим пустить в игру
+            client.sendEvents();
+
+            if (operation == 'j')
                 break;
+
+            client.askEvents();
+            if (!client.incoming.empty()) {
+                std::cout << client.incoming[0].value << std::endl;
             }
-
-            default: break;
+            client.incoming.clear();
         }
 
-        client.sendEvents();
+        while (client.incoming.empty()) // тут мы запрашиваем айдишник
+            client.askEvents();
 
-        if (operation == 'j')
-            break;
+        player_id_ = atoi(client.incoming[0].value.c_str());
 
-        client.askEvents();
-        if (!client.incoming.empty()) {
-            std::cout << client.incoming[0].value << std::endl;
-        }
+        std::cout << "my id " << player_id_ << std::endl;
+
         client.incoming.clear();
+
+    } else {
+        std::cout << "no server connection" << std::endl;
     }
 
-    while (client.incoming.empty()) // тут мы запрашиваем айдишник
-        client.askEvents();
-
-    client.incoming.clear();
 
     while (window.isOpen()) {
         input(client.outcoming);
 
-        try {
+        if (client.isConnected()) try {
             client.sendEvents();
             client.askEvents();
         } catch (const std::exception& e) {

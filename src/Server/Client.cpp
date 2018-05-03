@@ -6,9 +6,11 @@
 #include "Client.h"
 #include "Server.h"
 
-mp::Client::Client(const std::string &ip, unsigned short port) {
+mp::Client::Client(const std::string &ip, unsigned short port) : connected_(false) {
     std::cout << msg::waiting_connection << std::endl;
-    socket_.connect(ip, port);
+    if (socket_.connect(ip, port) == sf::Socket::Status::Done) {
+        connected_ = true;
+    };
     selector_.add(socket_);
 
     std::cout << msg::connected << std::endl;
@@ -48,5 +50,9 @@ bool mp::Client::sendEvents() {
     } else {
         throw std::logic_error(msg::error_sending_events);
     }
+}
+
+bool mp::Client::isConnected() {
+    return connected_;
 }
 

@@ -24,6 +24,7 @@ namespace mp {
         sf::TcpSocket       socket_;
         sf::SocketSelector  selector_;
         int                 player_id_;
+        bool                connected_;
 
     public:
         explicit Client(const std::string &ip, unsigned short port = 55001);
@@ -35,6 +36,8 @@ namespace mp {
          */
         bool askEvents();
         bool sendEvents();
+
+        bool isConnected();
 
         // эвенты
         std::vector<mp::Event> incoming;

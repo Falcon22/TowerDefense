@@ -50,16 +50,8 @@ void mp::player::getEvents() try {
 }
 
 void mp::player::startGame() {
-    sf::Packet packet_id;
-
-    std::string str_id(std::to_string(id));
-    packet_id.append(str_id.c_str(), str_id.size() + 1);
-
-    if (socket_.send(packet_id) == sf::Socket::Done) {
-        std::cout << msg::send_id << id << std::endl;
-    } else {
-        std::cout << msg::not_send_id << id << std::endl;
-    }
+    to_send.emplace_back(0, 's', std::to_string(id), sf::microseconds(0));
+    sendEvents();
 }
 
 
@@ -174,7 +166,7 @@ void mp::parseEventString(const std::string &sEvents, std::vector<mp::Event> &vE
             sValue += *iterator;
         ++iterator;
 
-        for (; *iterator != ' '; ++iterator)
+        for (; *iterator != ' ' && iterator != sEvents.end(); ++iterator)
             sTime += *iterator;
         ++iterator;
 

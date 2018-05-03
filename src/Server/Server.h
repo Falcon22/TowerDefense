@@ -50,7 +50,7 @@ namespace mp {
         struct msg {
             static constexpr const char *success = "[worker:success] ";
             static constexpr const char *run = "[worker:run] ";
-            static constexpr const char *end = "[worker:end]";
+            static constexpr const char *end = "[worker:end] ";
         };
 
         sf::SocketSelector  selector_;

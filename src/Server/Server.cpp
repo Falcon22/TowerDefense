@@ -7,7 +7,9 @@
 #include "Server.h"
 
 mp::master::master(unsigned short port): running_(true) {
-    listener_.listen(port);
+    if (listener_.listen(port) != sf::Socket::Status::Done) {
+        running_ = false;
+    };
     selector_.add(listener_);
 }
 
@@ -17,7 +19,7 @@ mp::master::~master() {
 
 void mp::master::work() {
     std::cout << msg::run << std::endl;
-    while (running_) {
+    while (running_) try {
         if (selector_.wait(constants::waitTime())) {
             if (selector_.isReady(listener_)) { // подключение нового игрока
                 player& new_player = pool_players_.create(); // добавление игрока в список
@@ -54,9 +56,11 @@ void mp::master::work() {
                 }
             }
         }
+    } catch (const std::exception& e) {
+            std::cout << e.what() << std::endl;
     }
 
-    std::cout << msg::end << std::endl;
+    wait();
 }
 
 void mp::master::proceedEvents(player &player) {
@@ -145,9 +149,10 @@ void mp::worker::work() {
     }
 
     while (running_) {
-        if (!first_.isAvailable() && !second_.isAvailable())
-            return;
-        
+        if (!first_.isAvailable() && !second_.isAvailable()) {
+            break;
+        }
+
         if (selector_.wait(constants::waitTime())) {
             if (first_.hasNewData(selector_)) {
                 try {
@@ -187,6 +192,5 @@ void mp::worker::work() {
         }
     }
 
-    std::cout << msg::end << std::endl;
-
+    std::cout << msg::end << pid_ << std::endl;
 }

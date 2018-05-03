@@ -34,6 +34,7 @@ private:
     StateManager stateManager;
 
     mp::Client client;
+    int player_id_;
 };
 
 
