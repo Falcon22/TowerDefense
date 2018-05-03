@@ -71,9 +71,20 @@ void Game::run() {
 
 //    context.incoming_events.emplace_back(1, 'u', "ksdfkjgksdfgjsdhfg", sf::microseconds(0));
 
+
     while (window.isOpen()) {
-        /*
-        input(client.outcoming);
+
+        sf::Time elapsedTime = clock.restart();
+        passedTime += elapsedTime;
+        while (passedTime > frameTime) {
+            passedTime -= frameTime;
+            input();
+            update(frameTime);
+        }
+
+        draw();
+
+        client.incoming.clear();
 
         if (client.isConnected()) try {
             client.sendEvents();
@@ -88,21 +99,6 @@ void Game::run() {
 
         }
 
-        client.incoming.clear();
-
-        update(frameTime);
-        draw();
-         */
-
-
-        sf::Time elapsedTime = clock.restart();
-        passedTime += elapsedTime;
-        while (passedTime > frameTime) {
-            passedTime -= frameTime;
-            input();
-            update(frameTime);
-        }
-        draw();
     }
 }
 

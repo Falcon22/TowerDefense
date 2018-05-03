@@ -49,7 +49,7 @@ void GameState::initTower() {
             bt->setCallback([this](int ind) {
                 if (player1->getGold() > player1->getTowers().at(ind)->getPrice() &&
                     player1->getWeaponsLvl() != Type::lvlTwo) {
-                    events.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                    getContext().outcoming_events.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
                     std::cout << ind << std::endl;
                 }
             });
@@ -71,7 +71,7 @@ void GameState::initTower() {
             bt->setCallback([this](int ind) {
                 if (player2->getGold() > player2->getTowers().at(ind)->getPrice() &&
                     (player2->getWeaponsLvl() != Type::lvlTwo)) {
-                    events.emplace_back(2, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                    getContext().outcoming_events.emplace_back(2, 't', std::to_string(ind), clock + sf::milliseconds(2000));
                     std::cout << ind << std::endl;
                 }
             });
@@ -113,24 +113,26 @@ bool GameState::handleEvent(const sf::Event& event) {
 }
 
 bool GameState::update(sf::Time dt) {
-    std::cout << getContext().incoming_events.size() << std::endl;
-    std::cout << getContext().outcoming_events.size() << std::endl;
+//    std::cout << getContext().incoming_events.size() << std::endl;
+//    std::cout << getContext().outcoming_events.size() << std::endl;
 
     for (auto &&item : getContext().incoming_events) {
 //        events.emplace_back(item);
     }
 
-    for (auto &&event : getContext().outcoming_events) {
-//        events.emplace_back(event);
+    if (waveTimer <= clock.asSeconds()) {
+        waveTimer += kWaveTimer;
+        getContext().outcoming_events.emplace_back(1, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
     }
+
+    for (auto &&event : getContext().outcoming_events) {
+        events.emplace_back(event.id, event.type, event.value, event.time);
+    }
+    getContext().outcoming_events.clear();
 
     //сгенерировать событие отправки волны!!!
     clock += dt;
     //std::cout << clock.asSeconds() << " " << waveTimer << std::endl;
-    if (waveTimer <= clock.asSeconds()) {
-        waveTimer += kWaveTimer;
-        events.emplace_back(1, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
-    }
     manageEvents();
     player1->updateCastle(dt);
     player2->updateCastle(dt);
