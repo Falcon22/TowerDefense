@@ -4,11 +4,13 @@
 #include "GameState.h"
 #include "ConnectGameState.h"
 #include <thread>
+#include "Server/Server.h"
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0, false}),
                context(window, font, textureHolder, fontHolder, cursor, 2),
-               stateManager(context) {
+               stateManager(context),
+               client(constants::ip) {
     loadAllResources();
     registerStates();
     stateManager.pushState(States::ID::Menu);
@@ -19,7 +21,79 @@ void Game::run() {
     sf::Clock clock;
     sf::Time passedTime = sf::Time::Zero;
 
+    if (client.isConnected()) {
+        // TODO мультиплеерная мутота
+        while (true) {
+            char operation;
+            std::cin >> operation;
+            switch (operation) {
+                case 'n': {
+                    std::string game_name;
+                    std::cin >> game_name;
+                    client.outcoming.emplace_back(0, 'n', game_name, sf::microseconds(0)); //
+                    break;
+                }
+
+                case 'j': {
+                    std::string game_id;
+                    std::cin >> game_id;
+                    client.outcoming.emplace_back(0, 'j', game_id, sf::microseconds(0)); // Просим пустить в игру
+                    break;
+                }
+
+                default: break;
+            }
+
+            client.sendEvents();
+
+            if (operation == 'j')
+                break;
+
+            client.askEvents();
+            if (!client.incoming.empty()) {
+                std::cout << client.incoming[0].value << std::endl;
+            }
+            client.incoming.clear();
+        }
+
+        while (client.incoming.empty()) // тут мы запрашиваем айдишник
+            client.askEvents();
+
+        player_id_ = atoi(client.incoming[0].value.c_str());
+
+        std::cout << "my id " << player_id_ << std::endl;
+
+        client.incoming.clear();
+
+    } else {
+        std::cout << "no server connection" << std::endl;
+    }
+
+
     while (window.isOpen()) {
+        /*
+        input(client.outcoming);
+
+        if (client.isConnected()) try {
+            client.sendEvents();
+            client.askEvents();
+        } catch (const std::exception& e) {
+            std::cout << e.what() << std::endl;
+        }
+
+        for (auto &&item : client.incoming) {
+            if (item.type == 's' && item.value == "stop")
+                window.close();
+
+        }
+
+        client.incoming.clear();
+
+        update(frameTime);
+        draw();
+         */
+
+
         sf::Time elapsedTime = clock.restart();
         passedTime += elapsedTime;
         while (passedTime > frameTime) {
