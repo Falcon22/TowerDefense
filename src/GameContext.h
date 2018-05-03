@@ -36,13 +36,14 @@ namespace States {
                 , sf::Font &font
                 , TextureHolder &textureHolder
                 , FontHolder &fontHolder
-                , sf::Sprite &cursor)
-
+                , sf::Sprite &cursor
+                , int id)
                 : window(&window)
                 , font(&font)
                 , textureHolder(&textureHolder)
                 , fontHolder(&fontHolder)
                 , cursor(&cursor)
+                , id(id)
 
         {};
 
@@ -52,6 +53,7 @@ namespace States {
         FontHolder *fontHolder;
         SoundManager *soundManager;
         sf::Sprite *cursor;
+        int id;
     };
 }
 

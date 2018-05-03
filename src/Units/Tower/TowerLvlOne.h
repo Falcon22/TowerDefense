@@ -7,7 +7,7 @@
 
 class TowerLvlOne: public Tower {
 public:
-    TowerLvlOne(const sf::Vector2f& position, std::vector<Warrior*>& warriors, std::vector<Bullet*>& bullets);
+    TowerLvlOne(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
 
     Bullet* makeBullet() override;
 

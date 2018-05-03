@@ -3,58 +3,217 @@
 #include "Units/Bullet/Bullet.h"
 #include "Units/Warrior/WarriorLvlTwo.h"
 #include "Units/Tower/TowerLvlOne.h"
+#include "Castle/Castle.h"
+#include "Graphics/Gui.h"
+#include "Graphics/Button.h"
 
-
+//TODO: что-то не то с lvl*
 GameState::GameState(StateManager &stack, States::Context context) :
+        player1(new Castle),
+        player2(new Castle),
         State(stack, context),
         gameData(),
         map(*context.window),
-        graphicsUnit(*context.window, Type::lvlTwo, *context.textureHolder)
-{
-    map.analyze();
-    warriors.push_back(new WarriorLvlTwo(sf::Vector2f(500, 700), map.getRoadRect()));
-    warriors.push_back(new WarriorLvlTwo(sf::Vector2f(500, 1000), map.getRoadRect()));
-    tower = new TowerLvlOne(sf::Vector2f(160, 500), warriors, bullets);
-    towerSprite.setTexture((*context.textureHolder).get(Textures::towerOneTop));
-    towerSprite.setOrigin(towerSprite.getTextureRect().width / 2, towerSprite.getTextureRect().height / 2);
-    bulletSprite.setTexture((*context.textureHolder).get(Textures::bulletTwo));
+        clock(sf::Time::Zero),
+        waveTimer(kWaveTimer) {
+    map.analyze(towers1, towers2);
+    player1->setEnemy(player2);
+    player2->setEnemy(player1);
+    bulletSprite.setTexture((*context.textureHolder).get(Textures::bulletOne));
     bulletSprite.setOrigin(bulletSprite.getTextureRect().width / 2, bulletSprite.getTextureRect().height / 2);
-    Tower::upgrade(tower);
-    if (tower->getType() == Type::lvlTwo)
-        std::cout << "Correct" << std::endl;
+    warriorSprite1.setTexture((*context.textureHolder).get(Textures::star));
+    warriorSprite1.setTextureRect(sf::IntRect(0, 0, TILE_SIZE, TILE_SIZE));
+    warriorSprite1.setOrigin(warriorSprite1.getTextureRect().width / 2, warriorSprite1.getTextureRect().height / 2);
+    warriorSprite2.setTexture((*context.textureHolder).get(Textures::star));
+    //warriorSprite2.setScale({0.5, 0.5});
+    warriorSprite2.setTextureRect(sf::IntRect(0, 0, TILE_SIZE, TILE_SIZE));
+    warriorSprite2.setOrigin(warriorSprite2.getTextureRect().width / 2, warriorSprite2.getTextureRect().height / 2);
+    initTower();
 }
 
-bool GameState::handleEvent(const sf::Event &event) {
+void GameState::initTower() {
+    sf::Texture b = getContext().textureHolder->get(Textures::target);
+    sf::IntRect rect{ TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE};
+    sf::Vector2f p;
+    for (int i = 0; i < towers1.size(); i++) {
+        player1->addTower(towers1[i], player2->getWarriors(), bullets);
+        if (getContext().id == 1) {
+            auto bt = std::make_shared<gui::Button>();
+            bt->setTexture(b);
+            bt->setTextureRect(rect);
+            p = towers1[i];
+            p.x -= TILE_SIZE / 2;
+            p.y -= TILE_SIZE / 2;
+            bt->setPosition(p);
+            bt->setInd(i);
+            bt->setCallback([this](int ind) {
+                if (player1->getGold() > player1->getTowers().at(ind)->getPrice() &&
+                    player1->getWeaponsLvl() != Type::lvlTwo) {
+                    events.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                    std::cout << ind << std::endl;
+                }
+            });
+            container.addWidget(bt);
+        }
+    }
 
+    for (int i = 0; i < towers2.size(); i++) {
+        player2->addTower(towers2[i], player1->getWarriors(), bullets);
+        auto bt = std::make_shared<gui::Button>();
+        if (getContext().id == 2) {
+            bt->setTexture(b);
+            bt->setTextureRect(rect);
+            p = towers2[i];
+            p.x -= TILE_SIZE / 2;
+            p.y -= TILE_SIZE / 2;
+            bt->setPosition(p);
+            bt->setInd(i);
+            bt->setCallback([this](int ind) {
+                if (player2->getGold() > player2->getTowers().at(ind)->getPrice() &&
+                    (player2->getWeaponsLvl() != Type::lvlTwo)) {
+                    events.emplace_back(2, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                    std::cout << ind << std::endl;
+                }
+            });
+            container.addWidget(bt);
+        }
+    }
+
+    towerSprite.setTexture(getContext().textureHolder->get(Textures::towerOneTop));
+    towerSprite.setOrigin(towerSprite.getTextureRect().width / 2, towerSprite.getTextureRect().height / 2);
+    towerSprite2.setTexture(getContext().textureHolder->get(Textures::towerTwoTop));
+    towerSprite2.setOrigin(towerSprite2.getTextureRect().width / 2, towerSprite2.getTextureRect().height / 2);
+}
+
+GameState::~GameState() {
+    for (auto bullet: bullets) {
+        delete bullet;
+    }
+    delete player1;
+    delete player2;
+}
+//handleEventу без времени плохо: как деактивировать кнопки на время? как следить за таймером волны?
+//нужно точно знать игрока за данным компьютером, иначе от кого генерировать события?
+bool GameState::handleEvent(const sf::Event& event) {
+    //Эвенты с игры
+
+    //сюда заходит, только если есть эвенты на экране, проблема
+
+    //Серверные эвенты
+    //manageEvents();
+
+    container.handleWidgetsEvent(event);
+
+    if (event.type == sf::Event::KeyReleased
+        && event.key.code == sf::Keyboard::P)
+    {
+        player1->addWarrior(Type::lvlTwo, map.getRoadRect());
+        std::cout << "pressed P " << player1->getWarriorsInBuffer() << std::endl;
+    }
 }
 
 bool GameState::update(sf::Time dt) {
-    for(auto bullet: bullets) {
-        if (!bullet->isExploded())
-            bullet->update(dt);
+    //сгенерировать событие отправки волны!!!
+    clock += dt;
+    //std::cout << clock.asSeconds() << " " << waveTimer << std::endl;
+    if (waveTimer <= clock.asSeconds()) {
+        waveTimer += kWaveTimer;
+        events.emplace_back(1, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
     }
-    tower->update(dt);
-    warriors[0]->update(dt);
-    warriors[1]->update(dt);
-    //std::cout << "0: " << warriors[0]->getPosition().x << "|" << warriors[0]->getPosition().y << std::endl;
-    //std::cout << "1: " << warriors[1]->getPosition().x << "|" << warriors[1]->getPosition().y << std::endl;
-    graphicsUnit.update(*warriors[0], dt);
+    manageEvents();
+    player1->updateCastle(dt);
+    player2->updateCastle(dt);
+    for (auto bullet = bullets.begin(); bullet != bullets.end();) {
+        (*bullet)->update(dt);
+        if ((*bullet)->isExploded() || (*bullet)->isDisappeared()) {
+            delete *bullet;
+            bullet = bullets.erase(bullet);
+        }
+        else {
+            ++bullet;
+        }
+    }
 }
 
 void GameState::draw() {
     map.draw();
-    towerSprite.setRotation(tower->getAngle());
-    towerSprite.setPosition(tower->getPosition());
-    getContext().window->draw(towerSprite);
-    for(auto bullet: bullets) {
-        if (!bullet->isExploded()) {
-            //std::cout << bullet->getAngle() << std::endl;
-            bulletSprite.setRotation(static_cast<float>(-bullet->getAngle() * 180 / M_PI + 180));
-            bulletSprite.setPosition(bullet->getPosition());
-            getContext().window->draw(bulletSprite);
+    
+    for (auto bullet: bullets) {
+        bulletSprite.setRotation(bullet->getAngle());
+        bulletSprite.setPosition(bullet->getPosition());
+        getContext().window->draw(bulletSprite);
+    }
+
+    for (auto tower: player1->getTowers()) {
+        towerSprite.setRotation(tower->getAngle());
+        towerSprite.setPosition(tower->getPosition());
+        getContext().window->draw(towerSprite);
+    }
+
+    for (auto tower: player2->getTowers()) {
+        towerSprite2.setRotation(tower->getAngle());
+        towerSprite2.setPosition(tower->getPosition());
+        getContext().window->draw(towerSprite2);
+    }
+
+    for (auto warrior: player1->getWarriors()) {
+        switch (warrior->getType()) {
+            case Type::lvlOne:
+                warriorSprite1.setRotation(warrior->getDirection());
+                warriorSprite1.setPosition(warrior->getPosition());
+                getContext().window->draw(warriorSprite1);
+                break;
+            case Type::lvlTwo:
+                warriorSprite2.setRotation(warrior->getDirection());
+                warriorSprite2.setPosition(warrior->getPosition());
+                getContext().window->draw(warriorSprite2);
+                break;
         }
     }
 
-    graphicsUnit.draw();
-
 }
+
+void GameState::manageEvents() {
+    Castle* player = nullptr;
+    //std::cout << events.size() << std::endl;
+    for(auto event = events.begin(); event != events.end();) {
+        if (event->time > clock) {
+            ++event;
+            break;
+        }
+        if (event->id == 1) {
+            player = player1;
+        } else {
+            player = player2;
+        }
+        switch (event->type) {
+            case 't':
+                player->upgradeTower(stoi(event->value));
+                break;
+            case 'w':
+                if (player->getWarriorsBuffer().empty()) {
+                    for (auto type : event->value) {
+                        switch (type) {
+                            case '1':
+                                player->addWarrior(Type::lvlOne, map.getRoadRect());
+                                break;
+                            case '2':
+                                player->addWarrior(Type::lvlTwo, map.getRoadRect());
+                                break;
+                        }
+                    }
+                }
+                player->letsMakingWave();
+                break;
+            case 'c':
+                player->upgradeBuilding(event->value[0]);
+                break;
+        }
+        event = events.erase(event);
+    }
+}
+
+
+
+
+

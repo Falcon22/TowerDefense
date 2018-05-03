@@ -2,7 +2,11 @@
 
 using namespace gui;
 
-Label::Label() {}
+Label::Label(sf::Texture texture, std::string& textIn, sf::Font &font)  {
+    sprite.setTexture(texture);
+    text.setString(textIn);
+    text.setFont(font);
+}
 
 void Label::handleEvent(const sf::Event &event) {
     sf::FloatRect rect = sprite.getGlobalBounds();

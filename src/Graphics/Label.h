@@ -5,8 +5,7 @@
 
 namespace gui {
     class Label : public Widget {
-        Label();
-
+        Label(sf::Texture texture, std::string& textIn, sf::Font &font);
         void handleEvent(const sf::Event& event) override;
         void update(sf::Time dt) override ;
 

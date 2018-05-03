@@ -73,6 +73,5 @@ bool Warrior::isFinished() const {
 }
 
 void Warrior::suffer(int damage) {
-    std::cout << "aaaa" << std::endl;
     hp_ -= damage;
 }

@@ -17,7 +17,7 @@ class Map {
 public:
     Map(sf::RenderWindow &window);
     void draw();
-    void analyze();
+    void analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>& towers2);
 
     enum Direction {
         UP,
@@ -29,6 +29,7 @@ public:
     struct LogicMap {
         std::vector<std::pair<sf::FloatRect, Direction>> road;
         sf::FloatRect finish;
+        sf::Vector2f start;
     };
 
 private:
@@ -44,6 +45,9 @@ private:
     int width;
     int height;
     std::pair<int, int> start;
+    std::vector<sf::Vector2f> t1;
+    std::vector<sf::Vector2f> t2;
+
 };
 
 
