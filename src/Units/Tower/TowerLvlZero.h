@@ -6,11 +6,7 @@
 
 class TowerLvlZero: public Tower {
 public:
-<<<<<<< Updated upstream
     TowerLvlZero(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
-=======
-    TowerLvlZero(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::list<Bullet*>& bullets);
->>>>>>> Stashed changes
 
     void update(const sf::Time& dTime) override {};
 

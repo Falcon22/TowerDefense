@@ -47,6 +47,7 @@ private:
     std::pair<int, int> start;
     std::vector<sf::Vector2f> t1;
     std::vector<sf::Vector2f> t2;
+
 };
 
 

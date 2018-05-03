@@ -13,19 +13,9 @@ Map::Map(sf::RenderWindow &window) : window(window) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             fin >> tileNumber;
-<<<<<<< Updated upstream
-            if (tileNumber == 13) {
-                sf::Vector2f p(i * TILE_SIZE, j * TILE_SIZE);
-                t1.push_back(p);
-                tileNumber = 16;
-            } else if (tileNumber == 14) {
-                sf::Vector2f p(i * TILE_SIZE, j * TILE_SIZE);
-                t2.push_back(p);
-=======
             map[i][j].setTileNumber(tileNumber);
-            if (tileNumber == 14) {
+            if (tileNumber == 13 || tileNumber == 14) {
                 map[i][j].setTileNumber(tileNumber);
->>>>>>> Stashed changes
                 tileNumber = 16;
             }
             sf::IntRect rect{ TILE_SIZE * (tileNumber % 15), TILE_SIZE * (tileNumber / 15), TILE_SIZE, TILE_SIZE };
@@ -34,25 +24,23 @@ Map::Map(sf::RenderWindow &window) : window(window) {
         }
     }
     fin >> start.second >> start.first;
-    roadRect.start = {600, 600};
 }
 
-<<<<<<< Updated upstream
+
 void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>& towers2) {
-    towers1 = t1;
-    towers2 = t2;
-=======
-void Map::analyze(std::vector<sf::Vector2f>& towerArea) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            if (map[i][j].getTileNumber() == 14) {
+            if (map[i][j].getTileNumber() == 13 || map[i][j].getTileNumber() == 14) {
                 sf::Vector2f tmp((j + 0.5) * TILE_SIZE, (i + 0.5) * TILE_SIZE);
-                towerArea.push_back(tmp);
+                if (map[i][j].getTileNumber() == 13) {
+                    towers1.push_back(tmp);
+                } else {
+                    towers2.push_back(tmp);
+                }
             }
         }
     }
 
->>>>>>> Stashed changes
     std::cout << width << " " << height << " " << start.first << " " << start.second << std::endl;
     int move = 0; // 1 - down, 2 - up, 3 - right, 4 - left, 0 - default
 
@@ -87,7 +75,8 @@ void Map::analyze(std::vector<sf::Vector2f>& towerArea) {
     }
 
     std::pair<long, long> point;
-
+    sf::Vector2f s((start.first + 1) * TILE_SIZE, (start.second) * TILE_SIZE);
+            roadRect.start = s;
     while ((this1.first == start.second || (this1.first != height && this1.first != 0)) &&
            (this1.second == start.first || (this1.second != width && this1.second != 0))) {
         std::cout << "(" << this1.first + 1<< ";" << this1.second + 1<< ") "<< " (" << this2.first + 1<< ";" << this2.second + 1<< ")" << std::endl;

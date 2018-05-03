@@ -4,10 +4,10 @@
 
 #include "Tower.h"
 #include "../../Constants.h"
-#include <list>
+
 class TowerLvlOne: public Tower {
 public:
-    TowerLvlOne(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::list<Bullet*>& bullets);
+    TowerLvlOne(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
 
     Bullet* makeBullet() override;
 

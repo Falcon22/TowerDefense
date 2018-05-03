@@ -7,17 +7,17 @@
 namespace gui {
     class Textbox : public Widget {
     public:
-        Textbox(sf::RenderWindow &window, sf::Font &font);
+        Textbox(sf::Font &font);
 
         void setDimensons(double newX, double newY, double newWidth, double newHeight);
 
-        void draw();
-
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        void update(sf::Time dt) override ;
         void setString(std::string newString);
 
         std::string getString();
 
-        bool pollEvent(sf::Event event);
+        void handleEvent(const sf::Event& event) override ;
 
         void setFocus(bool focus);
 
@@ -31,7 +31,6 @@ namespace gui {
         double height;
         std::string string = "";
         sf::Font &font;
-        sf::RenderWindow &window;
         sf::RectangleShape background;
         sf::Text text;
 

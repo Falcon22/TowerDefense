@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 #include "../GameUnit.h"
-#include <list>
+
 
 class Warrior;
 class Bullet;
@@ -17,10 +17,10 @@ public:
     static void upgrade(Tower*& tower);
 
     float getAngle() const;
-
+    unsigned int getPrice();
 protected:
     Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
-            std::list<Warrior*>& warriors, std::list<Bullet*>& bullets);
+          std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
 
     bool inRange(const sf::Vector2f& pointPosition) const;
     float aim() const;
@@ -34,7 +34,7 @@ protected:
     float attackCooldown_;
     Warrior* target_;
     std::list<Warrior*>& warriors_;
-    std::list<Bullet*>& bullets_;
+    std::vector<Bullet*>& bullets_;
 };
 
 

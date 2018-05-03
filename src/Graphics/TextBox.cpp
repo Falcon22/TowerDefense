@@ -2,15 +2,17 @@
 
 using namespace gui;
 
-Textbox::Textbox(sf::RenderWindow &window, sf::Font &font) : window(window), font(font) {
+Textbox::Textbox(sf::Font &font): font(font) {
     text = sf::Text("", font);
     background.setFillColor(sf::Color::White);
-    text.setColor(sf::Color::Red);
+    text.setColor(sf::Color::Black);
 }
 
-void Textbox::draw() {
-    window.draw(background);
-    window.draw(text);
+void Textbox::update(sf::Time dt) {}
+
+void Textbox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    target.draw(background, states);
+    target.draw(text, states);
 }
 
 void Textbox::setDimensons(double newX, double newY, double newWidth, double newHeight) {
@@ -33,12 +35,13 @@ std::string Textbox:: getString() {
     return string;
 }
 
-bool Textbox::pollEvent(sf::Event event) {
-    if(isFocused) {
-        if(event.type == sf::Event::TextEntered)
-            return enterText(event.text.unicode);
-    }
-    return false;
+void Textbox::handleEvent(const sf::Event &event) {
+        if(event.type == sf::Event::TextEntered) {
+            if (isFocused) {
+                enterText(event.text.unicode);
+            }
+            setFocus(!isFocused);
+        }
 }
 
 void Textbox::setFocus(bool focus) {
@@ -51,7 +54,9 @@ bool Textbox::enterText(sf::Uint32 unicode) {
     else if(unicode == 10)
         return true; // return key
     else
-        string += (char) unicode;
+        if (string.size() <= 10) {
+            string += (char) unicode;
+        }
     text.setString(string);
     return false;
 }

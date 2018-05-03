@@ -3,11 +3,11 @@
 #include "Game.h"
 
 MenuState::MenuState(StateManager &stack, States::Context context): State(stack, context) {
+    initButtons();
 }
 
 bool MenuState::handleEvent(const sf::Event &event) {
     container.handleWidgetsEvent(event);
-    initButtons();
     return false;
 }
 
@@ -23,7 +23,8 @@ void MenuState::initButtons() {
     singlePlayer->setScale(2.0f, 2.0f);
     singlePlayer->setFont(getContext().fontHolder->get(Fonts::font1));
     singlePlayer->setText("Singleplayer");
-    singlePlayer->setCallback([this]() {
+    singlePlayer->setInd(0);
+    singlePlayer->setCallback([this](int ind) {
         popState();
         pushState(States::ID::Game);
     });
@@ -38,7 +39,8 @@ void MenuState::initButtons() {
     multiPlayer->setScale(2.0f, 2.0f);
     multiPlayer->setFont(getContext().fontHolder->get(Fonts::font1));
     multiPlayer->setText("Multiplayer");
-    multiPlayer->setCallback([this]() {
+    multiPlayer->setInd(0);
+    multiPlayer->setCallback([this](int ind) {
         popState();
         pushState(States::ID::ConnectGame);
     });

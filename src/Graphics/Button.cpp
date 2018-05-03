@@ -2,7 +2,7 @@
 
 using namespace gui;
 
-Button::Button(sf::Texture& texture, std::string& text) : callback(),
+Button::Button() : callback(),
                    toggle(false),
                    selected(false)
 {}
@@ -17,6 +17,10 @@ void Button::setTexture(const sf::Texture& texture) {
     centerText();
 }
 
+void Button::setTextureRect(sf::IntRect rect) {
+    sprite.setTextureRect(rect);
+}
+
 void Button::setText(const std::string& text) {
     this->text.setString(text);
     centerText();
@@ -27,12 +31,16 @@ void Button::setFont(const sf::Font& font) {
     centerText();
 }
 
+void Button::setInd(const int i) {
+    ind = i;
+}
+
 void Button::handleEvent(const sf::Event& event) {
     sf::FloatRect rect;
     rect.left = getPosition().x;
     rect.top = getPosition().y;
-    rect.width = sprite.getLocalBounds().width * 2;
-    rect.height = sprite.getLocalBounds().height * 2;
+    rect.width = sprite.getLocalBounds().width * sprite.getScale().x;
+    rect.height = sprite.getLocalBounds().height * sprite.getScale().y;
 
     switch (event.type) {
         case sf::Event::MouseButtonPressed:
@@ -46,25 +54,25 @@ void Button::handleEvent(const sf::Event& event) {
                 }
             }
             break;
-        case sf::Event::MouseMoved:
-            if (rect.contains(static_cast<float>(event.mouseMove.x),
-                              static_cast<float>(event.mouseMove.y))) {
-                if (!selected) {
-                            select();
-                    }
-            } else {
-                if (selected) {
-                    deselect();
-                }
-            }
-            break;
+//        case sf::Event::MouseMoved:
+//            if (rect.contains(static_cast<float>(event.mouseMove.x),
+//                              static_cast<float>(event.mouseMove.y))) {
+//                if (!selected) {
+//                            select();
+//                    }
+//            } else {
+//                if (selected) {
+//                    deselect();
+//                }
+//            }
+//            break;
     }
 }
 
 void Button::update(sf::Time dt) {}
 
 void Button::select() {
-    changeTexture(Type::Selected);
+    changeTexture(Type::Normal);
     selected = true;
 }
 
@@ -74,17 +82,14 @@ void Button::deselect() {
 }
 
 void Button::activate() {
-    changeTexture(Type::Pressed);
-
     if (callback) {
-        callback();
+        callback(ind);
     }
 
     deactivate();
 }
 
 void Button::deactivate() {
-    changeTexture(Type::Selected);
 }
 
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
