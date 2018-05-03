@@ -17,22 +17,22 @@ GameState::GameState(StateManager &stack, States::Context context) :
     map.analyze();
     player1->setEnemy(player2);
     player2->setEnemy(player1);
-    //тут нужно создать вышки по карте player->addTower(position, anotherPlayer->getWarriors, bullets)
+
     player1->addTower({100, 100}, player2->getWarriors(), bullets);
     player1->addTower({100, 300}, player2->getWarriors(), bullets);
     player1->addTower({100, 500}, player2->getWarriors(), bullets);
     player2->addTower({100, 200}, player1->getWarriors(), bullets);
     player2->addTower({100, 400}, player1->getWarriors(), bullets);
     player2->addTower({100, 600}, player1->getWarriors(), bullets);
-    bulletSprite.setTexture((*context.textureHolder).get(Textures::star));
+    bulletSprite.setTexture((*context.textureHolder).get(Textures::bulletTwo));
     bulletSprite.setOrigin(bulletSprite.getTextureRect().width / 2, bulletSprite.getTextureRect().height / 2);
-    towerSprite.setTexture((*context.textureHolder).get(Textures::towerOneTop));
+    towerSprite.setTexture((*context.textureHolder).get(Textures::towerTopLvlOne));
     towerSprite.setOrigin(towerSprite.getTextureRect().width / 2, towerSprite.getTextureRect().height / 2);
-    towerSprite2.setTexture((*context.textureHolder).get(Textures::towerTwoTop));
+    towerSprite2.setTexture((*context.textureHolder).get(Textures::towerTopLvlTwo));
     towerSprite2.setOrigin(towerSprite2.getTextureRect().width / 2, towerSprite2.getTextureRect().height / 2);
-    warriorSprite1.setTexture((*context.textureHolder).get(Textures::bulletOne));
+    warriorSprite1.setTexture((*context.textureHolder).get(Textures::star));
     warriorSprite1.setOrigin(warriorSprite1.getTextureRect().width / 2, warriorSprite1.getTextureRect().height / 2);
-    warriorSprite2.setTexture((*context.textureHolder).get(Textures::bulletTwo));
+    warriorSprite2.setTexture((*context.textureHolder).get(Textures::gold));
     warriorSprite2.setOrigin(warriorSprite2.getTextureRect().width / 2, warriorSprite2.getTextureRect().height / 2);
 }
 
@@ -93,18 +93,19 @@ bool GameState::handleEvent(const sf::Event& event) {
 }
 
 bool GameState::update(sf::Time dt) {
-    //сгенерировать событие отправки волны!!!
     clock += dt;
-    //std::cout << clock.asSeconds() << " " << waveTimer << std::endl;
+
     if (waveTimer <= clock.asSeconds()) {
         waveTimer += kWaveTimer;
         events.emplace_back(1, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
     }
+
     manageEvents();
+
     player1->updateCastle(dt);
     player2->updateCastle(dt);
+
     for (auto bullet = bullets.begin(); bullet != bullets.end();) {
-        (*bullet)->update(dt);
         if ((*bullet)->isExploded() || (*bullet)->isDisappeared()) {
             delete *bullet;
             bullet = bullets.erase(bullet);
@@ -112,12 +113,12 @@ bool GameState::update(sf::Time dt) {
         else {
             ++bullet;
         }
+        (*bullet)->update(dt);
     }
 }
 
 void GameState::draw() {
     map.draw();
-
     for (auto tower: player1->getTowers()) {
         towerSprite.setRotation(tower->getAngle());
         towerSprite.setPosition(tower->getPosition());

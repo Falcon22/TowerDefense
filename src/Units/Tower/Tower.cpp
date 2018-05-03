@@ -4,6 +4,7 @@
 #include "TowerLvlOne.h"
 #include "TowerLvlTwo.h"
 #include "TowerLvlThree.h"
+#include "../../Graphics/GraphicsUnit/GraphicsBullet.h"
 
 
 Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,

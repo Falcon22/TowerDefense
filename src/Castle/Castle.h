@@ -8,6 +8,8 @@
 #include "Building/Farm.h"
 #include "Building/Barracks.h"
 #include "Building/Weapons.h"
+#include "../Graphics/GraphicsCastle/GraphicsCastle.h"
+#include "../Graphics/GraphicsUnit/GraphicsBullet.h"
 
 
 class Castle {

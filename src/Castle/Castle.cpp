@@ -16,7 +16,6 @@ Castle::Castle()
       weapons_(),
       makingWave_(false),
       waveDuration_(0) {
-    std::cout << "Castle" << std::endl;
 }
 
 Castle::~Castle() {
@@ -97,7 +96,6 @@ void Castle::addWarrior(Type type, const Map::LogicMap& logicMap) {
 void Castle::updateCastle(const sf::Time& dTime) {
     gold_ += farm_.getBenefits(dTime);
     for (auto warrior = warriors_.begin(); warrior != warriors_.end();) {
-        (*warrior)->update(dTime);
         if (!(*warrior)->isAlive() || (*warrior)->isFinished()) {
             if ((*warrior)->isFinished()) {
                 enemy_->takeDamage((*warrior)->getHp());
@@ -105,8 +103,10 @@ void Castle::updateCastle(const sf::Time& dTime) {
             delete *warrior;
             warrior = warriors_.erase(warrior);
         }
-        else
+        else {
             ++warrior;
+        }
+        (*warrior)->update(dTime);
     }
     for (auto tower : towers_) {
         tower->update(dTime);

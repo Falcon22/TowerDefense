@@ -10,8 +10,9 @@
 #include "Graphics/Gui.h"
 #include "Map.h"
 #include "Units/Warrior/Warrior.h"
-#include "Units/UnitsGraphics/GraphicsUnit.h"
 #include "Castle/Castle.h"
+#include "Graphics/GraphicsCastle/GraphicsCastle.h"
+#include "Graphics/GraphicsUnit/GraphicsBullet.h"
 
 
 class Tower;

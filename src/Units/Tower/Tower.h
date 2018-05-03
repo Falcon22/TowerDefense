@@ -8,6 +8,7 @@
 
 class Warrior;
 class Bullet;
+class GraphicsBullet;
 
 class Tower: public GameUnit {
 public:
