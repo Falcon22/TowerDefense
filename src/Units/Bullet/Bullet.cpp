@@ -8,9 +8,9 @@ Bullet::Bullet(Type type, const sf::Vector2f& position, Warrior& target, int dam
       damage_(damage),
       velocity_(velocity),
       angle_(angle),
-      duration_(2),
       exploded_(false),
-      disappeared_(false) {}
+      disappeared_(false) {
+}
 
 void Bullet::update(const sf::Time& dTime) {
     if (!exploded_ && target_.isAlive()) {
@@ -24,10 +24,6 @@ void Bullet::update(const sf::Time& dTime) {
         }
     } else {
         if (!target_.isAlive()) {
-            disappeared_ = true;
-        }
-        duration_ -= dTime.asSeconds();
-        if (duration_ < 0) {
             disappeared_ = true;
         }
     }
@@ -49,4 +45,8 @@ float Bullet::getAngle() const {
 
 bool Bullet::isExploded() const {
     return exploded_;
+}
+
+bool Bullet::isDisappeared() const {
+    return disappeared_;
 }

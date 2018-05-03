@@ -7,7 +7,7 @@
 
 
 Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
-             std::vector<Warrior*>& warriors, std::vector<Bullet*>& bullets)
+             std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets)
     : GameUnit(type, position),
       price_(price),
       angle_(0),
@@ -34,6 +34,7 @@ void Tower::update(const sf::Time& dTime) {
             }
         }
     }
+
 }
 
 bool Tower::inRange(const sf::Vector2f& pointPosition) const {
@@ -61,7 +62,7 @@ float Tower::getAngle() const {
 void Tower::upgrade(Tower*& tower) {
     Tower* newTower = nullptr;
     switch (tower->type_) {
-        case Type::lvlZero:
+        case Type ::lvlZero:
             newTower = new TowerLvlOne(tower->position_, tower->warriors_, tower->bullets_);
             delete tower;
             tower = newTower;

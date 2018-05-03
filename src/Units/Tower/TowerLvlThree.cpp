@@ -2,7 +2,7 @@
 #include "../Bullet/BulletLvlTwo.h"
 
 
-TowerLvlThree::TowerLvlThree(const sf::Vector2f& position, std::vector<Warrior*>& warriors,
+TowerLvlThree::TowerLvlThree(const sf::Vector2f& position, std::list<Warrior*>& warriors,
                          std::vector<Bullet*>& bullets)
         : Tower(Type::lvlThree, position, kPrice_, kAttackRange_, kAttackCooldown_, warriors, bullets) {}
 

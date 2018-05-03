@@ -3,58 +3,192 @@
 #include "Units/Bullet/Bullet.h"
 #include "Units/Warrior/WarriorLvlTwo.h"
 #include "Units/Tower/TowerLvlOne.h"
+#include "Castle/Castle.h"
 
-
+//TODO: что-то не то с lvl*
 GameState::GameState(StateManager &stack, States::Context context) :
+        player1(new Castle),
+        player2(new Castle),
         State(stack, context),
         gameData(),
         map(*context.window),
-        graphicsUnit(*context.window, Type::lvlTwo, *context.textureHolder)
-{
+        clock(sf::Time::Zero),
+        waveTimer(kWaveTimer) {
     map.analyze();
-    warriors.push_back(new WarriorLvlTwo(sf::Vector2f(500, 700), map.getRoadRect()));
-    warriors.push_back(new WarriorLvlTwo(sf::Vector2f(500, 1000), map.getRoadRect()));
-    tower = new TowerLvlOne(sf::Vector2f(160, 500), warriors, bullets);
+    player1->setEnemy(player2);
+    player2->setEnemy(player1);
+    //тут нужно создать вышки по карте player->addTower(position, anotherPlayer->getWarriors, bullets)
+    player1->addTower({100, 100}, player2->getWarriors(), bullets);
+    player1->addTower({100, 300}, player2->getWarriors(), bullets);
+    player1->addTower({100, 500}, player2->getWarriors(), bullets);
+    player2->addTower({100, 200}, player1->getWarriors(), bullets);
+    player2->addTower({100, 400}, player1->getWarriors(), bullets);
+    player2->addTower({100, 600}, player1->getWarriors(), bullets);
+    bulletSprite.setTexture((*context.textureHolder).get(Textures::star));
+    bulletSprite.setOrigin(bulletSprite.getTextureRect().width / 2, bulletSprite.getTextureRect().height / 2);
     towerSprite.setTexture((*context.textureHolder).get(Textures::towerOneTop));
     towerSprite.setOrigin(towerSprite.getTextureRect().width / 2, towerSprite.getTextureRect().height / 2);
-    bulletSprite.setTexture((*context.textureHolder).get(Textures::bulletTwo));
-    bulletSprite.setOrigin(bulletSprite.getTextureRect().width / 2, bulletSprite.getTextureRect().height / 2);
-    Tower::upgrade(tower);
-    if (tower->getType() == Type::lvlTwo)
-        std::cout << "Correct" << std::endl;
+    towerSprite2.setTexture((*context.textureHolder).get(Textures::towerTwoTop));
+    towerSprite2.setOrigin(towerSprite2.getTextureRect().width / 2, towerSprite2.getTextureRect().height / 2);
+    warriorSprite1.setTexture((*context.textureHolder).get(Textures::bulletOne));
+    warriorSprite1.setOrigin(warriorSprite1.getTextureRect().width / 2, warriorSprite1.getTextureRect().height / 2);
+    warriorSprite2.setTexture((*context.textureHolder).get(Textures::bulletTwo));
+    warriorSprite2.setOrigin(warriorSprite2.getTextureRect().width / 2, warriorSprite2.getTextureRect().height / 2);
 }
 
-bool GameState::handleEvent(const sf::Event &event) {
+GameState::~GameState() {
+    for (auto bullet: bullets) {
+        delete bullet;
+    }
+    delete player1;
+    delete player2;
+}
+//handleEventу без времени плохо: как деактивировать кнопки на время? как следить за таймером волны?
+//нужно точно знать игрока за данным компьютером, иначе от кого генерировать события?
+bool GameState::handleEvent(const sf::Event& event) {
+    //Эвенты с игры
+
+    //сюда заходит, только если есть эвенты на экране, проблема
+
+    //Серверные эвенты
+    //manageEvents();
+
+    if (event.type == sf::Event::KeyReleased
+        && event.key.code == sf::Keyboard::B) {
+        events.emplace_back(1, 'c', "f", clock + sf::milliseconds(2000));
+        std::cout << "pressed B" << std::endl;
+    }
+        if (event.type == sf::Event::KeyReleased
+        && event.key.code == sf::Keyboard::U)
+    {
+        events.emplace_back(1, 't', "0", clock + sf::milliseconds(2000));
+        std::cout << "pressed U" << std::endl;
+    }
+    if (event.type == sf::Event::KeyReleased
+        && event.key.code == sf::Keyboard::F)
+    {
+        events.emplace_back(2, 't', "0", clock + sf::milliseconds(2000));
+        std::cout << "pressed F" << std::endl;
+    }
+    if (event.type == sf::Event::KeyReleased
+        && event.key.code == sf::Keyboard::G)
+    {
+        events.emplace_back(2, 't', "1", clock + sf::milliseconds(2000));
+        std::cout << "pressed G" << std::endl;
+    }
+    if (event.type == sf::Event::KeyReleased
+        && event.key.code == sf::Keyboard::O)
+    {
+        player1->addWarrior(Type::lvlOne, map.getRoadRect());
+        std::cout << "pressed O " << player1->getWarriorsInBuffer() << std::endl;
+    }
+    if (event.type == sf::Event::KeyReleased
+        && event.key.code == sf::Keyboard::P)
+    {
+        player1->addWarrior(Type::lvlTwo, map.getRoadRect());
+        std::cout << "pressed P " << player1->getWarriorsInBuffer() << std::endl;
+    }
+
 
 }
 
 bool GameState::update(sf::Time dt) {
-    for(auto bullet: bullets) {
-        if (!bullet->isExploded())
-            bullet->update(dt);
+    //сгенерировать событие отправки волны!!!
+    clock += dt;
+    //std::cout << clock.asSeconds() << " " << waveTimer << std::endl;
+    if (waveTimer <= clock.asSeconds()) {
+        waveTimer += kWaveTimer;
+        events.emplace_back(1, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
     }
-    tower->update(dt);
-    warriors[0]->update(dt);
-    warriors[1]->update(dt);
-    //std::cout << "0: " << warriors[0]->getPosition().x << "|" << warriors[0]->getPosition().y << std::endl;
-    //std::cout << "1: " << warriors[1]->getPosition().x << "|" << warriors[1]->getPosition().y << std::endl;
-    graphicsUnit.update(*warriors[0], dt);
+    manageEvents();
+    player1->updateCastle(dt);
+    player2->updateCastle(dt);
+    for (auto bullet = bullets.begin(); bullet != bullets.end();) {
+        (*bullet)->update(dt);
+        if ((*bullet)->isExploded() || (*bullet)->isDisappeared()) {
+            delete *bullet;
+            bullet = bullets.erase(bullet);
+        }
+        else {
+            ++bullet;
+        }
+    }
 }
 
 void GameState::draw() {
     map.draw();
-    towerSprite.setRotation(tower->getAngle());
-    towerSprite.setPosition(tower->getPosition());
-    getContext().window->draw(towerSprite);
-    for(auto bullet: bullets) {
-        if (!bullet->isExploded()) {
-            //std::cout << bullet->getAngle() << std::endl;
-            bulletSprite.setRotation(static_cast<float>(-bullet->getAngle() * 180 / M_PI + 180));
-            bulletSprite.setPosition(bullet->getPosition());
-            getContext().window->draw(bulletSprite);
+
+    for (auto tower: player1->getTowers()) {
+        towerSprite.setRotation(tower->getAngle());
+        towerSprite.setPosition(tower->getPosition());
+        getContext().window->draw(towerSprite);
+    }
+    for (auto tower: player2->getTowers()) {
+        towerSprite2.setRotation(tower->getAngle());
+        towerSprite2.setPosition(tower->getPosition());
+        getContext().window->draw(towerSprite2);
+    }
+    for (auto warrior: player1->getWarriors()) {
+        switch (warrior->getType()) {
+            case Type::lvlOne:
+                warriorSprite1.setRotation(warrior->getDirection());
+                warriorSprite1.setPosition(warrior->getPosition());
+                getContext().window->draw(warriorSprite1);
+                break;
+            case Type::lvlTwo:
+                warriorSprite2.setRotation(warrior->getDirection());
+                warriorSprite2.setPosition(warrior->getPosition());
+                getContext().window->draw(warriorSprite2);
+                break;
         }
     }
-
-    graphicsUnit.draw();
-
+    for (auto bullet: bullets) {
+        bulletSprite.setRotation(bullet->getAngle());
+        bulletSprite.setPosition(bullet->getPosition());
+        getContext().window->draw(bulletSprite);
+    }
 }
+
+void GameState::manageEvents() {
+    Castle* player = nullptr;
+    //std::cout << events.size() << std::endl;
+    for(auto event = events.begin(); event != events.end();) {
+        if (event->time > clock) {
+            ++event;
+            break;
+        }
+        if (event->id == 1) {
+            player = player1;
+        } else {
+            player = player2;
+        }
+        switch (event->type) {
+            case 't':
+                player->upgradeTower(stoi(event->value));
+                break;
+            case 'w':
+                if (player->getWarriorsBuffer().empty()) {
+                    for (auto type : event->value) {
+                        switch (type) {
+                            case '1':
+                                player->addWarrior(Type::lvlOne, map.getRoadRect());
+                                break;
+                            case '2':
+                                player->addWarrior(Type::lvlTwo, map.getRoadRect());
+                                break;
+                        }
+                    }
+                }
+                player->letsMakingWave();
+                break;
+            case 'c':
+                player->upgradeBuilding(event->value[0]);
+                break;
+        }
+        event = events.erase(event);
+    }
+}
+
+
+
+

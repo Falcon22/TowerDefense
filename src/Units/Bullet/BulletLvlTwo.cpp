@@ -1,7 +1,7 @@
 #include "BulletLvlTwo.h"
 
 BulletLvlTwo::BulletLvlTwo(const sf::Vector2f &position, float angle, Warrior &target,
-                           std::vector<Warrior *> &warriors)
+                           std::list<Warrior *> &warriors)
     : Bullet(Type::lvlTwo, position, target, kDamage_, kVelocity_, angle),
       warriors_(warriors){}
 

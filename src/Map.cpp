@@ -23,6 +23,7 @@ Map::Map(sf::RenderWindow &window) : window(window) {
         }
     }
     fin >> start.second >> start.first;
+    roadRect.start = {600, 600};
 }
 
 void Map::analyze() {

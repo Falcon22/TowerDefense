@@ -19,6 +19,7 @@ public:
     void draw();
     void analyze();
 
+
     enum Direction {
         UP,
         DOWN,
@@ -29,6 +30,7 @@ public:
     struct LogicMap {
         std::vector<std::pair<sf::FloatRect, Direction>> road;
         sf::FloatRect finish;
+        sf::Vector2f start;
     };
 
 private:
