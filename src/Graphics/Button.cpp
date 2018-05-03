@@ -2,7 +2,7 @@
 
 using namespace gui;
 
-Button::Button() : callback(),
+Button::Button(sf::Texture& texture, std::string& text) : callback(),
                    toggle(false),
                    selected(false)
 {}

@@ -1,10 +1,10 @@
 #ifndef TOWERDEFENSE_TOWER_H
 #define TOWERDEFENSE_TOWER_H
 
-
 #include <vector>
+#include <list>
 #include "../GameUnit.h"
-
+#include <list>
 
 class Warrior;
 class Bullet;
@@ -20,7 +20,7 @@ public:
 
 protected:
     Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
-            std::vector<Warrior*>& warriors, std::vector<Bullet*>& bullets);
+            std::list<Warrior*>& warriors, std::list<Bullet*>& bullets);
 
     bool inRange(const sf::Vector2f& pointPosition) const;
     float aim() const;
@@ -33,8 +33,8 @@ protected:
     float cooldown_;
     float attackCooldown_;
     Warrior* target_;
-    std::vector<Warrior*>& warriors_;
-    std::vector<Bullet*>& bullets_;
+    std::list<Warrior*>& warriors_;
+    std::list<Bullet*>& bullets_;
 };
 
 

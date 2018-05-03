@@ -7,7 +7,11 @@
 
 class TowerLvlTwo: public Tower {
 public:
-    TowerLvlTwo(const sf::Vector2f& position, std::vector<Warrior*>& warriors, std::vector<Bullet*>& bullets);
+<<<<<<< Updated upstream
+    TowerLvlTwo(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
+=======
+    TowerLvlTwo(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::list<Bullet*>& bullets);
+>>>>>>> Stashed changes
 
     Bullet* makeBullet() override;
 

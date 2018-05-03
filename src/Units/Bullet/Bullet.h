@@ -13,6 +13,7 @@ public:
     float getAngle() const;
 
     bool isExploded() const;
+    bool isDisappeared() const;
 
 protected:
     Bullet(Type type, const sf::Vector2f& position, Warrior& target, int damage, float velocity, float angle);
@@ -24,7 +25,6 @@ protected:
     int damage_;
     float velocity_;
     float angle_;
-    float duration_;
     bool exploded_;
     bool disappeared_;
 };

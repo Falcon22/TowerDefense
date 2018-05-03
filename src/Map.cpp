@@ -1,6 +1,7 @@
 #include "Map.h"
 #include <fstream>
 
+
 Map::Map(sf::RenderWindow &window) : window(window) {
     std::ifstream fin("Resources/map.csv");
     texture.loadFromFile("Resources/map1.png");
@@ -12,6 +13,7 @@ Map::Map(sf::RenderWindow &window) : window(window) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             fin >> tileNumber;
+<<<<<<< Updated upstream
             if (tileNumber == 13) {
                 sf::Vector2f p(i * TILE_SIZE, j * TILE_SIZE);
                 t1.push_back(p);
@@ -19,21 +21,38 @@ Map::Map(sf::RenderWindow &window) : window(window) {
             } else if (tileNumber == 14) {
                 sf::Vector2f p(i * TILE_SIZE, j * TILE_SIZE);
                 t2.push_back(p);
+=======
+            map[i][j].setTileNumber(tileNumber);
+            if (tileNumber == 14) {
+                map[i][j].setTileNumber(tileNumber);
+>>>>>>> Stashed changes
                 tileNumber = 16;
             }
-
-            map[i][j].setTileNumber(tileNumber);
             sf::IntRect rect{ TILE_SIZE * (tileNumber % 15), TILE_SIZE * (tileNumber / 15), TILE_SIZE, TILE_SIZE };
             map[i][j].setTexture(texture, rect);
             map[i][j].setPosition(static_cast<float>(j * TILE_SIZE), static_cast<float>(i * TILE_SIZE));
         }
     }
     fin >> start.second >> start.first;
+    roadRect.start = {600, 600};
 }
 
+<<<<<<< Updated upstream
 void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>& towers2) {
     towers1 = t1;
     towers2 = t2;
+=======
+void Map::analyze(std::vector<sf::Vector2f>& towerArea) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            if (map[i][j].getTileNumber() == 14) {
+                sf::Vector2f tmp((j + 0.5) * TILE_SIZE, (i + 0.5) * TILE_SIZE);
+                towerArea.push_back(tmp);
+            }
+        }
+    }
+
+>>>>>>> Stashed changes
     std::cout << width << " " << height << " " << start.first << " " << start.second << std::endl;
     int move = 0; // 1 - down, 2 - up, 3 - right, 4 - left, 0 - default
 
@@ -216,29 +235,6 @@ void Map::draw() {
             window.draw(tile);
         }
     }
-
-    for (int i = 9; i >= 0; i--) {
-        sf::RectangleShape r(sf::Vector2f(roadRect.road[i].first.width, roadRect.road[i].first.height));
-        r.setPosition(roadRect.road[i].first.left, roadRect.road[i].first.top);
-        r.setOutlineColor(sf::Color::Black);
-        r.setOutlineThickness(0.5);
-        if (roadRect.road[i].second == UP) {
-            r.setFillColor(sf::Color::Red);
-        } else if (roadRect.road[i].second == DOWN) {
-            r.setFillColor(sf::Color::Green);
-        } else if (roadRect.road[i].second == LEFT) {
-            r.setFillColor(sf::Color::Blue);
-        } else if (roadRect.road[i].second == RIGHT) {
-            r.setFillColor(sf::Color::White);
-        }
-
-            //sf::Rect r(i.left, i.top, i.width, i.height);
-        window.draw(r);
-    }
-    sf::RectangleShape f(sf::Vector2f(roadRect.finish.width, roadRect.finish.height));
-    f.setPosition(roadRect.finish.left, roadRect.finish.top);
-    f.setFillColor(sf::Color::Black);
-    window.draw(f);
 }
 
 const Map::LogicMap &Map::getRoadRect() const {

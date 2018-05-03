@@ -16,7 +16,7 @@ namespace gui {
             Pressed
         };
 
-        explicit Button();
+        explicit Button(sf::Texture& texture, std::string& text);
 
         void setCallback(Callback callback);
         void setTexture(const sf::Texture& texture);

@@ -3,6 +3,7 @@
 #include "PauseState.h"
 #include "GameState.h"
 #include "ConnectGameState.h"
+#include <thread>
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0, false}),
@@ -16,11 +17,16 @@ Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
 void Game::run() {
     const sf::Time frameTime = sf::seconds(1.f / 60.f);
     sf::Clock clock;
-    sf::Time passedTIme = sf::Time::Zero;
+    sf::Time passedTime = sf::Time::Zero;
 
     while (window.isOpen()) {
-        input();
-        update(frameTime);
+        sf::Time elapsedTime = clock.restart();
+        passedTime += elapsedTime;
+        while (passedTime > frameTime) {
+            passedTime -= frameTime;
+            input();
+            update(frameTime);
+        }
         draw();
     }
 }
@@ -59,6 +65,7 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::towerTwoTop, "Resources/towerTopTwo.png");
     textureHolder.load(Textures::towerOneBase, "Resources/towerOneBase.png");
     textureHolder.load(Textures::towerTwoBase, "Resources/towerBaseTwo.png");
+    textureHolder.load(Textures::bulletOne, "Resources/bulletOne.png");
     textureHolder.load(Textures::bulletTwo, "Resources/bulletTwo.png");
 }
 
@@ -69,6 +76,8 @@ void Game::update(sf::Time frameTime) {
 
 void Game::draw() {
     window.clear(sf::Color(210, 210, 210));
+//    std::thread t1(&StateManager::draw, stateManager);
+//    t1.join();
     stateManager.draw();
     window.display();
 }
