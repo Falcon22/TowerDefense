@@ -137,7 +137,7 @@ bool GameState::update(sf::Time dt) {
 
 void GameState::draw() {
     map.draw();
-    
+
     for (auto bullet: bullets) {
         bulletSprite.setRotation(bullet->getAngle());
         bulletSprite.setPosition(bullet->getPosition());
