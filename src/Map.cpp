@@ -12,8 +12,14 @@ Map::Map(sf::RenderWindow &window) : window(window) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             fin >> tileNumber;
-            if (tileNumber == 14) {
-                //TODO конструктор башни
+            if (tileNumber == 13) {
+                sf::Vector2f p(i * TILE_SIZE, j * TILE_SIZE);
+                t1.push_back(p);
+                tileNumber = 16;
+            } else if (tileNumber == 14) {
+                sf::Vector2f p(i * TILE_SIZE, j * TILE_SIZE);
+                t2.push_back(p);
+                tileNumber = 16;
             }
 
             map[i][j].setTileNumber(tileNumber);
@@ -25,7 +31,9 @@ Map::Map(sf::RenderWindow &window) : window(window) {
     fin >> start.second >> start.first;
 }
 
-void Map::analyze() {
+void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>& towers2) {
+    towers1 = t1;
+    towers2 = t2;
     std::cout << width << " " << height << " " << start.first << " " << start.second << std::endl;
     int move = 0; // 1 - down, 2 - up, 3 - right, 4 - left, 0 - default
 

@@ -2,6 +2,7 @@
 #include "MenuState.h"
 #include "PauseState.h"
 #include "GameState.h"
+#include "ConnectGameState.h"
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0, false}),
@@ -9,7 +10,7 @@ Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
                stateManager(context) {
     loadAllResources();
     registerStates();
-    stateManager.pushState(States::ID::Game);
+    stateManager.pushState(States::ID::Menu);
 }
 
 void Game::run() {
@@ -73,5 +74,7 @@ void Game::draw() {
 }
 
 void Game::registerStates() {
+    stateManager.registerState<MenuState>(States::ID::Menu);
+    stateManager.registerState<ConnectGameState>(States::ID::ConnectGame);
     stateManager.registerState<GameState>(States::ID::Game);
 }

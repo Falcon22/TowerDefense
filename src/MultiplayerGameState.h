@@ -1,6 +1,3 @@
-#ifndef TOWERDEFENSE_GAMESTATE_H
-#define TOWERDEFENSE_GAMESTATE_H
-
 #include <SFML/System/Time.hpp>
 
 #include "ResourceManager/ResourcesHolder.h"
@@ -25,9 +22,8 @@ public:
     void draw() override;
 
 private:
-    std::vector<sf::Vector2f> towers1;
-    std::vector<sf::Vector2f> towers2;
-    Player::GameData gameData;
+    Player::GameData player1;
+    Player::GameData player2;
     gui::Gui containter;
     Map map;
     std::vector<sf::IntRect> roadRect;
@@ -38,6 +34,3 @@ private:
     sf::Sprite towerSprite;
     sf::Sprite bulletSprite;
 };
-
-
-#endif //TOWERDEFENSE_GAMESTATE_H

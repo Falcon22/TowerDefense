@@ -1,5 +1,5 @@
 #include "Bullet.h"
-
+#include <cmath>
 
 Bullet::Bullet(Type type, const sf::Vector2f& position, Warrior& target, int damage, float velocity,
                float angle)

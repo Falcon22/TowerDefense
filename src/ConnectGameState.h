@@ -1,22 +1,22 @@
-#ifndef TOWERDEFENSE_MENUSTATE_H
-#define TOWERDEFENSE_MENUSTATE_H
+#ifndef TOWERDEFENSE_CONNECTGAMESTATE_H
+#define TOWERDEFENSE_CONNECTGAMESTATE_H
 
 #include "Graphics/Gui.h"
 #include "State.h"
 
-
-class MenuState : public State {
+class ConnectGameState: public State {
 public:
-    explicit MenuState(StateManager& stack, States::Context context);
+    explicit ConnectGameState(StateManager& stack, States::Context context);
 
     bool handleEvent(const sf::Event& event) override ;
     bool update(sf::Time dt) override;
     void draw() override;
 
     void initButtons();
+
 private:
     gui::Gui container;
 };
 
 
-#endif //TOWERDEFENSE_MENUSTATE_H
+#endif //TOWERDEFENSE_CONNECTGAMESTATE_H

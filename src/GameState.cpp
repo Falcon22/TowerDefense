@@ -3,7 +3,7 @@
 #include "Units/Bullet/Bullet.h"
 #include "Units/Warrior/WarriorLvlTwo.h"
 #include "Units/Tower/TowerLvlOne.h"
-
+#include <cmath>
 
 GameState::GameState(StateManager &stack, States::Context context) :
         State(stack, context),
@@ -11,7 +11,7 @@ GameState::GameState(StateManager &stack, States::Context context) :
         map(*context.window),
         graphicsUnit(*context.window, Type::lvlTwo, *context.textureHolder)
 {
-    map.analyze();
+    map.analyze(towers1, towers2);
     warriors.push_back(new WarriorLvlTwo(sf::Vector2f(500, 700), map.getRoadRect()));
     warriors.push_back(new WarriorLvlTwo(sf::Vector2f(500, 1000), map.getRoadRect()));
     tower = new TowerLvlOne(sf::Vector2f(160, 500), warriors, bullets);
