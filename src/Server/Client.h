@@ -23,7 +23,6 @@ namespace mp {
 
         sf::TcpSocket       socket_;
         sf::SocketSelector  selector_;
-        int                 player_id_;
         bool                connected_;
 
     public:

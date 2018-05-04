@@ -24,6 +24,10 @@ bool mp::Client::askEvents() {
             std::string data = (char *)packet.getData();
             parseEventString(data, incoming);
 
+            for (auto &&event : incoming) {
+                std::cout << "[get event] " << event.type << " " << event.value << std::endl;
+            }
+
             return true;
         } else {
             throw std::logic_error(msg::error_accepting_events);
@@ -40,6 +44,11 @@ bool mp::Client::sendEvents() {
     sf::Packet packet;
     std::string message;
     encodeEventsToString(message, outcoming);
+
+
+//    for (auto &&event : outcoming) {
+//        std::cout << "[out event] " << event.type << " " << event.value << std::endl;
+//    }
 
     std::cout << message << std::endl;
     packet.append(message.c_str(), message.size() + 1);

@@ -59,48 +59,39 @@ void Game::run() {
         while (client.incoming.empty()) // тут мы запрашиваем айдишник
             client.askEvents();
 
-        player_id_ = atoi(client.incoming[0].value.c_str());
+        context.id = atoi(client.incoming[0].value.c_str());
 
-        context.id = player_id_;
-
-        std::cout << "my id " << player_id_ << std::endl;
-
+        std::cout << "[client] player id is " << context.id << std::endl;
         client.incoming.clear();
 
     } else {
-        std::cout << "no server connection" << std::endl;
+        std::cout << "[warning] no server connection" << std::endl;
     }
 
-//    context.incoming_events.emplace_back(1, 'u', "ksdfkjgksdfgjsdhfg", sf::microseconds(0));
-
-
     while (window.isOpen()) {
-
         sf::Time elapsedTime = clock.restart();
-        passedTime += elapsedTime;
+        passedTime += elapsedTime ;
         while (passedTime > frameTime) {
             passedTime -= frameTime;
             input();
+
+            if (client.isConnected()) 
+                try {
+                    client.sendEvents();
+                    client.askEvents();
+                    for (auto &&item : client.incoming) {
+                        if (item.type == 's' && item.value == "stop")
+                            window.close();
+                    }
+                } catch (const std::exception &e) {
+                    std::cout << e.what() << std::endl;
+                }
+
             update(frameTime);
+            client.incoming.clear();
         }
 
         draw();
-
-        client.incoming.clear();
-
-        if (client.isConnected()) try {
-            client.sendEvents();
-            client.askEvents();
-        } catch (const std::exception& e) {
-            std::cout << e.what() << std::endl;
-        }
-
-        for (auto &&item : client.incoming) {
-            if (item.type == 's' && item.value == "stop")
-                window.close();
-
-        }
-
     }
 }
 

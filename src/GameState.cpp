@@ -113,22 +113,25 @@ bool GameState::handleEvent(const sf::Event& event) {
 }
 
 bool GameState::update(sf::Time dt) {
+//    std::cout << clock.asMilliseconds() << std::endl;
+
 //    std::cout << getContext().incoming_events.size() << std::endl;
 //    std::cout << getContext().outcoming_events.size() << std::endl;
 
-    for (auto &&item : getContext().incoming_events) {
-//        events.emplace_back(item);
+    for (auto &&event : getContext().incoming_events) {
+        events.emplace_back(event.id, event.type, event.value, event.time);
     }
 
     if (waveTimer <= clock.asSeconds()) {
         waveTimer += kWaveTimer;
-        getContext().outcoming_events.emplace_back(1, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
+        getContext().outcoming_events.emplace_back(
+                    getContext().id, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
     }
 
     for (auto &&event : getContext().outcoming_events) {
         events.emplace_back(event.id, event.type, event.value, event.time);
     }
-    getContext().outcoming_events.clear();
+//    getContext().outcoming_events.clear();
 
     //сгенерировать событие отправки волны!!!
     clock += dt;
@@ -136,7 +139,7 @@ bool GameState::update(sf::Time dt) {
     manageEvents();
     player1->updateCastle(dt);
     player2->updateCastle(dt);
-    for (auto bullet = bullets.begin(); bullet != bullets.end();) {
+    for (auto bullet = bullets.begin(); bullet != bullets.end();) { // use smart ptrs!
         (*bullet)->update(dt);
         if ((*bullet)->isExploded() || (*bullet)->isDisappeared()) {
             delete *bullet;
@@ -184,6 +187,22 @@ void GameState::draw() {
         }
     }
 
+    for (auto warrior: player2->getWarriors()) {
+        switch (warrior->getType()) {
+
+            case Type::lvlOne:
+                warriorSprite1.setRotation(warrior->getDirection());
+                warriorSprite1.setPosition(warrior->getPosition());
+                getContext().window->draw(warriorSprite1);
+                break;
+            case Type::lvlTwo:
+                warriorSprite2.setRotation(warrior->getDirection());
+                warriorSprite2.setPosition(warrior->getPosition());
+                getContext().window->draw(warriorSprite2);
+                break;
+        }
+    }
+
 }
 
 void GameState::manageEvents() {
@@ -194,17 +213,21 @@ void GameState::manageEvents() {
             ++event;
             break;
         }
+
+
         if (event->id == 1) {
             player = player1;
         } else {
             player = player2;
         }
+
+
         switch (event->type) {
             case 't':
                 player->upgradeTower(stoi(event->value));
                 break;
             case 'w':
-                if (player->getWarriorsBuffer().empty()) {
+                if (player->getWarriorsInBuffer() == 0) {
                     for (auto type : event->value) {
                         switch (type) {
                             case '1':
