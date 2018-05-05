@@ -10,6 +10,8 @@
 #include "ResourceManager/ResourcesIdentifier.h"
 #include "Server/Client.h"
 
+//std::vector<mp::Events>& incoming_events;
+//std::vector<mp::Events>& outcoming_events;
 
 class Game {
 public:

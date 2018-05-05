@@ -3,6 +3,7 @@
 
 #include "ResourceManager/ResourcesIdentifier.h"
 #include "ResourceManager/ResourcesHolder.h"
+#include "Server/Entities.h"
 
 enum class Type {
     lvlZero,
@@ -37,13 +38,19 @@ namespace States {
                 , TextureHolder &textureHolder
                 , FontHolder &fontHolder
                 , sf::Sprite &cursor
-                , int id)
+                , int id
+                , std::vector<mp::Event>& ie
+                , std::vector<mp::Event>& oe)
+
                 : window(&window)
                 , font(&font)
                 , textureHolder(&textureHolder)
                 , fontHolder(&fontHolder)
                 , cursor(&cursor)
                 , id(id)
+        , incoming_events(ie)
+                , outcoming_events(oe)
+
 
         {};
 
@@ -53,6 +60,10 @@ namespace States {
         FontHolder *fontHolder;
         SoundManager *soundManager;
         sf::Sprite *cursor;
+
+        std::vector<mp::Event> &incoming_events;
+        std::vector<mp::Event> &outcoming_events;
+
         int id;
     };
 }
