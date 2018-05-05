@@ -8,11 +8,12 @@
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
-               client("172.20.10.4"),
-               context(window, font, textureHolder, fontHolder, cursor, 2, client.incoming, client.outcoming),
+               client(),
+               context(window, font, textureHolder, fontHolder, cursor, client),
                stateManager(context) {
     loadAllResources();
     registerStates();
+    window.setVerticalSyncEnabled(true);
     stateManager.pushState(States::ID::Menu);
 }
 
@@ -21,86 +22,32 @@ void Game::run() {
     sf::Clock clock;
     sf::Time passedTime = sf::Time::Zero;
 
-    if (client.isConnected()) {
-        // TODO мультиплеерная мутота
-        while (true) {
-            char operation;
-            std::cin >> operation;
-            switch (operation) {
-                case 'n': {
-                    std::string game_name;
-                    std::cin >> game_name;
-                    client.outcoming.emplace_back(0, 'n', game_name, sf::microseconds(0)); //
-                    break;
-                }
-
-                case 'j': {
-                    std::string game_id;
-                    std::cin >> game_id;
-                    client.outcoming.emplace_back(0, 'j', game_id, sf::microseconds(0)); // Просим пустить в игру
-                    break;
-                }
-
-                default: break;
-            }
-
-            client.sendEvents();
-
-            if (operation == 'j')
-                break;
-
-            client.askEvents();
-            if (!client.incoming.empty()) {
-                std::cout << client.incoming[0].value << std::endl;
-            }
-            client.incoming.clear();
-        }
-
-        while (client.incoming.empty()) // тут мы запрашиваем айдишник
-            client.askEvents();
-
-        player_id_ = atoi(client.incoming[0].value.c_str());
-
-        context.id = player_id_;
-
-        std::cout << "my id " << player_id_ << std::endl;
-
-        client.incoming.clear();
-
-    } else {
-        std::cout << "no server connection" << std::endl;
-    }
-
-//    context.incoming_events.emplace_back(1, 'u', "ksdfkjgksdfgjsdhfg", sf::microseconds(0));
-
-
     while (window.isOpen()) {
-
         sf::Time elapsedTime = clock.restart();
-        passedTime += elapsedTime;
+        passedTime += elapsedTime ;
         while (passedTime > frameTime) {
             passedTime -= frameTime;
             input();
             update(frameTime);
+
+            client.incoming.clear();
+            if (client.isConnected()) {
+                try {
+                    client.sendEvents();
+                    client.askEvents();
+                    for (auto &&item : client.incoming) {
+                        if (item.type == 's' && item.value == "stop")
+                            window.close();
+                    }
+                } catch (const std::exception &e) {
+                    std::cout << e.what() << std::endl;
+                }
+            } else {
+                client.outcoming.clear();
+            }
         }
 
         draw();
-
-        client.incoming.clear();
-
-        if (client.isConnected()) try {
-            client.sendEvents();
-            client.askEvents();
-        } catch (const std::exception& e) {
-            std::cout << e.what() << std::endl;
-        }
-
-        for (auto &&item : client.incoming) {
-            if (item.type == 's' && item.value == "stop")
-                window.close();
-
-        }
-
     }
 }
 

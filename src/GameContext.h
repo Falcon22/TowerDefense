@@ -3,7 +3,7 @@
 
 #include "ResourceManager/ResourcesIdentifier.h"
 #include "ResourceManager/ResourcesHolder.h"
-#include "Server/Entities.h"
+#include "Server/Client.h"
 
 enum class Type {
     lvlZero,
@@ -33,24 +33,21 @@ namespace Player {
 
 namespace States {
     struct Context {
-        explicit Context(sf::RenderWindow &window
-                , sf::Font &font
-                , TextureHolder &textureHolder
-                , FontHolder &fontHolder
-                , sf::Sprite &cursor
-                , int id
-                , std::vector<mp::Event>& ie
-                , std::vector<mp::Event>& oe)
+        explicit Context(
+                sf::RenderWindow &window,
+                sf::Font &font,
+                TextureHolder &textureHolder,
+                FontHolder &fontHolder,
+                sf::Sprite &cursor,
+                mp::Client &client
+        )
 
-                : window(&window)
-                , font(&font)
-                , textureHolder(&textureHolder)
-                , fontHolder(&fontHolder)
-                , cursor(&cursor)
-                , id(id)
-        , incoming_events(ie)
-                , outcoming_events(oe)
-
+                : window(&window),
+                  font(&font),
+                  textureHolder(&textureHolder),
+                  fontHolder(&fontHolder),
+                  cursor(&cursor),
+                  client(client)
 
         {};
 
@@ -61,10 +58,7 @@ namespace States {
         SoundManager *soundManager;
         sf::Sprite *cursor;
 
-        std::vector<mp::Event> &incoming_events;
-        std::vector<mp::Event> &outcoming_events;
-
-        int id;
+        mp::Client &client;
     };
 }
 

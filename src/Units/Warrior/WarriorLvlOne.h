@@ -9,7 +9,7 @@ public:
     WarriorLvlOne(const sf::Vector2f& position, const Map::LogicMap& logicMap);
 
     static const unsigned int kCost_ = 100;
-    constexpr static const float kVelocity_ = 50;
+    constexpr static const float kVelocity_ = 100;
     static const int kHp_ = 600;
 };
 
