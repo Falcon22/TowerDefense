@@ -124,9 +124,11 @@ bool GameState::update(sf::Time dt) {
 
     if (waveTimer <= clock.asSeconds()) {
         waveTimer += kWaveTimer;
-        getContext().client.outcoming.emplace_back(
-                    getContext().client.getId(), 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
+        if (!Castle::generateWaveString(*player1).empty())
+            getContext().client.outcoming.emplace_back(
+                    1, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
     }
+
 
     for (auto &&event : getContext().client.outcoming) {
         events.emplace_back(event.id, event.type, event.value, event.time);
@@ -135,7 +137,7 @@ bool GameState::update(sf::Time dt) {
 
     //сгенерировать событие отправки волны!!!
     clock += dt;
-    //std::cout << clock.asSeconds() << " " << waveTimer << std::endl;
+//    std::cout << clock.asSeconds() << " " << waveTimer << std::endl;
     manageEvents();
     player1->updateCastle(dt);
     player2->updateCastle(dt);
@@ -209,10 +211,10 @@ void GameState::manageEvents() {
     Castle* player = nullptr;
     //std::cout << events.size() << std::endl;
     for(auto event = events.begin(); event != events.end();) {
-        if (event->time > clock) {
-            ++event;
-            break;
-        }
+//        if (event->time > clock) {
+//            ++event;
+//            break;
+//        }
 
 
         if (event->id == 1) {

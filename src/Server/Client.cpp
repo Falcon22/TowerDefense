@@ -6,7 +6,7 @@
 #include "Client.h"
 #include "Server.h"
 
-mp::Client::Client() : connected_(false), id_(1) { }
+mp::Client::Client() : connected_(false), id_(2) { }
 
 void mp::Client::connect(const std::string &ip, unsigned short port) {
     std::cout << msg::waiting_connection << std::endl;
@@ -44,14 +44,15 @@ bool mp::Client::sendEvents() {
     if (outcoming.empty())
         return false;
 
+
     sf::Packet packet;
     std::string message;
     encodeEventsToString(message, outcoming);
 
 
-//    for (auto &&event : outcoming) {
-//        std::cout << "[out event] " << event.type << " " << event.value << std::endl;
-//    }
+    for (auto &&event : outcoming) {
+        std::cout << "[out event] " << event.type << " " << event.value << std::endl;
+    }
 
     std::cout << message << std::endl;
     packet.append(message.c_str(), message.size() + 1);
