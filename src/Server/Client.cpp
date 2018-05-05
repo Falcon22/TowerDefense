@@ -6,14 +6,17 @@
 #include "Client.h"
 #include "Server.h"
 
-mp::Client::Client(const std::string &ip, unsigned short port) : connected_(false) {
+mp::Client::Client() : connected_(false), id_(1) { }
+
+void mp::Client::connect(const std::string &ip, unsigned short port) {
     std::cout << msg::waiting_connection << std::endl;
     if (socket_.connect(ip, port) == sf::Socket::Status::Done) {
         connected_ = true;
+        std::cout << msg::connected << std::endl;
+
     };
     selector_.add(socket_);
 
-    std::cout << msg::connected << std::endl;
 }
 
 bool mp::Client::askEvents() {
@@ -63,5 +66,13 @@ bool mp::Client::sendEvents() {
 
 bool mp::Client::isConnected() {
     return connected_;
+}
+
+int mp::Client::getId() const {
+    return id_;
+}
+
+void mp::Client::setId(int id) {
+    id_ = id;
 }
 

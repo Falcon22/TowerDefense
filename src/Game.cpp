@@ -8,11 +8,12 @@
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
-               client(constants::ip),
-               context(window, font, textureHolder, fontHolder, cursor, 2, client.incoming, client.outcoming),
+               client(),
+               context(window, font, textureHolder, fontHolder, cursor, client),
                stateManager(context) {
     loadAllResources();
     registerStates();
+    window.setVerticalSyncEnabled(true);
     stateManager.pushState(States::ID::Menu);
 }
 
@@ -20,53 +21,6 @@ void Game::run() {
     const sf::Time frameTime = sf::seconds(1.f / 60.f);
     sf::Clock clock;
     sf::Time passedTime = sf::Time::Zero;
-
-    if (client.isConnected()) {
-        // TODO мультиплеерная мутота
-        while (true) {
-            char operation;
-            std::cin >> operation;
-            switch (operation) {
-                case 'n': {
-                    std::string game_name;
-                    std::cin >> game_name;
-                    client.outcoming.emplace_back(0, 'n', game_name, sf::microseconds(0)); //
-                    break;
-                }
-
-                case 'j': {
-                    std::string game_id;
-                    std::cin >> game_id;
-                    client.outcoming.emplace_back(0, 'j', game_id, sf::microseconds(0)); // Просим пустить в игру
-                    break;
-                }
-
-                default: break;
-            }
-
-            client.sendEvents();
-
-            if (operation == 'j')
-                break;
-
-            client.askEvents();
-            if (!client.incoming.empty()) {
-                std::cout << client.incoming[0].value << std::endl;
-            }
-            client.incoming.clear();
-        }
-
-        while (client.incoming.empty()) // тут мы запрашиваем айдишник
-            client.askEvents();
-
-        context.id = atoi(client.incoming[0].value.c_str());
-
-        std::cout << "[client] player id is " << context.id << std::endl;
-        client.incoming.clear();
-
-    } else {
-        std::cout << "[warning] no server connection" << std::endl;
-    }
 
     while (window.isOpen()) {
         sf::Time elapsedTime = clock.restart();

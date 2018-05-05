@@ -28,6 +28,7 @@ void MenuState::initButtons() {
         popState();
         pushState(States::ID::Game);
     });
+
     container.addWidget(singlePlayer);
 
     auto multiPlayer = std::make_shared<gui::Button>();

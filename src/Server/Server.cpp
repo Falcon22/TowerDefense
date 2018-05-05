@@ -82,7 +82,7 @@ void mp::master::proceedEvents(player &player) {
         } else if (event.type == 'n') {
             pool_games_.emplace_back(event.value); // name - имя игры
 
-            player.to_send.emplace_back(0, 's', std::to_string(pool_games_.size() - 1),
+            player.to_send.emplace_back(0, 'n', std::to_string(pool_games_.size() - 1),
                                         sf::microseconds(0));
 
             std::cout << msg::add_game << event.value << std::endl;
