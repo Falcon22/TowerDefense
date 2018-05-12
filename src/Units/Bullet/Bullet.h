@@ -14,6 +14,7 @@ public:
 
     bool isExploded() const;
     bool isDisappeared() const;
+    const sf::Vector2f& getTargetPosition() const;
 
 protected:
     Bullet(Type type, const sf::Vector2f& position, Warrior& target, int damage, float velocity, float angle);

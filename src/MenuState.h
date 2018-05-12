@@ -13,6 +13,7 @@ public:
     bool update(sf::Time dt) override;
     void draw() override;
 
+    void initButtons();
 private:
     gui::Gui container;
 };

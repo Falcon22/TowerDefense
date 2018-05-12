@@ -15,7 +15,7 @@ private:
 
     static const int kCost_ = 1000;
     static const int kLvlBenefits_ = 100;
-    static const sf::Int32 kWorkTime_ = 10000;//mseconds
+    static const sf::Int32 kWorkTime_ = 5000;//mseconds
 };
 
 

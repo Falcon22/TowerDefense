@@ -9,6 +9,7 @@ Castle::Castle()
       health_(kInitHealth_),
       towers_(),
       warriors_(),
+      numWarriorsToWave(0),
       numRealWarriors(0),
       warriorsBuffer_(10, nullptr),
       farm_(),
@@ -16,6 +17,7 @@ Castle::Castle()
       weapons_(),
       makingWave_(false),
       waveDuration_(0) {
+    std::cout << "Castle" << std::endl;
 }
 
 Castle::~Castle() {
@@ -95,6 +97,7 @@ void Castle::addWarrior(Type type, const Map::LogicMap& logicMap) {
 
 void Castle::updateCastle(const sf::Time& dTime) {
     gold_ += farm_.getBenefits(dTime);
+
     for (auto warrior = warriors_.begin(); warrior != warriors_.end();) {
         if (!(*warrior)->isAlive() || (*warrior)->isFinished()) {
             if ((*warrior)->isFinished()) {
@@ -104,9 +107,9 @@ void Castle::updateCastle(const sf::Time& dTime) {
             warrior = warriors_.erase(warrior);
         }
         else {
+            (*warrior)->update(dTime);
             ++warrior;
         }
-        (*warrior)->update(dTime);
     }
     for (auto tower : towers_) {
         tower->update(dTime);
@@ -132,7 +135,8 @@ void Castle::makeWave(const sf::Time& dTime) {
     waveDuration_ -= dTime.asMilliseconds();
     if (waveDuration_ <= 0) {
         waveDuration_ = kWaveDuration_;
-        if (numRealWarriors > 0) {
+        if (numWarriorsToWave > 0) {
+            --numWarriorsToWave;
             --numRealWarriors;
             warriors_.push_back(warriorsBuffer_[numRealWarriors]);
             warriorsBuffer_[numRealWarriors] = nullptr;
@@ -143,6 +147,7 @@ void Castle::makeWave(const sf::Time& dTime) {
 }
 
 void Castle::letsMakingWave() {
+    numWarriorsToWave = numRealWarriors;
     makingWave_ = true;
 }
 

@@ -8,8 +8,6 @@
 #include "Building/Farm.h"
 #include "Building/Barracks.h"
 #include "Building/Weapons.h"
-#include "../Graphics/GraphicsCastle/GraphicsCastle.h"
-#include "../Graphics/GraphicsUnit/GraphicsBullet.h"
 
 
 class Castle {
@@ -42,7 +40,7 @@ public:
 private:
     static const int kInitGold_ = 1000;
     static const int kInitHealth_ = 1000;
-    static const int kWaveDuration_ = 1000;//mseconds
+    static const int kWaveDuration_ = 2000;//mseconds
 
     int gold_;
     int health_;
@@ -50,6 +48,7 @@ private:
     std::vector<Tower*> towers_;
     std::list<Warrior*> warriors_;
     size_t numRealWarriors;
+    size_t numWarriorsToWave;
     std::vector<Warrior*> warriorsBuffer_;
 
     Farm farm_;

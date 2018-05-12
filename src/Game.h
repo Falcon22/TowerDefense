@@ -8,7 +8,10 @@
 #include "GameContext.h"
 #include "ResourceManager/ResourcesHolder.h"
 #include "ResourceManager/ResourcesIdentifier.h"
+#include "Server/Client.h"
 
+//std::vector<mp::Events>& incoming_events;
+//std::vector<mp::Events>& outcoming_events;
 
 class Game {
 public:
@@ -31,6 +34,8 @@ private:
     sf::RenderWindow window;
     States::Context context;
     StateManager stateManager;
+
+    mp::Client client;
 };
 
 

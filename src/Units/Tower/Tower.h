@@ -8,7 +8,6 @@
 
 class Warrior;
 class Bullet;
-class GraphicsBullet;
 
 class Tower: public GameUnit {
 public:
@@ -18,10 +17,10 @@ public:
     static void upgrade(Tower*& tower);
 
     float getAngle() const;
-
+    unsigned int getPrice();
 protected:
     Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
-            std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
+          std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
 
     bool inRange(const sf::Vector2f& pointPosition) const;
     float aim() const;

@@ -4,24 +4,23 @@
 #include "TowerLvlOne.h"
 #include "TowerLvlTwo.h"
 #include "TowerLvlThree.h"
-#include "../../Graphics/GraphicsUnit/GraphicsBullet.h"
 
 
 Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
              std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets)
-    : GameUnit(type, position),
-      price_(price),
-      angle_(0),
-      attackRange_(attackRange),
-      attackCooldown_(attackCooldown),
-      warriors_(warriors),
-      bullets_(bullets),
-      target_(nullptr),
-      cooldown_(0) {}
+        : GameUnit(type, position),
+          price_(price),
+          angle_(0),
+          attackRange_(attackRange),
+          attackCooldown_(attackCooldown),
+          warriors_(warriors),
+          bullets_(bullets),
+          target_(nullptr),
+          cooldown_(0) {}
 
 void Tower::update(const sf::Time& dTime) {
     if (target_ != nullptr) {
-        if (inRange(target_->getPosition()) && target_->isAlive()) {
+        if (inRange(target_->getPosition()) && target_->isAlive() && !target_->isFinished()) {
             angle_ = aim();
             shoot(dTime);
         } else {
@@ -29,13 +28,16 @@ void Tower::update(const sf::Time& dTime) {
         }
     } else {
         for (auto warrior : warriors_) {
-            if (inRange(warrior->getPosition()) && warrior->isAlive()) {
+            if (inRange(warrior->getPosition()) && warrior->isAlive() && !warrior->isFinished()) {
                 target_ = warrior;////
                 break;
             }
         }
     }
+}
 
+unsigned int Tower::getPrice() {
+    return price_;
 }
 
 bool Tower::inRange(const sf::Vector2f& pointPosition) const {
@@ -45,7 +47,7 @@ bool Tower::inRange(const sf::Vector2f& pointPosition) const {
 
 float Tower::aim() const {
     return static_cast<float>((atan2((position_.y - target_->getPosition().y),
-                                      (position_.x - target_->getPosition().x)) * 180 / M_PI) - 90);
+                                     (position_.x - target_->getPosition().x)) * 180 / M_PI) - 90);
 }
 
 void Tower::shoot(const sf::Time &dTime) {
