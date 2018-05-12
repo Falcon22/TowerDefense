@@ -13,14 +13,15 @@ add_executable(TowerDefense  src/main.cpp src/Game.cpp src/Game.h src/ResourceMa
         src/PauseState.cpp src/PauseState.h src/State.cpp src/State.h src/StateManager.cpp
         src/StateManager.h src/Graphics/Widget.h src/Map.h src/Map.cpp src/Constants.h src/Tile.h src/Tile.cpp
         src/Units/Warrior/Warrior.cpp src/Units/Warrior/Warrior.h src/Units/Warrior/WarriorLvlOne.cpp
-        src/Units/Warrior/WarriorLvlOne.h src/Units/UnitsGraphics/GraphicsUnit.cpp src/Units/UnitsGraphics/GraphicsUnit.h
+        src/Units/Warrior/WarriorLvlOne.h
         src/Units/Warrior/WarriorLvlTwo.cpp src/Units/Warrior/WarriorLvlTwo.h src/Units/Tower/Tower.cpp src/Units/Tower/Tower.h
         src/Units/GameUnit.cpp src/Units/GameUnit.h src/Units/Tower/TowerLvlZero.cpp src/Units/Tower/TowerLvlZero.h
         src/Units/Tower/TowerLvlOne.cpp src/Units/Tower/TowerLvlOne.h src/Units/Tower/TowerLvlTwo.cpp src/Units/Tower/TowerLvlTwo.h
         src/Units/Bullet/Bullet.cpp src/Units/Bullet/Bullet.h src/Units/Bullet/BulletLvlOne.cpp src/Units/Bullet/BulletLvlOne.h
         src/Units/Bullet/BulletLvlTwo.h src/Units/Bullet/BulletLvlTwo.cpp src/Units/Tower/TowerLvlThree.cpp src/Units/Tower/TowerLvlThree.h src/Server/Client.cpp src/Server/Entities.cpp
         src/Graphics/TextBox.h src/Graphics/TextBox.cpp src/ConnectGameState.h src/ConnectGameState.cpp
-        src/Units/Bullet/BulletLvlTwo.h src/Units/Bullet/BulletLvlTwo.cpp src/Units/Tower/TowerLvlThree.cpp src/Units/Tower/TowerLvlThree.h src/Castle/Castle.cpp src/Castle/Castle.h src/Castle/Building/Building.cpp src/Castle/Building/Building.h src/Castle/Building/Farm.cpp src/Castle/Building/Farm.h src/Castle/Building/Barracks.cpp src/Castle/Building/Barracks.h src/Castle/Building/Weapons.cpp src/Castle/Building/Weapons.h)
+        src/Units/Bullet/BulletLvlTwo.h src/Units/Bullet/BulletLvlTwo.cpp src/Units/Tower/TowerLvlThree.cpp src/Units/Tower/TowerLvlThree.h src/Castle/Castle.cpp src/Castle/Castle.h src/Castle/Building/Building.cpp src/Castle/Building/Building.h src/Castle/Building/Farm.cpp src/Castle/Building/Farm.h src/Castle/Building/Barracks.cpp src/Castle/Building/Barracks.h src/Castle/Building/Weapons.cpp src/Castle/Building/Weapons.h
+        src/Graphics/GraphicsUnits/GraphicsCastle.cpp src/Graphics/GraphicsUnits/GraphicsCastle.h src/Graphics/GraphicsUnits/GraphicsTower.cpp src/Graphics/GraphicsUnits/GraphicsTower.h src/Graphics/GraphicsUnits/GraphicsWarrior.cpp src/Graphics/GraphicsUnits/GraphicsWarrior.h src/Graphics/GraphicsUnits/GraphicsBullet.cpp src/Graphics/GraphicsUnits/GraphicsBullet.h src/Units/Bullet/BulletLvlThree.cpp src/Units/Bullet/BulletLvlThree.h src/Graphics/GraphicsUnits/GraphicsUnitManager.cpp src/Graphics/GraphicsUnits/GraphicsUnitManager.h)
 
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 FIND_PACKAGE(SFML 2 REQUIRED system window graphics network audio)

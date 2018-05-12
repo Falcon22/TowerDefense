@@ -20,7 +20,7 @@ Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float 
 
 void Tower::update(const sf::Time& dTime) {
     if (target_ != nullptr) {
-        if (inRange(target_->getPosition()) && target_->isAlive()) {
+        if (inRange(target_->getPosition()) && target_->isAlive() && !target_->isFinished()) {
             angle_ = aim();
             shoot(dTime);
         } else {
@@ -28,7 +28,7 @@ void Tower::update(const sf::Time& dTime) {
         }
     } else {
         for (auto warrior : warriors_) {
-            if (inRange(warrior->getPosition()) && warrior->isAlive()) {
+            if (inRange(warrior->getPosition()) && warrior->isAlive() && !warrior->isFinished()) {
                 target_ = warrior;////
                 break;
             }

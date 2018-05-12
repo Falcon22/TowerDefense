@@ -10,13 +10,15 @@
 #include "Graphics/Gui.h"
 #include "Map.h"
 #include "Units/Warrior/Warrior.h"
-#include "Units/UnitsGraphics/GraphicsUnit.h"
 #include "Castle/Castle.h"
 #include "Graphics/Button.h"
+#include "Graphics/GraphicsUnits/GraphicsUnitManager.h"
+
 
 class Tower;
 class Bullet;
-
+class GraphicsCastle;
+class GraphicsBullet;
 
 class GameState : public State {
 public:
@@ -31,6 +33,7 @@ public:
 
 private:
     void initTower();
+    void updateBullets(const sf::Time& dTime);
 
     struct Event {
         Event(int id_, char type_, std::string value_, const sf::Time time_) :
@@ -48,6 +51,7 @@ private:
     Castle* player1;
     Castle* player2;
     std::vector<Bullet*> bullets;
+
     float waveTimer;
     const float kWaveTimer = 10;//second
 
@@ -56,12 +60,8 @@ private:
     Map map;
     std::vector<sf::IntRect> roadRect;
 
-    sf::Sprite towerSprite;
-    sf::Sprite towerSprite2;
-    sf::Sprite warriorSprite1;
-    sf::Sprite warriorSprite2;
-    sf::Sprite bulletSprite;
-    sf::Sprite t;
+    GraphicsUnitManager gComponent;
+
     std::vector<sf::Vector2f> towers1;
     std::vector<sf::Vector2f> towers2;
     gui::Gui container;

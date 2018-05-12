@@ -48,6 +48,7 @@ private:
     std::vector<Tower*> towers_;
     std::list<Warrior*> warriors_;
     size_t numRealWarriors;
+    size_t numWarriorsToWave;
     std::vector<Warrior*> warriorsBuffer_;
 
     Farm farm_;

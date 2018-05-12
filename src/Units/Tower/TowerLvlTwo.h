@@ -12,8 +12,8 @@ public:
     Bullet* makeBullet() override;
 
     static const unsigned int kPrice_ = 2000;
-    constexpr static const float kAttackRange_ = 10000;
-    static const int kAttackCooldown_ = 5;
+    constexpr static const float kAttackRange_ = 400;
+    static const int kAttackCooldown_ = 1;
 };
 
 

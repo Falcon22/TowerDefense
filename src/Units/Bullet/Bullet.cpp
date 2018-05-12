@@ -14,7 +14,7 @@ Bullet::Bullet(Type type, const sf::Vector2f& position, Warrior& target, int dam
 }
 
 void Bullet::update(const sf::Time& dTime) {
-    if (!exploded_ && target_.isAlive()) {
+    if (!exploded_ && target_.isAlive() && !target_.isFinished()) {
         if (!checkCollisionWithTarget()) {
             angle_ = static_cast<float>(atan2((target_.getPosition().x - position_.x), (target_.getPosition().y - position_.y)));
             position_.x += velocity_ * dTime.asSeconds() * sin(angle_);
@@ -24,7 +24,7 @@ void Bullet::update(const sf::Time& dTime) {
             damage();
         }
     } else {
-        if (!target_.isAlive()) {
+        if (!target_.isAlive() || target_.isFinished()) {
             disappeared_ = true;
         }
     }
@@ -45,9 +45,15 @@ float Bullet::getAngle() const {
 }
 
 bool Bullet::isExploded() const {
-    return exploded_ || disappeared_;
+    return exploded_;
 }
 
 bool Bullet::isDisappeared() const {
     return disappeared_;
+}
+
+const sf::Vector2f& Bullet::getTargetPosition()  const {
+    if (!target_.isFinished()) {
+        return target_.getPosition();
+    }
 }
