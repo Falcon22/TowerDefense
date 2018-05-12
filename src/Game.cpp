@@ -28,10 +28,7 @@ void Game::run() {
         while (passedTime > frameTime) {
             passedTime -= frameTime;
             input();
-            update(frameTime);
-
-            client.incoming.clear();
-            if (client.isConnected()) {
+            if (client.isConnected())
                 try {
                     client.sendEvents();
                     client.askEvents();
@@ -42,9 +39,9 @@ void Game::run() {
                 } catch (const std::exception &e) {
                     std::cout << e.what() << std::endl;
                 }
-            } else {
-                client.outcoming.clear();
-            }
+
+            update(frameTime);
+            client.incoming.clear();
         }
 
         draw();

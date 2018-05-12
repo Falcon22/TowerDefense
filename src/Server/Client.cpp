@@ -49,11 +49,6 @@ bool mp::Client::sendEvents() {
     std::string message;
     encodeEventsToString(message, outcoming);
 
-
-    for (auto &&event : outcoming) {
-        std::cout << "[out event] " << event.type << " " << event.value << std::endl;
-    }
-
     std::cout << message << std::endl;
     packet.append(message.c_str(), message.size() + 1);
 
