@@ -30,7 +30,7 @@ public:
     int getHealth() const;
     const std::vector<std::shared_ptr<Tower>>& getTowers() const;
     std::list<std::shared_ptr<Warrior>>& getWarriors();
-    const std::vector<std::shared_ptr<Warrior>>& getWarriorsBuffer() const;
+    const std::list<std::shared_ptr<Warrior>>& getWarriorsBuffer() const;
     size_t getWarriorsInBuffer() const;
     Type getFarmLvl() const;
     Type getBarracksLvl() const;
@@ -40,15 +40,15 @@ private:
     static const int kInitGold_ = 1000;
     static const int kInitHealth_ = 1000;
     static const int kWaveDuration_ = 2000;//mseconds
-
+    static const int kBufferSize_ = 10;
     int gold_;
     int health_;
     std::shared_ptr<Castle> enemy_;
     std::vector<std::shared_ptr<Tower>> towers_;
     std::list<std::shared_ptr<Warrior>> warriors_;
-    size_t numRealWarriors;
-    size_t numWarriorsToWave;
-    std::vector<std::shared_ptr<Warrior>> warriorsBuffer_;
+    size_t numWarriorsInBuffer_;
+    size_t numWarriorsToWave_;
+    std::list<std::shared_ptr<Warrior>> warriorsBuffer_;
 
     Farm farm_;
     Barracks barracks_;

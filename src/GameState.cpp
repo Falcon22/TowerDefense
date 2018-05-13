@@ -167,7 +167,7 @@ void GameState::manageEvents() {
                 player->upgradeTower(stoi(event->value));
                 break;
             case 'w':
-                if (player->getWarriorsInBuffer() == 0) {
+                if (event->id == 2) {
                     for (auto type : event->value) {
                         switch (type) {
                             case '1':

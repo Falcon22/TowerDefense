@@ -9,9 +9,9 @@ Castle::Castle()
       health_(kInitHealth_),
       towers_(),
       warriors_(),
-      numWarriorsToWave(0),
-      numRealWarriors(0),
-      warriorsBuffer_(10, nullptr),
+      numWarriorsToWave_(0),
+      numWarriorsInBuffer_(0),
+      warriorsBuffer_(),
       farm_(),
       barracks_(),
       weapons_(),
@@ -36,7 +36,7 @@ std::list<std::shared_ptr<Warrior>>& Castle::getWarriors() {
     return warriors_;
 }
 
-const std::vector<std::shared_ptr<Warrior>>& Castle::getWarriorsBuffer() const {
+const std::list<std::shared_ptr<Warrior>>& Castle::getWarriorsBuffer() const {
     return warriorsBuffer_;
 }
 
@@ -71,26 +71,24 @@ void Castle::upgradeBuilding(char type) {
 }
 
 void Castle::addWarrior(Type type, const Map::LogicMap& logicMap) {
+    if (numWarriorsInBuffer_ >= kBufferSize_) {
+        return;
+    }
     switch (type) {
         case Type::lvlOne:
-            warriorsBuffer_.at(numRealWarriors) = std::make_shared<WarriorLvlOne>(logicMap.start, logicMap);
+            warriorsBuffer_.push_back(std::make_shared<WarriorLvlOne>(logicMap.start, logicMap));
             break;
         case Type::lvlTwo:
-            warriorsBuffer_.at(numRealWarriors) = std::make_shared<WarriorLvlTwo>(logicMap.start, logicMap);
+            warriorsBuffer_.push_back(std::make_shared<WarriorLvlTwo>(logicMap.start, logicMap));
             break;
     }
-    gold_ -= warriorsBuffer_[numRealWarriors]->getCost();
-    ++numRealWarriors;
+    gold_ -= warriorsBuffer_.back()->getCost();
+    ++numWarriorsInBuffer_;
 }
 
 void Castle::updateCastle(const sf::Time& dTime) {
     gold_ += farm_.getBenefits(dTime);
 
-//    size_t i = 0;
-//    for (auto warrior: warriors_) {
-//        std::cout << "warrior[" << i++ << "] -> " << warrior.use_count() << std::endl;
-//    }
-    //std::cout << warriors_.size() << std::endl;
     for (auto warrior = warriors_.begin(); warrior != warriors_.end();) {
         (*warrior)->update(dTime);
         if (!(*warrior)->isAlive() || (*warrior)->isFinished()) {
@@ -104,7 +102,7 @@ void Castle::updateCastle(const sf::Time& dTime) {
         }
     }
 
-    for (auto tower : towers_) {
+    for (const auto &tower : towers_) {
         tower->update(dTime);
     }
     if (makingWave_) {
@@ -128,11 +126,10 @@ void Castle::makeWave(const sf::Time& dTime) {
     waveDuration_ -= dTime.asMilliseconds();
     if (waveDuration_ <= 0) {
         waveDuration_ = kWaveDuration_;
-        if (numWarriorsToWave > 0) {
-            --numWarriorsToWave;
-            --numRealWarriors;
-            warriors_.push_back(warriorsBuffer_[numRealWarriors]);
-            warriorsBuffer_[numRealWarriors].reset();
+        if (numWarriorsToWave_ > 0) {
+            --numWarriorsToWave_;
+            warriors_.push_back(warriorsBuffer_.front());
+            warriorsBuffer_.pop_front();
         } else {
             makingWave_ = false;
         }
@@ -140,13 +137,15 @@ void Castle::makeWave(const sf::Time& dTime) {
 }
 
 void Castle::letsMakingWave() {
-    numWarriorsToWave = numRealWarriors;
+    numWarriorsToWave_ += numWarriorsInBuffer_;
+    numWarriorsInBuffer_ = 0;
     makingWave_ = true;
 }
 
 std::string Castle::generateWaveString(const Castle& player) {
     std::string value;
-    for (const auto &warrior: player.getWarriorsBuffer()) {
+
+    for (const auto& warrior: player.getWarriorsBuffer()) {
         if (warrior != nullptr) {
             switch (warrior->getType()) {
                 case Type::lvlOne:
@@ -162,5 +161,5 @@ std::string Castle::generateWaveString(const Castle& player) {
 }
 
 size_t Castle::getWarriorsInBuffer() const {
-    return numRealWarriors;
+    return numWarriorsInBuffer_;
 }
