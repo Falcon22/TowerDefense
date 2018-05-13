@@ -1,13 +1,13 @@
 #include "BulletLvlThree.h"
 
-BulletLvlThree::BulletLvlThree(const sf::Vector2f &position, float angle, Warrior &target,
-                           std::list<Warrior *> &warriors)
+BulletLvlThree::BulletLvlThree(const sf::Vector2f &position, float angle, const std::shared_ptr<Warrior>& target,
+                           std::list<std::shared_ptr<Warrior>> &warriors)
         : Bullet(Type::lvlThree, position, target, kDamage_, kVelocity_, angle),
           warriors_(warriors){}
 
 void BulletLvlThree::damage() {
-    for (auto warrior: warriors_) {
-        if (inRange(warrior->getPosition()) && warrior->isAlive()) {
+    for (const auto& warrior: warriors_) {
+        if (warrior != nullptr && inRange(warrior->getPosition()) && warrior->isAlive()) {
             warrior->suffer(damage_);
         }
     }

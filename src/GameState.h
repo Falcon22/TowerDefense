@@ -23,7 +23,6 @@ class GraphicsBullet;
 class GameState : public State {
 public:
     explicit GameState(StateManager& stack, States::Context context);
-    ~GameState();
 
     bool handleEvent(const sf::Event &event) override;
     bool update(sf::Time dt) override;
@@ -48,9 +47,9 @@ private:
     };
     std::vector<Event> events;
     sf::Time clock;
-    Castle* player1;
-    Castle* player2;
-    std::vector<Bullet*> bullets;
+    std::shared_ptr<Castle> player1;
+    std::shared_ptr<Castle> player2;
+    std::vector<std::shared_ptr<Bullet>> bullets;
 
     float waveTimer;
     const float kWaveTimer = 10;//second

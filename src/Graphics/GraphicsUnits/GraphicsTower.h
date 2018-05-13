@@ -9,7 +9,7 @@
 class GraphicsTower {
 public:
     explicit GraphicsTower(States::Context& context);
-    void draw(States::Context& context, const Tower* tower);
+    void draw(States::Context& context, const std::shared_ptr<Tower>& tower);
 
 private:
     sf::Sprite towerZero_;

@@ -6,7 +6,7 @@
 
 class BulletLvlTwo: public Bullet {
 public:
-    BulletLvlTwo(const sf::Vector2f& position, float angle, Warrior& target);
+    BulletLvlTwo(const sf::Vector2f& position, float angle, const std::shared_ptr<Warrior>& target);
 
     static const int kDamage_ = 150;
     constexpr static const float kVelocity_ = 500;

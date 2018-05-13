@@ -1,7 +1,8 @@
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <utility>
 #include "GraphicsWarrior.h"
 
-GraphicsWarrior::GraphicsWarrior(const Warrior* warrior, States::Context& context)
+GraphicsWarrior::GraphicsWarrior(std::shared_ptr<Warrior>& warrior, States::Context& context)
         : warrior_(warrior),
           deathDuration(2000),
           died_(false),
@@ -24,20 +25,20 @@ GraphicsWarrior::GraphicsWarrior(const Warrior* warrior, States::Context& contex
 }
 
 void GraphicsWarrior::update(const sf::Time& dTime) {
-    if (!died_ && !finished_ && warrior_ != nullptr) {
-        lifeAnimation(dTime);
+    if (!died_ && warrior_ != nullptr) {
         if (!warrior_->isAlive()) {
             deadSprite_.setPosition(warrior_->getPosition());
             died_ = true;
-            warrior_ = nullptr;
+            warrior_.reset();
             return;
         }
         if (warrior_->isFinished()) {
             finished_ = true;
-            warrior_ = nullptr;
+            warrior_.reset();
             return;
         }
-    } else if (!finished_) {
+        lifeAnimation(dTime);
+    } else {
         deathAnimation(dTime);
     }
 

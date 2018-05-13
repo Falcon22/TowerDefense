@@ -9,7 +9,7 @@
 
 class GraphicsWarrior {
 public:
-    explicit GraphicsWarrior(const Warrior* warrior, States::Context& context);
+    explicit GraphicsWarrior(std::shared_ptr<Warrior>& warrior, States::Context& context);
     void update(const sf::Time& dTime);
     void draw(const States::Context& context);
 
@@ -20,10 +20,11 @@ private:
     void lifeAnimation(const sf::Time& dTime);
     void deathAnimation(const sf::Time& dTime);
 
-    const Warrior* warrior_;
+    std::shared_ptr<Warrior> warrior_;
     sf::Sprite sprite_;
     std::pair<int, int> warriorSpriteRect_;//<width, height>
     sf::Sprite deadSprite_;
+
     const char kFrames_ = 4;
     sf::Int32 deathDuration;
     float currentFrame_;

@@ -9,16 +9,16 @@
 class GraphicsUnitManager {
 public:
     GraphicsUnitManager(States::Context& context, Castle& castle1, Castle& castle2);
-    ~GraphicsUnitManager();
 
-    void update(const sf::Time &dt, States::Context& context, const std::vector<Bullet*>& bullets);
+    void update(const sf::Time &dt, States::Context& context, const std::vector<std::shared_ptr<Bullet>>& bullets);
     void draw(States::Context& context);
 
 private:
-    GraphicsCastle *gCastle1;
-    GraphicsCastle *gCastle2;
-    std::vector<GraphicsBullet *> gBullets;
-    std::vector<GraphicsBullet *> gExplodedBullets;
+    std::shared_ptr<GraphicsCastle> gCastle1;
+    std::shared_ptr<GraphicsCastle> gCastle2;
+
+    std::vector<std::shared_ptr<GraphicsBullet>> gBullets;
+    size_t intactBulletsCounter;
 };
 
 

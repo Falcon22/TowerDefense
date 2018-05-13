@@ -17,9 +17,8 @@ public:
 
 private:
     Castle& castle_;
-    std::list<GraphicsWarrior*> gWarriors_;
-    std::vector<GraphicsWarrior*> deadGWarriors_;
-    GraphicsTower* gTower_;
+    std::list<std::shared_ptr<GraphicsWarrior>> gWarriors_;
+    std::unique_ptr<GraphicsTower> gTower_;
 };
 
 

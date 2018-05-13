@@ -11,8 +11,8 @@
 
 
 GameState::GameState(StateManager &stack, States::Context context) :
-        player1(new Castle),
-        player2(new Castle),
+        player1(std::make_shared<Castle>()),
+        player2(std::make_shared<Castle>()),
         State(stack, context),
         gameData(),
         map(*context.window),
@@ -73,14 +73,6 @@ void GameState::initTower() {
             container.addWidget(bt);
         }
     }
-}
-
-GameState::~GameState() {
-    for (auto bullet: bullets) {
-        delete bullet;
-    }
-    delete player1;
-    delete player2;
 }
 
 bool GameState::handleEvent(const sf::Event& event) {
@@ -147,9 +139,9 @@ bool GameState::update(sf::Time dt) {
 
     player1->updateCastle(dt);
     player2->updateCastle(dt);
-
     updateBullets(dt);
     gComponent.update(dt, getContext(), bullets);
+    //std::cout << bullets.size() << " | " << gComponent.getGBulletsSize() << std::endl;
 }
 
 void GameState::draw() {
@@ -166,9 +158,9 @@ void GameState::manageEvents() {
             break;
         }
         if (event->id == 1) {
-            player = player1;
+            player = player1.get();
         } else {
-            player = player2;
+            player = player2.get();
         }
         switch (event->type) {
             case 't':
@@ -198,12 +190,11 @@ void GameState::manageEvents() {
 }
 
 void GameState::updateBullets(const sf::Time& dTime) {
-    for (auto bullet = bullets.begin(); bullet != bullets.end();) { // use smart ptrs!
-        if ((*bullet)->isExploded() || (*bullet)->isDisappeared()) {
-            delete *bullet;
+    for (auto bullet = bullets.begin(); bullet != bullets.end();) {
+        (*bullet)->update(dTime);
+        if (*bullet == nullptr || (*bullet)->isExploded() || (*bullet)->isDisappeared()) {
             bullet = bullets.erase(bullet);
         } else {
-            (*bullet)->update(dTime);
             ++bullet;
         }
     }

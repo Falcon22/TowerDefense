@@ -22,7 +22,7 @@ GraphicsTower::GraphicsTower(States::Context &context) {
     towerBaseLvlThree_.setOrigin(towerBaseLvlThree_.getTextureRect().width / 2, towerBaseLvlThree_.getTextureRect().height / 2);
 }
 
-void GraphicsTower::draw(States::Context& context, const Tower* tower) {
+void GraphicsTower::draw(States::Context& context, const std::shared_ptr<Tower>& tower) {
     if (tower == nullptr) {
         return;
     }
