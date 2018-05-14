@@ -7,7 +7,7 @@
 
 
 Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
-             std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets)
+             std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets)
         : GameUnit(type, position),
           price_(price),
           angle_(0),
@@ -20,15 +20,15 @@ Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float 
 
 void Tower::update(const sf::Time& dTime) {
     if (target_ != nullptr) {
-        if (inRange(target_->getPosition()) && target_->isAlive()) {
+        if (inRange(target_->getPosition()) && target_->isAlive() && !target_->isFinished()) {
             angle_ = aim();
             shoot(dTime);
         } else {
-            target_ = nullptr;
+            target_.reset();
         }
     } else {
-        for (auto warrior : warriors_) {
-            if (inRange(warrior->getPosition()) && warrior->isAlive()) {
+        for (const auto& warrior : warriors_) {
+            if (warrior != nullptr && inRange(warrior->getPosition()) && warrior->isAlive() && !warrior->isFinished()) {
                 target_ = warrior;////
                 break;
             }
@@ -62,23 +62,16 @@ float Tower::getAngle() const {
     return angle_;
 }
 
-void Tower::upgrade(Tower*& tower) {
-    Tower* newTower = nullptr;
+void Tower::upgrade(std::shared_ptr<Tower>& tower) {
     switch (tower->type_) {
         case Type ::lvlZero:
-            newTower = new TowerLvlOne(tower->position_, tower->warriors_, tower->bullets_);
-            delete tower;
-            tower = newTower;
+            tower.reset(new TowerLvlOne(tower->position_, tower->warriors_, tower->bullets_));
             break;
         case Type::lvlOne:
-            newTower = new TowerLvlTwo(tower->position_, tower->warriors_, tower->bullets_);
-            delete tower;
-            tower = newTower;
+            tower.reset(new TowerLvlTwo(tower->position_, tower->warriors_, tower->bullets_));
             break;
         case Type::lvlTwo:
-            newTower = new TowerLvlThree(tower->position_, tower->warriors_, tower->bullets_);
-            delete tower;
-            tower = newTower;
+            tower.reset(new TowerLvlThree(tower->position_, tower->warriors_, tower->bullets_));
             break;
         default:
             break;
