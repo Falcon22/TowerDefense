@@ -7,6 +7,7 @@
 
 
 Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
+<<<<<<< Updated upstream
              std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets)
         : GameUnit(type, position),
           price_(price),
@@ -17,6 +18,18 @@ Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float 
           bullets_(bullets),
           target_(nullptr),
           cooldown_(0) {}
+=======
+             std::list<Warrior*>& warriors, std::list<Bullet*>& bullets)
+    : GameUnit(type, position),
+      price_(price),
+      angle_(0),
+      attackRange_(attackRange),
+      attackCooldown_(attackCooldown),
+      warriors_(warriors),
+      bullets_(bullets),
+      target_(nullptr),
+      cooldown_(0) {}
+>>>>>>> Stashed changes
 
 void Tower::update(const sf::Time& dTime) {
     if (target_ != nullptr) {

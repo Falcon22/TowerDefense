@@ -46,8 +46,11 @@ float Bullet::getAngle() const {
 
 bool Bullet::isExploded() const {
     return exploded_ || disappeared_;
+<<<<<<< Updated upstream
 }
 
 bool Bullet::isDisappeared() const {
     return disappeared_;
+=======
+>>>>>>> Stashed changes
 }

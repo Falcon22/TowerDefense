@@ -6,6 +6,7 @@
 #include <thread>
 #include "Server/Server.h"
 
+
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
                client(),
