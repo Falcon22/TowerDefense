@@ -2,42 +2,46 @@
 #include "Bullet.h"
 #include <cmath>
 
-Bullet::Bullet(Type type, const sf::Vector2f& position, Warrior& target, int damage, float velocity,
+Bullet::Bullet(Type type, const sf::Vector2f& position, const std::shared_ptr<Warrior>& target, int damage, float velocity,
                float angle)
-    : GameUnit(type, position),
-      target_(target),
-      damage_(damage),
-      velocity_(velocity),
-      angle_(angle),
-      exploded_(false),
-      disappeared_(false) {
+        : GameUnit(type, position),
+          target_(target),
+          damage_(damage),
+          velocity_(velocity),
+          angle_(angle),
+          exploded_(false),
+          disappeared_(false) {
 }
 
 void Bullet::update(const sf::Time& dTime) {
-    if (!exploded_ && target_.isAlive()) {
-        if (!checkCollisionWithTarget()) {
-            angle_ = static_cast<float>(atan2((target_.getPosition().x - position_.x), (target_.getPosition().y - position_.y)));
-            position_.x += velocity_ * dTime.asSeconds() * sin(angle_);
-            position_.y += velocity_ * dTime.asSeconds() * cos(angle_);
-        } else {
-            exploded_ = true;
-            damage();
-        }
+    if (target_ == nullptr) {
+        disappeared_ = true;
+        return;
+    }
+    if (target_->isFinished() || !target_->isAlive()) {
+        disappeared_ = true;
+        target_.reset();
+        return;
+    }
+    if (!checkCollisionWithTarget()) {
+        angle_ = static_cast<float>(atan2((target_->getPosition().x - position_.x), (target_->getPosition().y - position_.y)));
+        position_.x += velocity_ * dTime.asSeconds() * sin(angle_);
+        position_.y += velocity_ * dTime.asSeconds() * cos(angle_);
     } else {
-        if (!target_.isAlive()) {
-            disappeared_ = true;
-        }
+        exploded_ = true;
+        damage();
+        target_.reset();
     }
 }
 
 bool Bullet::checkCollisionWithTarget() {
-    float area = 20;
-    return (position_.x < target_.getPosition().x + area && position_.x > target_.getPosition().x - area)
-           && (position_.y < target_.getPosition().y + area && position_.y > target_.getPosition().y - area);
+    float area = 10;
+    return (position_.x < target_->getPosition().x + area && position_.x > target_->getPosition().x - area)
+           && (position_.y < target_->getPosition().y + area && position_.y > target_->getPosition().y - area);
 }
 
 void Bullet::damage() {
-    target_.suffer(damage_);
+    target_->suffer(damage_);
 }
 
 float Bullet::getAngle() const {
@@ -45,12 +49,9 @@ float Bullet::getAngle() const {
 }
 
 bool Bullet::isExploded() const {
-    return exploded_ || disappeared_;
-<<<<<<< Updated upstream
+    return exploded_;
 }
 
 bool Bullet::isDisappeared() const {
     return disappeared_;
-=======
->>>>>>> Stashed changes
 }

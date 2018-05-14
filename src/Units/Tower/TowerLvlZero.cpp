@@ -2,15 +2,10 @@
 #include "../Bullet/BulletLvlOne.h"
 
 
-TowerLvlZero::TowerLvlZero(const sf::Vector2f& position, std::list<Warrior*>& warriors,
-<<<<<<< Updated upstream
-                           std::vector<Bullet*>& bullets)
+TowerLvlZero::TowerLvlZero(const sf::Vector2f& position, std::list<std::shared_ptr<Warrior>>& warriors,
+                           std::vector<std::shared_ptr<Bullet>>& bullets)
         : Tower(Type::lvlZero, position, 0, 0, 0, warriors, bullets) {}
-=======
-                           std::list<Bullet*>& bullets)
-    : Tower(type_, position, 0, 0, 0, warriors, bullets) {}
->>>>>>> Stashed changes
 
-Bullet* TowerLvlZero::makeBullet() {
+std::shared_ptr<Bullet> TowerLvlZero::makeBullet() {
     return nullptr;
 }

@@ -14,12 +14,11 @@ Warrior::Warrior(Type type, const sf::Vector2f& position, const Map::LogicMap& l
 }
 
 void Warrior::update(const sf::Time &dTime) {
-    if (logicMap_.finish.contains(position_)) {
-        finished_ = true;
+    if (!alive_) {
         return;
     }
-    if (hp_ <= 0) {
-        alive_ = false;
+    if (logicMap_.finish.contains(position_)) {
+        finished_ = true;
         return;
     }
 
@@ -74,4 +73,7 @@ bool Warrior::isFinished() const {
 
 void Warrior::suffer(int damage) {
     hp_ -= damage;
+    if (hp_ <= 0) {
+        alive_ = false;
+    }
 }

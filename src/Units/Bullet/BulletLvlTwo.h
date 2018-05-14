@@ -3,26 +3,13 @@
 
 
 #include "Bullet.h"
-#include <list>
 
 class BulletLvlTwo: public Bullet {
 public:
-    BulletLvlTwo(const sf::Vector2f& position, float angle, Warrior& target, std::list<Warrior*>& warriors);
+    BulletLvlTwo(const sf::Vector2f& position, float angle, const std::shared_ptr<Warrior>& target);
 
-    void damage() override;
-
-    static const int kDamage_ = 100;
-    constexpr static const float kVelocity_ = 100;
-
-private:
-    bool inRange(const sf::Vector2f& pointPosition);
-
-    std::list<Warrior*>& warriors_;
-<<<<<<< Updated upstream
-    const float rangeAOE_ = 500;
-=======
-    const float rangeAOE_ = 250;
->>>>>>> Stashed changes
+    static const int kDamage_ = 150;
+    constexpr static const float kVelocity_ = 500;
 };
 
 

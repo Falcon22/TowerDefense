@@ -6,16 +6,12 @@
 
 class TowerLvlZero: public Tower {
 public:
-<<<<<<< Updated upstream
-    TowerLvlZero(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
-=======
-    TowerLvlZero(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::list<Bullet*>& bullets);
->>>>>>> Stashed changes
+    TowerLvlZero(const sf::Vector2f& position, std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets);
 
     void update(const sf::Time& dTime) override {};
 
 private:
-    Bullet* makeBullet() override;
+    std::shared_ptr<Bullet> makeBullet() override;
 };
 
 

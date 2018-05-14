@@ -10,7 +10,7 @@ public:
 
     static const unsigned int kCost_ = 100;
     constexpr static const float kVelocity_ = 100;
-    static const int kHp_ = 600;
+    static const int kHp_ = 1000;
 };
 
 

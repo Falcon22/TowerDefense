@@ -19,6 +19,7 @@ public:
     void draw();
     void analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>& towers2);
 
+
     enum Direction {
         UP,
         DOWN,

@@ -77,15 +77,22 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::audioOn, "Resources/audioOn.png");
     textureHolder.load(Textures::musicOff, "Resources/musicOff.png");
     textureHolder.load(Textures::musicOn, "Resources/musicOn.png");
-    textureHolder.load(Textures::warriorLvlOne, "Resources/enemyOne.png");
-    textureHolder.load(Textures::warriorLvlTwo, "Resources/enemy.png");
+    textureHolder.load(Textures::warriorOne, "Resources/enemyOne.png");
+    textureHolder.load(Textures::warriorTwo, "Resources/enemy.png");
+    textureHolder.load(Textures::blood, "Resources/blood.png");
+    textureHolder.load(Textures::towerZero, "Resources/target.png");
     textureHolder.load(Textures::towerOneTop, "Resources/towerOneTop.png");
-    textureHolder.load(Textures::towerTwoTop, "Resources/towerTopTwo.png");
     textureHolder.load(Textures::towerOneBase, "Resources/towerOneBase.png");
-    textureHolder.load(Textures::towerTwoBase, "Resources/towerBaseTwo.png");
+    textureHolder.load(Textures::towerTwoTop, "Resources/towerTwoTop.png");
+    textureHolder.load(Textures::towerTwoBase, "Resources/towerTwoBase.png");
+    textureHolder.load(Textures::towerThreeTop, "Resources/towerThreeTop.png");
+    textureHolder.load(Textures::towerThreeBase, "Resources/towerThreeBase.png");
     textureHolder.load(Textures::bulletOne, "Resources/bulletOne.png");
     textureHolder.load(Textures::bulletTwo, "Resources/bulletTwo.png");
-    textureHolder.load(Textures::warriorLvlOne, "Resources/enemyOne.png");
+    textureHolder.load(Textures::bulletThree, "Resources/bulletThree.png");
+    textureHolder.load(Textures::explosionOne, "Resources/explosionOne.png");
+    textureHolder.load(Textures::explosionTwo, "Resources/explosionTwo.png");
+    textureHolder.load(Textures::explosionThree, "Resources/explosionThree.png");
 }
 
 

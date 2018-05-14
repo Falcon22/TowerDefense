@@ -18,6 +18,6 @@ void State::clearStates() {
     stack.clearStates();
 }
 
-States::Context State::getContext() const {
+States::Context& State::getContext() {
     return context;
 }

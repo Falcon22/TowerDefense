@@ -6,10 +6,10 @@
 
 class BulletLvlOne: public Bullet {
 public:
-    BulletLvlOne(const sf::Vector2f& position, float angle, Warrior& target);
+    BulletLvlOne(const sf::Vector2f& position, float angle, const std::shared_ptr<Warrior>& target);
 
     static const int kDamage_ = 100;
-    constexpr static const float kVelocity_ = 100;
+    constexpr static const float kVelocity_ = 200;
 };
 
 
