@@ -66,17 +66,23 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
     rect.first.height = 0;
     rect.first.width = 0;
 
+
+    std::cout << start.first <<  " " << start.second << " " << move << std::endl;
     if (move == 1 || move == 2) {
-        this2.second = start.first + 1;
+        this2.first = start.second + 1;
         rect.first.width = TILE_SIZE;
+        sf::Vector2f s((start.first + 1) * TILE_SIZE, (start.second) * TILE_SIZE);
+        roadRect.start = s;
     } else if (move == 3 || move == 4) {
-        this2.first = start.second - 1;
+        this2.first = start.second + 1;
         rect.first.height = TILE_SIZE;
+        sf::Vector2f s((start.first - 5) * TILE_SIZE, (start.second - 5) * TILE_SIZE);
+        roadRect.start = s;
     }
 
     std::pair<long, long> point;
-    sf::Vector2f s((start.first + 1) * TILE_SIZE, (start.second) * TILE_SIZE);
-            roadRect.start = s;
+//    sf::Vector2f s((start.first + 1) * TILE_SIZE, (start.second) * TILE_SIZE);
+//            roadRect.start = s;
     while ((this1.first == start.second || (this1.first != height && this1.first != 0)) &&
            (this1.second == start.first || (this1.second != width && this1.second != 0))) {
         std::cout << "(" << this1.first + 1<< ";" << this1.second + 1<< ") "<< " (" << this2.first + 1<< ";" << this2.second + 1<< ")" << std::endl;
@@ -213,8 +219,11 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
         rect.first.left = (this1.second + 0.5) * TILE_SIZE;
         roadRect.road.push_back(rect);
     } else if (move == 4) {
-
+        rect.first.top = (this1.first + 0.5) * TILE_SIZE;
+        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+        roadRect.road.push_back(rect);
     }
+   std::cout << roadRect.start.x << " !! " << roadRect.start.y;
 
 }
 
@@ -224,6 +233,29 @@ void Map::draw() {
             window.draw(tile);
         }
     }
+
+    for (int i = 1; i >= 0; i--) {
+                sf::RectangleShape r(sf::Vector2f(roadRect.road[i].first.width, roadRect.road[i].first.height));
+                r.setPosition(roadRect.road[i].first.left, roadRect.road[i].first.top);
+                r.setOutlineColor(sf::Color::Black);
+                r.setOutlineThickness(0.5);
+                if (roadRect.road[i].second == UP) {
+                        r.setFillColor(sf::Color::Red);
+                    } else if (roadRect.road[i].second == DOWN) {
+                        r.setFillColor(sf::Color::Green);
+                    } else if (roadRect.road[i].second == LEFT) {
+                        r.setFillColor(sf::Color::Blue);
+                    } else if (roadRect.road[i].second == RIGHT) {
+                        r.setFillColor(sf::Color::White);
+                    }
+
+                            //sf::Rect r(i.left, i.top, i.width, i.height);
+                                window.draw(r);
+            }
+        sf::RectangleShape f(sf::Vector2f(roadRect.finish.width, roadRect.finish.height));
+        f.setPosition(roadRect.finish.left, roadRect.finish.top);
+        f.setFillColor(sf::Color::Black);
+        window.draw(f);
 }
 
 const Map::LogicMap &Map::getRoadRect() const {

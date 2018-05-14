@@ -117,14 +117,14 @@ bool GameState::update(sf::Time dt) {
 //    std::cout << getContext().incoming_events.size() << std::endl;
 //    std::cout << getContext().outcoming_events.size() << std::endl;
 
-    for (auto &&event : getContext().incoming_events) {
+    for (auto &&event : getContext().client.incoming) {
         events.emplace_back(event.id, event.type, event.value, event.time);
     }
 
     if (waveTimer <= clock.asSeconds()) {
         waveTimer += kWaveTimer;
-        getContext().outcoming_events.emplace_back(
-                    getContext().id, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
+        getContext().client.outcoming.emplace_back(
+                    getContext().client.getId(), 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
     }
 
 
@@ -208,7 +208,9 @@ void GameState::manageEvents() {
     Castle* player = nullptr;
     //std::cout << events.size() << std::endl;
     for(auto event = events.begin(); event != events.end();) {
-            break;
+            if (event->time > clock) {
+                ++event;
+                break;
         }
 
 
