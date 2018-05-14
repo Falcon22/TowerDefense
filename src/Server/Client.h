@@ -11,7 +11,7 @@
 
 
 namespace mp {
-    
+
     class Client {
     private:
         struct msg {
@@ -24,10 +24,9 @@ namespace mp {
         sf::TcpSocket       socket_;
         sf::SocketSelector  selector_;
         bool                connected_;
-        int                 id_;
 
     public:
-        explicit Client();
+        explicit Client(const std::string &ip, unsigned short port = 55001);
 
 
         /*
@@ -37,16 +36,12 @@ namespace mp {
         bool askEvents();
         bool sendEvents();
 
-        void connect(const std::string &ip, unsigned short port = 55001);
-
         bool isConnected();
-
-        int getId() const;
-        void setId(int id);
 
         // эвенты
         std::vector<mp::Event> incoming;
         std::vector<mp::Event> outcoming;
+
     };
 
 }
