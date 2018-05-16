@@ -126,7 +126,9 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::warriorOne, "Resources/enemyOne.png");
     textureHolder.load(Textures::warriorTwo, "Resources/enemy.png");
     textureHolder.load(Textures::blood, "Resources/blood.png");
-    textureHolder.load(Textures::towerZero, "Resources/target.png");
+    textureHolder.load(Textures::warriorExplosion, "Resources/warriorExplosion.png");
+    textureHolder.load(Textures::towerZeroRed, "Resources/redTarget.png");
+    textureHolder.load(Textures::towerZeroBlue, "Resources/blueTarget.png");
     textureHolder.load(Textures::towerOneTop, "Resources/towerOneTop.png");
     textureHolder.load(Textures::towerOneBase, "Resources/towerOneBase.png");
     textureHolder.load(Textures::towerTwoTop, "Resources/towerTwoTop.png");

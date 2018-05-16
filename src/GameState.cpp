@@ -25,7 +25,7 @@ void GameState::initTower() {
     sf::Vector2f p;
     for (int i = 0; i < towers1.size(); i++) {
         lComponent.getPlayer1()->addTower(towers1[i], lComponent.getPlayer2()->getWarriors(), lComponent.getBullets());
-        if (getContext().id == 1) {
+        //if (getContext().id == 1) {
             auto bt = std::make_shared<gui::Button>();
             bt->setTexture(b);
             bt->setTextureRect(rect);
@@ -41,7 +41,7 @@ void GameState::initTower() {
                 }
             });
             container.addWidget(bt);
-        }
+        //}
     }
 
     for (int i = 0; i < towers2.size(); i++) {
@@ -98,7 +98,15 @@ bool GameState::handleEvent(const sf::Event& event) {
         && event.key.code == sf::Keyboard::C)
     {
         getContext().outcoming_events.emplace_back(2, 'c', "w", clock + sf::milliseconds(1000));
+        getContext().outcoming_events.emplace_back(1, 'c', "w", clock + sf::milliseconds(1000));
         std::cout << "pressed C " << std::endl;
+    }
+    if (event.type == sf::Event::KeyReleased
+        && event.key.code == sf::Keyboard::L)
+    {
+
+        getContext().outcoming_events.emplace_back(2, 't', "0", clock + sf::milliseconds(2000));
+        std::cout << "pressed L " << std::endl;
     }
 }
 

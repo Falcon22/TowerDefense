@@ -19,16 +19,19 @@ public:
 private:
     void lifeAnimation(const sf::Time& dTime);
     void deathAnimation(const sf::Time& dTime);
+    void finishedAnimation(const sf::Time& dTime);
 
     std::shared_ptr<Warrior> warrior_;
     sf::Sprite sprite_;
     std::pair<int, int> warriorSpriteRect_;//<width, height>
     sf::Sprite deadSprite_;
-
+    sf::Sprite explosionSprite_;
     const char kFrames_ = 4;
-    sf::Int32 deathDuration;
+    sf::Int32 deathDuration_;
+    sf::Int32 finishedDuration_;
     float currentFrame_;
     bool died_;
+    bool finishing_;
     bool finished_;
 };
 
