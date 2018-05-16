@@ -5,18 +5,20 @@
 
 using namespace gui;
 
-HUD::HUD(States::Context context, std::shared_ptr<Castle> player1, std::shared_ptr<Castle> player2)
+HUD::HUD(States::Context context, std::shared_ptr<Castle>& player1, std::shared_ptr<Castle>& player2)
         : context(context),
           gold(context.textureHolder->get(Textures::gold), context.fontHolder->get(Fonts::font1)),
           livePlayer(context.textureHolder->get(Textures::lives), context.fontHolder->get(Fonts::font1)),
-          liveFoe(context.textureHolder->get(Textures::lives), context.fontHolder->get(Fonts::font1)) {
-    if (context.id == 1) {
-        player = player1;
-        foe = player2;
-    } else {
-        player = player2;
-        foe = player1;
-    }
+          liveFoe(context.textureHolder->get(Textures::lives), context.fontHolder->get(Fonts::font1)),
+          player(player1),
+          foe(player2) {
+//    if (context.id == 1) {
+//        player = player1;
+//        foe = player2;
+//    } else {
+//        player = player2;
+//        foe = player1;
+//    }
 
 //
 //    auto audio = std::make_shared<gui::Icon>();
@@ -94,6 +96,8 @@ HUD::HUD(States::Context context, std::shared_ptr<Castle> player1, std::shared_p
 
 void HUD::init()
 {
+    std::cout << "HUD::init()" << std::endl;
+
     sf::IntRect rect{ TILE_SIZE * (15), TILE_SIZE * (0), TILE_SIZE, TILE_SIZE };
     for (int i = 0; i < 10; i++) {
         sf::RectangleShape tmp;
@@ -119,7 +123,7 @@ void HUD::init()
     liveFoe.setTexture(context.textureHolder->get(Textures::lives));
     liveFoe.setScale({1.f / 3.f, 1.f / 3.f});
 
-
+//
 //    star.setTexture(context.textureHolder->get(Textures::star));
 //    star.setPosition(250.f, 5.f);
 //
@@ -130,12 +134,12 @@ void HUD::init()
 //
 //    fight.setTexture(context.textureHolder->get(Textures::fight));
 //    fight.setPosition(430.f, 5.f);
-
-    //singleTurret.setTexture(context.textureHolder->get(Textures::towerOneBase));
-    //singleTurret.setPosition(268.f, 500.f);
-
-    //singleTurret.setTexture(context.textureHolder->get(Textures::towerOneBase));
-    //splashTurret.setPosition(368.f, 500.f);
+//
+//    singleTurret.setTexture(context.textureHolder->get(Textures::towerOneBase));
+//    singleTurret.setPosition(268.f, 500.f);
+//
+//    singleTurret.setTexture(context.textureHolder->get(Textures::towerOneBase));
+//    splashTurret.setPosition(368.f, 500.f);
 
     totalGold.setFont(context.fontHolder->get(Fonts::font1));
     totalGold.setString(std::to_string(player->getGold()));
@@ -153,16 +157,6 @@ void HUD::init()
         totalPlayerLives.setPosition(50.f, 10.f);
         totalFoeLives.setPosition(1020.f, 10.f);
     }
-//    totalLives.setString(std::to_string(gameData->lives));
-//    totalLives.setPosition(200.f, 10.f);
-//
-//    currentLevel.setFont(*context.font);
-//    currentLevel.setString(std::to_string(gameData->currentLevel));
-//    currentLevel.setPosition(450.f, 50.f);
-//
-//    score.setFont(*context.font);
-//    score.setString(std::to_string(gameData->score));
-//    score.setPosition(300.f, 10.f);
 }
 
 void HUD::handleEvent(const sf::Event &event)
@@ -225,7 +219,7 @@ void HUD::draw(sf::RenderTarget &target, sf::RenderStates states) const
     }
 
     auto p = 0.f;
-    for (auto warrior : foe->getWarriorsBuffer()) {
+    for (auto warrior : player->getWarriorsBuffer()) {
         sf::Sprite tmp;
         sf::IntRect rect{ 0, 0, TILE_SIZE, TILE_SIZE };
         tmp.setTextureRect(rect);

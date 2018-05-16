@@ -11,9 +11,13 @@ Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
                client(constants::ip),
                context(window, font, textureHolder, fontHolder, cursor, 2, client.incoming, client.outcoming),
                stateManager(context) {
+    std::cout << "start game constructor" << std::endl;
     loadAllResources();
+    std::cout << "load resources" << std::endl;
     registerStates();
-    stateManager.pushState(States::ID::Menu);
+    std::cout << "register state" << std::endl;
+    stateManager.pushState(States::ID::Game);
+    std::cout << "start game" << std::endl;
 }
 
 void Game::run() {

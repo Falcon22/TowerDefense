@@ -5,6 +5,7 @@
 LogicUnitsManager::LogicUnitsManager()
     : player1_(std::make_shared<Castle>()),
       player2_(std::make_shared<Castle>()) {
+    std::cout << "LComponentConstructor" << std::endl;
     player1_->setEnemy(player2_);
     player2_->setEnemy(player1_);
 }
