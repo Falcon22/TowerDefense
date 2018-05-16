@@ -3,7 +3,7 @@
 
 #include "ResourceManager/ResourcesIdentifier.h"
 #include "ResourceManager/ResourcesHolder.h"
-#include "Server/Client.h"
+#include "Multiplayer/MultiplayerFacade/AbstractMultiplayerFacade.h"
 
 enum class Type {
     lvlZero,

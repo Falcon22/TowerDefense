@@ -2,7 +2,6 @@
 #include "Graphics/Button.h"
 #include "Graphics/TextBox.h"
 #include "Game.h"
-#include "Server/Server.h"
 
 ConnectGameState::ConnectGameState(StateManager &stack, States::Context context) : State(stack, context) {
     context.multiplayer->connect();

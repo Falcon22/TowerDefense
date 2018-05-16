@@ -8,7 +8,7 @@
 #include "GameContext.h"
 #include "ResourceManager/ResourcesHolder.h"
 #include "ResourceManager/ResourcesIdentifier.h"
-#include "Server/Client.h"
+#include "Multiplayer/Entities/Player.h"
 
 //std::vector<mp::Events>& incoming_events;
 //std::vector<mp::Events>& outcoming_events;

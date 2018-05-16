@@ -3,8 +3,9 @@
 #include "PauseState.h"
 #include "GameState.h"
 #include "ConnectGameState.h"
+#include "Multiplayer/MultiplayerFacade/ClientMultiplayerFacade.h"
+#include "Multiplayer/MultiplayerFacade/ServerMultiplayerFacade.h"
 #include <thread>
-#include "Server/Server.h"
 
 Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
         sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
@@ -125,7 +126,7 @@ void Game::server_run(bool use_validation) {
     sf::Time passedTime = sf::Time::Zero;
 
     std::cout << "start multi game" << std::endl;
-    
+
     auto& mp = context.multiplayer;
     while (true) {
         if (!mp->isConnected()) {

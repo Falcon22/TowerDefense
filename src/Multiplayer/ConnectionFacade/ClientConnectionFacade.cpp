@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "ClientConnectionFacade.h"
-#include "../Server.h"
+#include "../Constants.h"
 
 bool mp::ClientConnectionFacade::hasNewData() {
     if(selector_.wait(constants::waitTime()))
