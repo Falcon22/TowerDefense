@@ -8,6 +8,7 @@
 #include "Building/Farm.h"
 #include "Building/Barracks.h"
 #include "Building/Weapons.h"
+#include "../GameConstants.h"
 
 
 class Castle {
@@ -25,6 +26,7 @@ public:
     void makeWave(const sf::Time& dTime);
 
     static std::string generateWaveString(const Castle& player);
+    static bool checkValidUpgradeTower(const Type& towerLvl, unsigned char weaponsLvl);
 
     int getGold() const;
     int getHealth() const;
@@ -32,15 +34,14 @@ public:
     std::list<std::shared_ptr<Warrior>>& getWarriors();
     const std::list<std::shared_ptr<Warrior>>& getWarriorsBuffer() const;
     size_t getWarriorsInBuffer() const;
-    Type getFarmLvl() const;
-    Type getBarracksLvl() const;
-    Type getWeaponsLvl() const;
+
+    const Farm& getFarm() const;
+    const Barracks& getBarracks() const;
+    const Weapons& getWeapons() const;
+
+    GameConstants& gameConst = GameConstants::instance();
 
 private:
-    static const int kInitGold_ = 1000;
-    static const int kInitHealth_ = 1000;
-    static const int kWaveDuration_ = 2000;//mseconds
-    static const int kBufferSize_ = 10;
     int gold_;
     int health_;
     std::shared_ptr<Castle> enemy_;

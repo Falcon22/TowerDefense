@@ -31,11 +31,11 @@ void GraphicsCastle::update(const sf::Time& dTime, States::Context& context) {
     }
 }
 
-void GraphicsCastle::draw(States::Context& context) {
+void GraphicsCastle::draw(States::Context& context, int id) {
     for (const auto &gWarrior: gWarriors_) {
         gWarrior->draw(context);
     }
     for (const auto &tower: castle_.getTowers()) {
-        gTower_->draw(context, tower);
+        gTower_->draw(context, tower, id);
     }
 }

@@ -5,7 +5,7 @@
 #include <list>
 #include <cmath>
 #include "../GameUnit.h"
-#include <list>
+#include "../../GameConstants.h"
 
 class Warrior;
 class Bullet;
@@ -14,9 +14,11 @@ class Tower: public GameUnit {
 public:
 
     void update(const sf::Time& dTime) override;
-    static void upgrade(std::shared_ptr<Tower>& tower);
+    static int upgrade(std::shared_ptr<Tower>& tower);
     float getAngle() const;
     unsigned int getPrice();
+
+    GameConstants& gameConst = GameConstants::instance();
 
 protected:
     Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,

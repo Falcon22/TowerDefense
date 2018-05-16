@@ -62,7 +62,7 @@ float Tower::getAngle() const {
     return angle_;
 }
 
-void Tower::upgrade(std::shared_ptr<Tower>& tower) {
+int Tower::upgrade(std::shared_ptr<Tower>& tower) {
     switch (tower->type_) {
         case Type ::lvlZero:
             tower.reset(new TowerLvlOne(tower->position_, tower->warriors_, tower->bullets_));
@@ -74,6 +74,7 @@ void Tower::upgrade(std::shared_ptr<Tower>& tower) {
             tower.reset(new TowerLvlThree(tower->position_, tower->warriors_, tower->bullets_));
             break;
         default:
-            break;
+            return 0;
     }
+    return tower->getPrice();
 }

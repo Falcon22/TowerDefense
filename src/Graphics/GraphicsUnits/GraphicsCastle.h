@@ -13,7 +13,7 @@ class GraphicsCastle {
 public:
     GraphicsCastle(States::Context& context, Castle& castle);
     void update(const sf::Time& dTime, States::Context& context);
-    void draw(States::Context& context);
+    void draw(States::Context& context, int id);
 
 private:
     Castle& castle_;
