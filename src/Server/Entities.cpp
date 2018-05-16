@@ -50,7 +50,7 @@ void mp::player::getEvents() try {
 }
 
 void mp::player::startGame() {
-    to_send.emplace_back(0, 'j', std::to_string(id), sf::microseconds(0));
+    to_send.emplace_back(0, 's', std::to_string(id), sf::microseconds(0));
     sendEvents();
 }
 

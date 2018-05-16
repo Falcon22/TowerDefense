@@ -6,6 +6,7 @@
 #include "Castle/Castle.h"
 #include "Graphics/Gui.h"
 #include "Graphics/Button.h"
+#include "Graphics/HUD.h"
 #include "Graphics/GraphicsUnits/GraphicsCastle.h"
 #include "Graphics/GraphicsUnits/GraphicsBullet.h"
 
@@ -18,11 +19,14 @@ GameState::GameState(StateManager &stack, States::Context context) :
         map(*context.window),
         clock(sf::Time::Zero),
         waveTimer(kWaveTimer),
-        gComponent(context, *player1, *player2) {
+        gComponent(context, *player1, *player2),
+        hud(context, player1, player2) {
     player1->setEnemy(player2);
     player2->setEnemy(player1);
     map.analyze(towers1, towers2);
+    map.getRoadRect(roadRect);
     initTower();
+    initHUD();
 }
 
 void GameState::initTower() {
@@ -75,19 +79,61 @@ void GameState::initTower() {
     }
 }
 
+void GameState::initHUD() {
+    hud.init();
+    sf::IntRect rect{0, 0, TILE_SIZE, TILE_SIZE};
+    auto addLvlOne = std::make_shared<gui::Button>();
+    auto addLvlTwo = std::make_shared<gui::Button>();
+
+    addLvlOne->setCallback([this](int ind) {
+        if (getContext().id == 2) {
+            player1->addWarrior(Type::lvlOne, roadRect[0]);
+        } else {
+            player2->addWarrior(Type::lvlOne, roadRect[1]);
+        }
+        });
+
+    addLvlOne->setTexture(getContext().textureHolder->get(Textures::addWarriorOne));
+    addLvlOne->setTextureRect(rect);
+    addLvlOne->setPosition(860.f, 705.f);
+    addLvlTwo->setCallback([this](int ind) {
+        if (getContext().id == 2) {
+            player1->addWarrior(Type::lvlTwo, roadRect[0]);
+        } else {
+            player2->addWarrior(Type::lvlTwo, roadRect[1]);
+        }
+    });
+
+    addLvlTwo->setTexture(getContext().textureHolder->get(Textures::addWarriorTwo));
+    addLvlTwo->setTextureRect(rect);
+    addLvlTwo->setPosition(920.f, 705.f);
+
+    buttons.addWidget(addLvlOne);
+    buttons.addWidget(addLvlTwo);
+}
+
 bool GameState::handleEvent(const sf::Event& event) {
     container.handleWidgetsEvent(event);
+    buttons.handleWidgetsEvent(event);
+    hud.handleEvent(event);
+    auto action = hud.getAction();
+
+    if (action == gui::HUD::Action::Exit) {
+        popState();
+        pushState(States::ID::Menu);
+        hud.setAction(gui::HUD::Action::None);
+    }
 
     if (event.type == sf::Event::KeyReleased
         && event.key.code == sf::Keyboard::P)
     {
-        player1->addWarrior(Type::lvlTwo, map.getRoadRect());
+        player1->addWarrior(Type::lvlTwo, roadRect[0]);
         std::cout << "pressed P " << player1->getWarriorsInBuffer() << std::endl;
     }
     if (event.type == sf::Event::KeyReleased
         && event.key.code == sf::Keyboard::U)
     {
-        player1->addWarrior(Type::lvlOne, map.getRoadRect());
+        player1->addWarrior(Type::lvlOne, roadRect[1]);
         std::cout << "pressed U " << player1->getWarriorsInBuffer() << std::endl;
     }
     if (event.type == sf::Event::KeyReleased
@@ -137,6 +183,7 @@ bool GameState::update(sf::Time dt) {
     clock += dt;
     manageEvents();
 
+    hud.update(dt);
     player1->updateCastle(dt);
     player2->updateCastle(dt);
     updateBullets(dt);
@@ -146,6 +193,9 @@ bool GameState::update(sf::Time dt) {
 
 void GameState::draw() {
     map.draw();
+
+    getContext().window->draw(hud);
+    getContext().window->draw(buttons);
     gComponent.draw(getContext());
 }
 
@@ -171,10 +221,10 @@ void GameState::manageEvents() {
                     for (auto type : event->value) {
                         switch (type) {
                             case '1':
-                                player->addWarrior(Type::lvlOne, map.getRoadRect());
+                                player->addWarrior(Type::lvlOne, roadRect[0]);
                                 break;
                             case '2':
-                                player->addWarrior(Type::lvlTwo, map.getRoadRect());
+                                player->addWarrior(Type::lvlTwo, roadRect[1]);
                                 break;
                         }
                     }

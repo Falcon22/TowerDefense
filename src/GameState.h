@@ -12,6 +12,7 @@
 #include "Units/Warrior/Warrior.h"
 #include "Castle/Castle.h"
 #include "Graphics/Button.h"
+#include "Graphics/HUD.h"
 #include "Graphics/GraphicsUnits/GraphicsUnitManager.h"
 
 
@@ -32,6 +33,7 @@ public:
 
 private:
     void initTower();
+    void initHUD();
     void updateBullets(const sf::Time& dTime);
 
     struct Event {
@@ -56,14 +58,16 @@ private:
 
     Player::GameData gameData;
     gui::Gui containter;
+    gui::HUD hud;
     Map map;
-    std::vector<sf::IntRect> roadRect;
 
     GraphicsUnitManager gComponent;
 
     std::vector<sf::Vector2f> towers1;
     std::vector<sf::Vector2f> towers2;
     gui::Gui container;
+    gui::Gui buttons;
+    std::vector<Map::LogicMap> roadRect;
 };
 
 

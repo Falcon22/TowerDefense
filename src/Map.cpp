@@ -5,7 +5,7 @@
 Map::Map(sf::RenderWindow &window) : window(window) {
     std::ifstream fin("Resources/map.csv");
     texture.loadFromFile("Resources/map1.png");
-
+    fin >> count;
     fin >> height >> width;
     map.resize(height, std::vector<Tile>(width));
     int tileNumber;
@@ -23,8 +23,12 @@ Map::Map(sf::RenderWindow &window) : window(window) {
             map[i][j].setPosition(static_cast<float>(j * TILE_SIZE), static_cast<float>(i * TILE_SIZE));
         }
     }
-    fin >> start.second >> start.first;
-    roadRect.start = {600, 600};
+
+    for (int i = 0; i < count; i++) {
+        std::pair<int, int> tmp;
+        fin >> tmp.second >> tmp.first;
+        start.push_back(tmp);
+    }
     fin.close();
 }
 
@@ -43,190 +47,215 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
         }
     }
 
-    std::cout << width << " " << height << " " << start.first << " " << start.second << std::endl;
+    //std::cout << width << " " << height << " " << start.first << " " << start.second << std::endl;
     int move = 0; // 1 - down, 2 - up, 3 - right, 4 - left, 0 - default
 
-    if (start.first == 0) {
-        move = 3;
-    } else if (start.first == (width - 1)) {
-        move = 4;
-    } else if (start.second == 0) {
-        move = 1;
-    } else if (start.second == (height - 1)) {
-        move = 2;
-    }
+    for (auto s: start) {
+        LogicMap tmpRoadRect;
+        if (s.first == 0) {
+            move = 3;
+        } else if (s.first == (width - 1)) {
+            move = 4;
+        } else if (s.second == 0) {
+            move = 1;
+        } else if (s.second == (height - 1)) {
+            move = 2;
+        }
 
-    std::cout << move << std::endl;
+        std::cout << move << std::endl;
 
-    std::pair<int, int> this1, this2;
-    this1.first = start.second;
-    this1.second = start.first;
-    this2.first = start.second;
-    this2.second = start.first;
+        std::pair<int, int> this1, this2;
+        this1.first = s.second;
+        this1.second = s.first;
+        this2.first = s.second;
+        this2.second = s.first;
 
-    std::pair<sf::FloatRect, Direction> rect;
-    rect.first.height = 0;
-    rect.first.width = 0;
+        std::pair<sf::FloatRect, Direction> rect;
+        rect.first.height = 0;
+        rect.first.width = 0;
 
 
-    std::cout << start.first <<  " " << start.second << " " << move << std::endl;
-    if (move == 1 || move == 2) {
-        this2.first = start.second + 1;
-        rect.first.width = TILE_SIZE;
-        sf::Vector2f s((start.first + 1) * TILE_SIZE, (start.second) * TILE_SIZE);
-        roadRect.start = s;
-    } else if (move == 3 || move == 4) {
-        this2.first = start.second + 1;
-        rect.first.height = TILE_SIZE;
-        sf::Vector2f s((start.first - 5) * TILE_SIZE, (start.second - 5) * TILE_SIZE);
-        roadRect.start = s;
-    }
+        std::cout << s.first << " " << s.second << " " << move << std::endl;
+        if (move == 1 || move == 2) {
+            this2.first = s.second + 1;
+            rect.first.width = TILE_SIZE;
+            sf::Vector2f st((s.first + 1) * TILE_SIZE, (s.second) * TILE_SIZE);
+            tmpRoadRect.start = st;
+        } else if (move == 3 || move == 4) {
+            if (move == 3) {
+                rect.first.top = (s.second + 0.5) * TILE_SIZE;
+                rect.first.left = (s.first - 0.5) * TILE_SIZE;
+                rect.first.width = 0.5 * TILE_SIZE;
+            }
+            this2.first = s.second + 1;
+            rect.first.height = TILE_SIZE;
+            sf::Vector2f st((s.first) * TILE_SIZE, (s.second + 1) * TILE_SIZE);
+            tmpRoadRect.start = st;
+        }
 
-    std::pair<long, long> point;
+        std::pair<long, long> point;
 //    sf::Vector2f s((start.first + 1) * TILE_SIZE, (start.second) * TILE_SIZE);
 //            roadRect.start = s;
-    while ((this1.first == start.second || (this1.first != height && this1.first != 0)) &&
-           (this1.second == start.first || (this1.second != width && this1.second != 0))) {
-        std::cout << "(" << this1.first + 1<< ";" << this1.second + 1<< ") "<< " (" << this2.first + 1<< ";" << this2.second + 1<< ")" << std::endl;
-        switch (move) {
-            case 1:
-                if (map[this1.first][this1.second].getTileNumber() == 18) {
-                    rect.second = DOWN;
-                    roadRect.road.push_back(rect);
-                    rect.first.top = (this1.first - 0.5) * TILE_SIZE;
-                    rect.first.left = (this1.second + 0.5) * TILE_SIZE;
-                    this1.first--;
-                    this1.second++;
-                    move = 3;
-                    rect.first.width = 0.5 * TILE_SIZE;
-                    rect.first.height = TILE_SIZE;
-                } else
-                if (map[this2.first][this2.second].getTileNumber() == 19) {
-                    rect.second = DOWN;
-                    roadRect.road.push_back(rect);
-                    this1.first--;
-                    this2.second--;
-                    move = 4;
-                    rect.first.width = 0.5 * TILE_SIZE;
-                    rect.first.height = TILE_SIZE;
-                } else {
-                    rect.first.height += TILE_SIZE;
-                    this1.first++;
-                    this2.first++;
-                }
-                break;
-            case 2:
-                if (map[this1.first][this1.second].getTileNumber() == 3) {
-                    rect.second = UP;
-                    rect.first.top = (this1.first + 1) * TILE_SIZE;
-                    rect.first.left = (this1.second + 0.5) * TILE_SIZE;
-                    roadRect.road.push_back(rect);
-                    rect.first.top = (this1.first + 0.5) * TILE_SIZE;
-                    rect.first.left = (this1.second + 0.5) * TILE_SIZE;
-                    this2.first++;
-                    this1.second++;
-                    move = 3;
-                    rect.first.width = 0.5 * TILE_SIZE;
-                    rect.first.height = TILE_SIZE;
-                } else
-                if (map[this2.first][this2.second].getTileNumber() == 4) {
-                    rect.second = UP;
-                    rect.first.top = (this1.first + 1) * TILE_SIZE;
-                    rect.first.left = (this1.second + 0.5) * TILE_SIZE;
-                    roadRect.road.push_back(rect);
-                    this2.first++;
-                    this2.second--;
-                    move = 4;
-                    rect.first.width = 0.5 * TILE_SIZE;
-                    rect.first.height = TILE_SIZE;
-                } else {
-                    rect.first.height += TILE_SIZE;
-                    this1.first--;
-                    this2.first--;
-                }
-                break;
+        while ((this1.first == s.second || (this1.first != height && this1.first != 0)) &&
+               (this1.second == s.first || (this1.second != width && this1.second != 0))) {
+            std::cout << "(" << this1.first + 1 << ";" << this1.second + 1 << ") " << " (" << this2.first + 1 << ";"
+                      << this2.second + 1 << ")" << std::endl;
+            switch (move) {
+                case 1:
+                    if (map[this1.first][this1.second].getTileNumber() == 18) {
+                        std::cout << "!1!" << std::endl;
+                        rect.second = DOWN;
+                        tmpRoadRect.road.push_back(rect);
+                        rect.first.top = (this1.first - 0.5) * TILE_SIZE;
+                        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+                        this1.first--;
+                        this1.second++;
+                        move = 3;
+                        rect.first.width = 0.5 * TILE_SIZE;
+                        rect.first.height = TILE_SIZE;
+                    } else if (map[this2.first][this2.second].getTileNumber() == 19) {
+                        std::cout << "!2!" << std::endl;
+                        rect.second = DOWN;
+                        tmpRoadRect.road.push_back(rect);
+                        this1.first--;
+                        this2.second--;
+                        move = 4;
+                        rect.first.width = 0.5 * TILE_SIZE;
+                        rect.first.height = TILE_SIZE;
+                    } else {
+                        std::cout << "!3!" << std::endl;
+                        rect.first.height += TILE_SIZE;
+                        this1.first++;
+                        this2.first++;
+                    }
+                    break;
+                case 2:
+                    if (map[this1.first][this1.second].getTileNumber() == 3) {
+                        std::cout << "!4!" << std::endl;
+                        rect.second = UP;
+                        rect.first.top = (this1.first + 1) * TILE_SIZE;
+                        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+                        tmpRoadRect.road.push_back(rect);
+                        rect.first.top = (this1.first + 0.5) * TILE_SIZE;
+                        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+                        this2.first++;
+                        this1.second++;
+                        move = 3;
+                        rect.first.width = 0.5 * TILE_SIZE;
+                        rect.first.height = TILE_SIZE;
+                    } else if (map[this2.first][this2.second].getTileNumber() == 4) {
+                        std::cout << "!5!" << std::endl;
+                        rect.second = UP;
+                        rect.first.top = (this1.first + 1) * TILE_SIZE;
+                        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+                        tmpRoadRect.road.push_back(rect);
+                        this2.first++;
+                        this2.second--;
+                        move = 4;
+                        rect.first.width = 0.5 * TILE_SIZE;
+                        rect.first.height = TILE_SIZE;
+                    } else {
+                        std::cout << "!6!" << std::endl;
+                        rect.first.height += TILE_SIZE;
+                        this1.first--;
+                        this2.first--;
+                    }
+                    break;
 
-            case 3:
-                if (map[this1.first][this1.second].getTileNumber() == 4) {
-                    rect.second = RIGHT;
-                    roadRect.road.push_back(rect);
-                    this1.first++;
-                    this1.second--;
-                    rect.first.left = (this1.second + 0.5) * TILE_SIZE;
-                    rect.first.top = (this1.first - 0.5) * TILE_SIZE;
-                    move = 1;
-                    rect.first.width = TILE_SIZE;
-                    rect.first.height = 0.5 * TILE_SIZE;
-                } else if (map[this2.first][this2.second].getTileNumber() == 19) {
-                    rect.second = RIGHT;
-                    roadRect.road.push_back(rect);
-                    this1.second--;
-                    this2.first--;
-                    move = 2;
-                    rect.first.width = TILE_SIZE;
-                    rect.first.height = 0.5 * TILE_SIZE;
-                } else {
-                    rect.first.width += TILE_SIZE;
-                    this1.second++;
-                    this2.second++;
-                }
-                break;
-            case 4:
-                if (map[this1.first][this1.second].getTileNumber() == 3) {
-                    rect.first.top = (this1.first + 0.5) * TILE_SIZE;
-                    rect.first.left = (this1.second + 1) * TILE_SIZE;
-                    rect.second = LEFT;
-                    roadRect.road.push_back(rect);
-                    rect.first.top = (this1.first + 0.5) * TILE_SIZE;
-                    rect.first.left = (this1.second + 0.5) * TILE_SIZE;
-                    this1.first++;
-                    this2.second++;
-                    move = 1;
-                    rect.first.width = TILE_SIZE;
-                    rect.first.height = 0.5 * TILE_SIZE;
-                } else if (map[this2.first][this2.second].getTileNumber() == 18) {
-                    rect.first.top = (this1.first + 0.5) * TILE_SIZE;
-                    rect.first.left = (this1.second + 1) * TILE_SIZE;
-                    rect.second = LEFT;
-                    roadRect.road.push_back(rect);
-                    this2.second++;
-                    this2.first--;
-                    move = 2;
-                    rect.first.width = TILE_SIZE;
-                    rect.first.height = 0.5 * TILE_SIZE;
-                } else {
-                    rect.first.width += TILE_SIZE;
-                    this1.second--;
-                    this2.second--;
-                }
-                break;
-            default:
-                break;
+                case 3:
+                    if (map[this1.first][this1.second].getTileNumber() == 4) {
+                        std::cout << "!7!" << std::endl;
+                        rect.second = RIGHT;
+                        tmpRoadRect.road.push_back(rect);
+                        this1.first++;
+                        this1.second--;
+                        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+                        rect.first.top = (this1.first - 0.5) * TILE_SIZE;
+                        move = 1;
+                        rect.first.width = TILE_SIZE;
+                        rect.first.height = 0.5 * TILE_SIZE;
+                    } else if (map[this2.first][this2.second].getTileNumber() == 19) {
+                        std::cout << "!8!" << std::endl;
+                        rect.second = RIGHT;
+                        tmpRoadRect.road.push_back(rect);
+                        this1.second--;
+                        this2.first--;
+                        move = 2;
+                        rect.first.width = TILE_SIZE;
+                        rect.first.height = 0.5 * TILE_SIZE;
+                    } else {
+                        std::cout << "!9!" << std::endl;
+                        rect.first.width += TILE_SIZE;
+                        this1.second++;
+                        this2.second++;
+                    }
+                    break;
+                case 4:
+                    if (map[this1.first][this1.second].getTileNumber() == 3) {
+                        std::cout << "!10!" << std::endl;
+                        rect.first.top = (this1.first + 0.5) * TILE_SIZE;
+                        rect.first.left = (this1.second + 1) * TILE_SIZE;
+                        rect.second = LEFT;
+                        tmpRoadRect.road.push_back(rect);
+                        rect.first.top = (this1.first + 0.5) * TILE_SIZE;
+                        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+                        this1.first++;
+                        this2.second++;
+                        move = 1;
+                        rect.first.width = TILE_SIZE;
+                        rect.first.height = 0.5 * TILE_SIZE;
+                    } else if (map[this2.first][this2.second].getTileNumber() == 18) {
+                        std::cout << "!11!" << std::endl;
+                        rect.first.top = (this1.first + 0.5) * TILE_SIZE;
+                        rect.first.left = (this1.second + 1) * TILE_SIZE;
+                        rect.second = LEFT;
+                        tmpRoadRect.road.push_back(rect);
+                        this2.second++;
+                        this2.first--;
+                        move = 2;
+                        rect.first.width = TILE_SIZE;
+                        rect.first.height = 0.5 * TILE_SIZE;
+                    } else {
+                        std::cout << "!12!" << std::endl;
+                        rect.first.width += TILE_SIZE;
+                        this1.second--;
+                        this2.second--;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
-    }
 
-    if (move == 1 || move == 3) {
-        if (move == 1) {
-            rect.second = DOWN;
-        } else if (move == 3) {
-            rect.second = RIGHT;
+        if (move == 1 || move == 3) {
+            if (move == 1) {
+                rect.second = DOWN;
+            } else if (move == 3) {
+                rect.second = RIGHT;
+            }
+            tmpRoadRect.finish.top = (this1.first + 0.5) * TILE_SIZE;
+            tmpRoadRect.finish.left = (this1.second - 2) * TILE_SIZE;
+            tmpRoadRect.finish.height = TILE_SIZE;
+            tmpRoadRect.finish.width = TILE_SIZE;
+            tmpRoadRect.road.push_back(rect);
+        } else if (move == 2) {
+            rect.second = LEFT;
+            rect.first.top = (this1.first + 1) * TILE_SIZE;
+            rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+            tmpRoadRect.road.push_back(rect);
+        } else if (move == 4) {
+            rect.second = LEFT;
+            tmpRoadRect.finish.top = (this1.first + 0.5) * TILE_SIZE;
+            tmpRoadRect.finish.left = (this1.second) * TILE_SIZE;
+            tmpRoadRect.finish.height = TILE_SIZE;
+            tmpRoadRect.finish.width = TILE_SIZE;
+            rect.first.top = (this1.first + 0.5) * TILE_SIZE;
+            rect.first.left = (this1.second + 0.5) * TILE_SIZE;
+            tmpRoadRect.road.push_back(rect);
         }
-        roadRect.finish.top = (this1.first + 0.5) * TILE_SIZE;
-        roadRect.finish.left = (this1.second - 2) * TILE_SIZE;
-        roadRect.finish.height = TILE_SIZE;
-        roadRect.finish.width = TILE_SIZE;
-        roadRect.road.push_back(rect);
-    } else if (move == 2) {
-        rect.first.top = (this1.first + 1) * TILE_SIZE;
-        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
-        roadRect.road.push_back(rect);
-    } else if (move == 4) {
-        rect.first.top = (this1.first + 0.5) * TILE_SIZE;
-        rect.first.left = (this1.second + 0.5) * TILE_SIZE;
-        roadRect.road.push_back(rect);
+        std::cout << tmpRoadRect.start.x << " !! " << tmpRoadRect.start.y;
+        roadRect.push_back(tmpRoadRect);
     }
-   std::cout << roadRect.start.x << " !! " << roadRect.start.y;
-
 }
 
 void Map::draw() {
@@ -236,30 +265,33 @@ void Map::draw() {
         }
     }
 
-    for (int i = 1; i >= 0; i--) {
-                sf::RectangleShape r(sf::Vector2f(roadRect.road[i].first.width, roadRect.road[i].first.height));
-                r.setPosition(roadRect.road[i].first.left, roadRect.road[i].first.top);
-                r.setOutlineColor(sf::Color::Black);
-                r.setOutlineThickness(0.5);
-                if (roadRect.road[i].second == UP) {
-                        r.setFillColor(sf::Color::Red);
-                    } else if (roadRect.road[i].second == DOWN) {
-                        r.setFillColor(sf::Color::Green);
-                    } else if (roadRect.road[i].second == LEFT) {
-                        r.setFillColor(sf::Color::Blue);
-                    } else if (roadRect.road[i].second == RIGHT) {
-                        r.setFillColor(sf::Color::White);
-                    }
+//    for (auto roadRects : roadRect) {
+//        for (auto roads : roadRects.road) {
+//            sf::RectangleShape r(sf::Vector2f(roads.first.width, roads.first.height));
+//            r.setPosition(roads.first.left, roads.first.top);
+//            r.setOutlineColor(sf::Color::Black);
+//            r.setOutlineThickness(0.5);
+//            if (roads.second == UP) {
+//                r.setFillColor(sf::Color::Red);
+//            } else if (roads.second == DOWN) {
+//                r.setFillColor(sf::Color::Green);
+//            } else if (roads.second == LEFT) {
+//                r.setFillColor(sf::Color::Blue);
+//            } else if (roads.second == RIGHT) {
+//                r.setFillColor(sf::Color::White);
+//            }
+//
+//            //sf::Rect r(i.left, i.top, i.width, i.height);
+//            window.draw(r);
+//        }
+//        sf::RectangleShape f(sf::Vector2f(roadRects.finish.width, roadRects.finish.height));
+//        f.setPosition(roadRects.finish.left, roadRects.finish.top);
+//        f.setFillColor(sf::Color::Black);
+//        window.draw(f);
+//    }
 
-                            //sf::Rect r(i.left, i.top, i.width, i.height);
-                                window.draw(r);
-            }
-        sf::RectangleShape f(sf::Vector2f(roadRect.finish.width, roadRect.finish.height));
-        f.setPosition(roadRect.finish.left, roadRect.finish.top);
-        f.setFillColor(sf::Color::Black);
-        window.draw(f);
 }
 
-const Map::LogicMap &Map::getRoadRect() const {
-    return roadRect;
+ void Map::getRoadRect(std::vector<LogicMap>& road) const {
+    road = roadRect;
 }

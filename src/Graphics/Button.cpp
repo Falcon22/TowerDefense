@@ -2,7 +2,7 @@
 
 using namespace gui;
 
-Button::Button(sf::Texture& texture, std::string& text) : callback(),
+Button::Button() : callback(),
                    toggle(false),
                    selected(false)
 {}
@@ -107,6 +107,6 @@ void Button::centerText() {
     sf::FloatRect rect = text.getGlobalBounds();
     text.setOrigin(rect.left, rect.top);
     text.setPosition({sprite.getLocalBounds().width + 160,
-    sprite.getLocalBounds().height + rect.height / 2});
+                      sprite.getLocalBounds().height + rect.height / 2});
 
 }
