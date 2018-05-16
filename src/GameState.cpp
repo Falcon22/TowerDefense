@@ -37,7 +37,7 @@ void GameState::initTower() {
     sf::Vector2f p;
     for (int i = 0; i < towers1.size(); i++) {
         player1->addTower(towers1[i], player2->getWarriors(), bullets);
-        if (getContext().client.getId() == 1) {
+        if (*getContext().p_id == 1) {
             auto bt = std::make_shared<gui::Button>();
             bt->setTexture(b);
             bt->setTextureRect(rect);
@@ -49,7 +49,7 @@ void GameState::initTower() {
             bt->setCallback([this](int ind) {
                 if (player1->getGold() > player1->getTowers().at(ind)->getPrice() &&
                     player1->getWeaponsLvl() != Type::lvlTwo) {
-                    getContext().client.outcoming.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                    getContext().multiplayer->outcoming.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
                     std::cout << ind << std::endl;
                 }
             });
@@ -60,7 +60,7 @@ void GameState::initTower() {
     for (int i = 0; i < towers2.size(); i++) {
         player2->addTower(towers2[i], player1->getWarriors(), bullets);
         auto bt = std::make_shared<gui::Button>();
-        if (getContext().client.getId() == 2) {
+        if (*getContext().p_id == 2) {
             bt->setTexture(b);
             bt->setTextureRect(rect);
             p = towers2[i];
@@ -71,7 +71,7 @@ void GameState::initTower() {
             bt->setCallback([this](int ind) {
                 if (player2->getGold() > player2->getTowers().at(ind)->getPrice() &&
                     (player2->getWeaponsLvl() != Type::lvlTwo)) {
-                    getContext().client.outcoming.emplace_back(2, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                    getContext().multiplayer->outcoming.emplace_back(2, 't', std::to_string(ind), clock + sf::milliseconds(2000));
                     std::cout << ind << std::endl;
                 }
             });
@@ -115,25 +115,25 @@ bool GameState::handleEvent(const sf::Event& event) {
 bool GameState::update(sf::Time dt) {
 //    std::cout << clock.asMilliseconds() << std::endl;
 
-//    std::cout << getContext().client.incoming.size() << std::endl;
-//    std::cout << getContext().client.outcoming.size() << std::endl;
+//    std::cout << getContext().multiplayer->incoming.size() << std::endl;
+//    std::cout << getContext().multiplayer->outcoming.size() << std::endl;
 
-    for (auto &&event : getContext().client.incoming) {
+    for (auto &&event : getContext().multiplayer->incoming) {
         events.emplace_back(event.id, event.type, event.value, event.time);
     }
 
     if (waveTimer <= clock.asSeconds()) {
         waveTimer += kWaveTimer;
         if (!Castle::generateWaveString(*player1).empty())
-            getContext().client.outcoming.emplace_back(
+            getContext().multiplayer->outcoming.emplace_back(
                     1, 'w', Castle::generateWaveString(*player1), clock + sf::milliseconds(2000));
     }
 
 
-    for (auto &&event : getContext().client.outcoming) {
+    for (auto &&event : getContext().multiplayer->outcoming) {
         events.emplace_back(event.id, event.type, event.value, event.time);
     }
-//    getContext().client.outcoming.clear();
+//    getContext().multiplayer->outcoming.clear();
 
     //сгенерировать событие отправки волны!!!
     clock += dt;

@@ -16,8 +16,10 @@
 class Game {
 public:
     Game();
+    Game(mp::player &first, mp::player &second);
 
     void run();
+    void server_run(bool use_validation);
 
 private:
     void input();
@@ -34,8 +36,6 @@ private:
     sf::RenderWindow window;
     States::Context context;
     StateManager stateManager;
-
-    mp::Client client;
 };
 
 

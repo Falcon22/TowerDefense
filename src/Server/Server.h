@@ -7,6 +7,7 @@
 
 #include <SFML/Network.hpp>
 #include "Manager.h"
+#include "../Game.h"
 
 class constants {
 public:
@@ -15,7 +16,9 @@ public:
     }
 
     static const unsigned short port = 55001;
+    static const bool debug = true;
     static constexpr const char * ip = "0.0.0.0";
+
 };
 
 namespace mp {
@@ -53,12 +56,11 @@ namespace mp {
             static constexpr const char *end = "[worker:end] ";
         };
 
-        sf::SocketSelector  selector_;
-        bool                running_;
         pid_t               pid_;
 
         player &            first_;
         player &            second_;
+        Game                game_;
 
     public:
         worker(player &first, player &second, pid_t pid);

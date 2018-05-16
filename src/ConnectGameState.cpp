@@ -5,9 +5,9 @@
 #include "Server/Server.h"
 
 ConnectGameState::ConnectGameState(StateManager &stack, States::Context context) : State(stack, context) {
-    context.client.connect(constants::ip);
+    context.multiplayer->connect();
 
-    if (!context.client.isConnected()) {
+    if (!context.multiplayer->isConnected()) {
         std::cout << "[warning] no server connection" << std::endl;
     }
 
@@ -23,11 +23,11 @@ ConnectGameState::ConnectGameState(StateManager &stack, States::Context context)
     textbox_join->setInd(0);
 
     textbox_new->setCallback([this, textbox_new](int ind) {
-        getContext().client.outcoming.emplace_back(0, 'n', textbox_new->getString(), sf::microseconds(0));
+        getContext().multiplayer->outcoming.emplace_back(0, 'n', textbox_new->getString(), sf::microseconds(0));
     });
 
     textbox_join->setCallback([this, textbox_join](int ind) {
-        getContext().client.outcoming.emplace_back(0, 'j', textbox_join->getString(), sf::microseconds(0));
+        getContext().multiplayer->outcoming.emplace_back(0, 'j', textbox_join->getString(), sf::microseconds(0));
     });
 }
 
@@ -38,7 +38,7 @@ bool ConnectGameState::handleEvent(const sf::Event &event) {
 
 bool ConnectGameState::update(sf::Time dt) {
 
-    for (auto &&event :getContext().client.incoming) {
+    for (auto &&event: getContext().multiplayer->incoming) {
         switch (event.type) {
             case 'n': {
                 std::cout << "[success] game id " << event.value << std::endl;
@@ -46,8 +46,8 @@ bool ConnectGameState::update(sf::Time dt) {
             }
 
             case 'j': {
-                getContext().client.setId(atoi(event.value.c_str()));
-                std::cout << "[success] in game. your id " << getContext().client.getId() << std::endl;
+                *getContext().p_id = atoi(event.value.c_str());
+                std::cout << "[success] in game. your id " << *getContext().p_id << std::endl;
                 popState();
                 pushState(States::ID::Game);
                 break;

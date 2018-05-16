@@ -39,7 +39,7 @@ namespace States {
                 TextureHolder &textureHolder,
                 FontHolder &fontHolder,
                 sf::Sprite &cursor,
-                mp::Client &client
+                mp::AbstractMultiplayerFacade *p_mult
         )
 
                 : window(&window),
@@ -47,7 +47,8 @@ namespace States {
                   textureHolder(&textureHolder),
                   fontHolder(&fontHolder),
                   cursor(&cursor),
-                  client(client)
+                  p_id(new int(2)),
+                  multiplayer(p_mult)
 
         {};
 
@@ -58,7 +59,8 @@ namespace States {
         SoundManager *soundManager;
         sf::Sprite *cursor;
 
-        mp::Client &client;
+        std::shared_ptr<int> p_id;
+        std::shared_ptr<mp::AbstractMultiplayerFacade> multiplayer;
     };
 }
 

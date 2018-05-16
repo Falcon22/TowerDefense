@@ -60,7 +60,7 @@ void mp::master::work() {
             std::cout << e.what() << std::endl;
     }
 
-    wait();
+//    wait();
 }
 
 void mp::master::proceedEvents(player &player) {
@@ -124,13 +124,8 @@ void mp::master::startWorker(mp::game &game) {
 
 
 mp::worker::worker(player &first, player &second, pid_t pid)
-        : first_(first), second_(second), pid_(pid), running_(false) {
-
-
+        : first_(first), second_(second), pid_(pid), game_(first, second) {
     std::cout << msg::success << pid << std::endl;
-
-    selector_.add(first.getSocket());
-    selector_.add(second.getSocket());
 
     first_.setId(1);
     second_.setId(2);
@@ -143,54 +138,12 @@ void mp::worker::work() {
     try {
         first_.startGame();
         second_.startGame();
-        running_ = true;
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
+        return;
     }
 
-    while (running_) {
-        if (!first_.isAvailable() && !second_.isAvailable()) {
-            break;
-        }
-
-        if (selector_.wait(constants::waitTime())) {
-            if (first_.hasNewData(selector_)) {
-                try {
-                    first_.getEvents();
-                } catch (const std::exception &e) {
-                    selector_.remove(first_.getSocket());
-                }
-            }
-
-            if (second_.hasNewData(selector_)) {
-                try {
-                    second_.getEvents();
-                } catch (const std::exception &e) {
-                    selector_.remove(second_.getSocket());
-                }
-            }
-        } else {
-            // TODO validation:
-            // здесь происходит вызов Game.servRun(player &first, player &second);
-
-            first_.to_send = second_.from_client;
-            if (!second_.isAvailable())
-                first_.to_send.emplace_back(0, 's', "stop", sf::microseconds(0)); // системный вызов, завершающий игру
-
-            second_.from_client.clear(); // в Game этот вектор после обработки должен быть очищен!
-
-
-            second_.to_send = first_.from_client;
-            if (!first_.isAvailable())
-                second_.to_send.emplace_back(0, 's', "stop", sf::microseconds(0)); // системный вызов, завершающий игру
-
-            first_.from_client.clear(); // в Game этот вектор после обработки должен быть очищен!
-
-
-            first_.sendEvents();
-            second_.sendEvents();
-        }
-    }
+    game_.server_run(false);
 
     std::cout << msg::end << pid_ << std::endl;
 }

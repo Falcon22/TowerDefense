@@ -22,7 +22,6 @@ namespace mp {
         virtual void remove(int id) = 0;
     };
 
-
     class player_manager: public manager<player> {
     private:
         int next_id;
