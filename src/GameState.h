@@ -5,20 +5,15 @@
 #include <utility>
 #include "ResourceManager/ResourcesHolder.h"
 #include "ResourceManager/ResourcesIdentifier.h"
-
 #include "State.h"
 #include "Graphics/Gui.h"
 #include "Map.h"
 #include "Units/Warrior/Warrior.h"
-#include "Castle/Castle.h"
 #include "Graphics/Button.h"
 #include "Graphics/GraphicsUnits/GraphicsUnitManager.h"
+#include "Units/LogicUnitsManager.h"
+#include "GameConstants.h"
 
-
-class Tower;
-class Bullet;
-class GraphicsCastle;
-class GraphicsBullet;
 
 class GameState : public State {
 public:
@@ -30,9 +25,10 @@ public:
 
     void manageEvents();
 
+    GameConstants& gameConst = GameConstants::instance();
+
 private:
     void initTower();
-    void updateBullets(const sf::Time& dTime);
 
     struct Event {
         Event(int id_, char type_, std::string value_, const sf::Time time_) :
@@ -45,20 +41,18 @@ private:
         std::string value;
         sf::Time time;
     };
+
     std::vector<Event> events;
     sf::Time clock;
-    std::shared_ptr<Castle> player1;
-    std::shared_ptr<Castle> player2;
-    std::vector<std::shared_ptr<Bullet>> bullets;
 
     float waveTimer;
-    const float kWaveTimer = 10;//second
 
     Player::GameData gameData;
     gui::Gui containter;
     Map map;
     std::vector<sf::IntRect> roadRect;
 
+    LogicUnitsManager lComponent;
     GraphicsUnitManager gComponent;
 
     std::vector<sf::Vector2f> towers1;

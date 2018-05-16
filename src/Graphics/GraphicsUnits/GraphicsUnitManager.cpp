@@ -34,8 +34,8 @@ void GraphicsUnitManager::update(const sf::Time& dt, States::Context& context, c
 }
 
 void GraphicsUnitManager::draw(States::Context& context) {
-    gCastle1->draw(context);
-    gCastle2->draw(context);
+    gCastle1->draw(context, 1);
+    gCastle2->draw(context, 2);
     for (const auto &gBullet: gBullets) {
         gBullet->draw(context);
     }

@@ -4,6 +4,7 @@
 
 #include "../GameUnit.h"
 #include "../Warrior/Warrior.h"
+#include "../../GameConstants.h"
 
 class Bullet: public GameUnit {
 public:

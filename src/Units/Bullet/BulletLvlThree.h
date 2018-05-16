@@ -11,14 +11,11 @@ public:
 
     void damage() override;
 
-    static const int kDamage_ = 200;
-    constexpr static const float kVelocity_ = 200;
-
 private:
     bool inRange(const sf::Vector2f& pointPosition);
 
     std::list<std::shared_ptr<Warrior>>& warriors_;
-    const float rangeAOE_ = 300;
+    float rangeAOE_;
 };
 
 
