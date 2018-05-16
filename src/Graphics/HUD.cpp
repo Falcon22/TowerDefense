@@ -53,7 +53,7 @@ HUD::HUD(States::Context context, std::shared_ptr<Castle> player1, std::shared_p
     auto exit = std::make_shared<gui::Icon>();
 
     exit->setTexture(context.textureHolder->get(Textures::exit), context.textureHolder->get(Textures::exit));
-    exit->setPosition({1020.f, 5.f});
+    exit->setPosition({1120.f, 5.f});
     exit->setCallback([this]
                       {
                           action = Action::Exit;
@@ -104,14 +104,14 @@ void HUD::init()
         buffer.push_back(tmp);
     }
     gold.setTexture(context.textureHolder->get(Textures::gold));
-    gold.setPosition(435.f, 0.f);
+    gold.setPosition(535.f, 0.f);
 
     if (context.id == 1) {
         livePlayer.setPosition(0.f, 5.f);
-        liveFoe.setPosition(870.f, 5.f);
+        liveFoe.setPosition(970.f, 5.f);
     } else {
         liveFoe.setPosition(0.f, 5.f);
-        livePlayer.setPosition(870.f, 5.f);
+        livePlayer.setPosition(970.f, 5.f);
     }
 
     livePlayer.setTexture(context.textureHolder->get(Textures::lives));
@@ -139,7 +139,7 @@ void HUD::init()
 
     totalGold.setFont(context.fontHolder->get(Fonts::font1));
     totalGold.setString(std::to_string(player->getGold()));
-    totalGold.setPosition(485.f, 10.f);
+    totalGold.setPosition(585.f, 10.f);
 //
     totalPlayerLives.setFont(context.fontHolder->get(Fonts::font1));
     totalFoeLives.setFont(context.fontHolder->get(Fonts::font1));
@@ -148,10 +148,10 @@ void HUD::init()
 
     if (context.id == 1) {
         totalFoeLives.setPosition(50.f, 10.f);
-        totalPlayerLives.setPosition(920.f, 10.f);
+        totalPlayerLives.setPosition(1020.f, 10.f);
     } else {
         totalPlayerLives.setPosition(50.f, 10.f);
-        totalFoeLives.setPosition(920.f, 10.f);
+        totalFoeLives.setPosition(1020.f, 10.f);
     }
 //    totalLives.setString(std::to_string(gameData->lives));
 //    totalLives.setPosition(200.f, 10.f);
@@ -184,7 +184,6 @@ void HUD::handleEvent(const sf::Event &event)
 void HUD::update(sf::Time dt)
 {
     totalGold.setString(std::to_string(player->getGold()));
-    std::cout << player->getGold() << std::endl;
 
     totalPlayerLives.setString(std::to_string(player->getHealth()));
     totalFoeLives.setString(std::to_string(foe->getHealth()));
@@ -226,8 +225,6 @@ void HUD::draw(sf::RenderTarget &target, sf::RenderStates states) const
     }
 
     auto p = 0.f;
-    std::cout << player->getWarriorsBuffer().size() << std::endl;
-    std::cout << foe->getWarriorsBuffer().size() << std::endl;
     for (auto warrior : foe->getWarriorsBuffer()) {
         sf::Sprite tmp;
         sf::IntRect rect{ 0, 0, TILE_SIZE, TILE_SIZE };

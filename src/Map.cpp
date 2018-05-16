@@ -51,6 +51,7 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
     int move = 0; // 1 - down, 2 - up, 3 - right, 4 - left, 0 - default
 
     for (auto s: start) {
+        std::cout << "start.x "<< s.first << " start.y " << s.second << ";" << std::endl;
         LogicMap tmpRoadRect;
         if (s.first == 0) {
             move = 3;
@@ -60,6 +61,13 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
             move = 1;
         } else if (s.second == (height - 1)) {
             move = 2;
+        }
+        if ((s.first == 0) && (s.second == 3)) {
+            move = 2;
+        }
+
+        if ((s.first == 17) && (s.second == 8)) {
+            move = 1;
         }
 
         std::cout << move << std::endl;
@@ -77,9 +85,15 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
 
         std::cout << s.first << " " << s.second << " " << move << std::endl;
         if (move == 1 || move == 2) {
-            this2.first = s.second + 1;
+            this2.second = this1.second + 1;
             rect.first.width = TILE_SIZE;
             sf::Vector2f st((s.first + 1) * TILE_SIZE, (s.second) * TILE_SIZE);
+            if (move == 1) {
+                rect.first.top = (s.second) * TILE_SIZE;
+                rect.first.left = (s.first + 0.5) * TILE_SIZE;
+                rect.first.width = TILE_SIZE;
+                rect.second = DOWN;
+            }
             tmpRoadRect.start = st;
         } else if (move == 3 || move == 4) {
             if (move == 3) {
@@ -96,10 +110,11 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
         std::pair<long, long> point;
 //    sf::Vector2f s((start.first + 1) * TILE_SIZE, (start.second) * TILE_SIZE);
 //            roadRect.start = s;
-        while ((this1.first == s.second || (this1.first != height && this1.first != 0)) &&
-               (this1.second == s.first || (this1.second != width && this1.second != 0))) {
-            std::cout << "(" << this1.first + 1 << ";" << this1.second + 1 << ") " << " (" << this2.first + 1 << ";"
-                      << this2.second + 1 << ")" << std::endl;
+        while ((this1.first == s.second || (this1.first != height && this1.first != -1)) &&
+               (this1.second == s.first || (this1.second != width && this1.second != -1)) &&
+                (map[this1.first][this1.second].getTileNumber() != 16 || map[this2.first][this2.second].getTileNumber() != 16)) {
+            //std::cout << "(" << this1.first + 1 << ";" << this1.second + 1 << ") " << " (" << this2.first + 1 << ";"
+            //          << this2.second + 1 << ")" << std::endl;
             switch (move) {
                 case 1:
                     if (map[this1.first][this1.second].getTileNumber() == 18) {
@@ -233,13 +248,17 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
             } else if (move == 3) {
                 rect.second = RIGHT;
             }
-            tmpRoadRect.finish.top = (this1.first + 0.5) * TILE_SIZE;
-            tmpRoadRect.finish.left = (this1.second - 2) * TILE_SIZE;
+            tmpRoadRect.finish.top = (this1.first) * TILE_SIZE;
+            tmpRoadRect.finish.left = (this1.second + 0.5) * TILE_SIZE;
             tmpRoadRect.finish.height = TILE_SIZE;
             tmpRoadRect.finish.width = TILE_SIZE;
             tmpRoadRect.road.push_back(rect);
         } else if (move == 2) {
-            rect.second = LEFT;
+            tmpRoadRect.finish.top = (this1.first) * TILE_SIZE;
+            tmpRoadRect.finish.left = (this1.second + 0.5) * TILE_SIZE;
+            tmpRoadRect.finish.height = TILE_SIZE;
+            tmpRoadRect.finish.width = TILE_SIZE;
+            rect.second = UP;
             rect.first.top = (this1.first + 1) * TILE_SIZE;
             rect.first.left = (this1.second + 0.5) * TILE_SIZE;
             tmpRoadRect.road.push_back(rect);

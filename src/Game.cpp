@@ -6,7 +6,7 @@
 #include <thread>
 #include "Server/Server.h"
 
-Game::Game() : window({1088, 768}, "Tower Defense", sf::Style::Titlebar |
+Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
                                                      sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
                client(constants::ip),
                context(window, font, textureHolder, fontHolder, cursor, 2, client.incoming, client.outcoming),
@@ -143,6 +143,9 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::warriorIconTwo, "Resources/warriorTwo.png");
     textureHolder.load(Textures::addWarriorOne, "Resources/addWarriorOne.png");
     textureHolder.load(Textures::addWarriorTwo, "Resources/addWarrior.png");
+    textureHolder.load(Textures::addBarraks, "Resources/addBarraks.png");
+    textureHolder.load(Textures::addFarm, "Resources/addFarm.png");
+    textureHolder.load(Textures::addWeapons, "Resources/addWeapons.png");
 }
 
 

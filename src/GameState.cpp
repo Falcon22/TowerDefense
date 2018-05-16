@@ -91,7 +91,7 @@ void GameState::initHUD() {
         } else {
             player2->addWarrior(Type::lvlOne, roadRect[1]);
         }
-        });
+    });
 
     addLvlOne->setTexture(getContext().textureHolder->get(Textures::addWarriorOne));
     addLvlOne->setTextureRect(rect);
@@ -110,6 +110,53 @@ void GameState::initHUD() {
 
     buttons.addWidget(addLvlOne);
     buttons.addWidget(addLvlTwo);
+
+    auto addFarm = std::make_shared<gui::Button>();
+    auto addBarraks = std::make_shared<gui::Button>();
+    auto addWeapons = std::make_shared<gui::Button>();
+
+    addFarm->setTexture(getContext().textureHolder->get(Textures::addFarm));
+    addFarm->setTextureRect(rect);
+    addFarm->setPosition(280.f, 705.f);
+
+    addBarraks->setTexture(getContext().textureHolder->get(Textures::addBarraks));
+    addBarraks->setTextureRect(rect);
+    addBarraks->setPosition(220.f, 705.f);
+
+    addWeapons->setTexture(getContext().textureHolder->get(Textures::addWeapons));
+    addWeapons->setTextureRect(rect);
+    addWeapons->setPosition(160.f, 705.f);
+
+    addFarm->setCallback([this](int ind) {
+        std::cout << "farm" << std::endl;
+        if (getContext().id == 2) {
+            player1->upgradeBuilding('f');
+        } else {
+            player2->upgradeBuilding('f');
+        }
+    });
+
+    addBarraks->setCallback([this](int ind) {
+        std::cout << "barraks" << std::endl;
+        if (getContext().id == 2) {
+            player1->upgradeBuilding('b');
+        } else {
+            player2->upgradeBuilding('b');
+        }
+    });
+
+    addWeapons->setCallback([this](int ind) {
+        std::cout << "weapons" << std::endl;
+        if (getContext().id == 2) {
+            player1->upgradeBuilding('w');
+        } else {
+            player2->upgradeBuilding('w');
+        }
+    });
+
+    buttons.addWidget(addFarm);
+    buttons.addWidget(addBarraks);
+    buttons.addWidget(addWeapons);
 }
 
 bool GameState::handleEvent(const sf::Event& event) {
