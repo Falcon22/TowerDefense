@@ -12,6 +12,7 @@
 #include "Graphics/Button.h"
 #include "Graphics/GraphicsUnits/GraphicsUnitManager.h"
 #include "Units/LogicUnitsManager.h"
+#include "GameConstants.h"
 
 
 class GameState : public State {
@@ -23,6 +24,8 @@ public:
     void draw() override;
 
     void manageEvents();
+
+    GameConstants& gameConst = GameConstants::instance();
 
 private:
     void initTower();
@@ -38,11 +41,11 @@ private:
         std::string value;
         sf::Time time;
     };
+
     std::vector<Event> events;
     sf::Time clock;
 
     float waveTimer;
-    const float kWaveTimer = 10;//second
 
     Player::GameData gameData;
     gui::Gui containter;

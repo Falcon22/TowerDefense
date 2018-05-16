@@ -8,8 +8,7 @@ class Barracks: public Building {
 public:
     Barracks();
 
-private:
-    static const int kCost_ = 1000;
+    int upgrade() override;
 };
 
 

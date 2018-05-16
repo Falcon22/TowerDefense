@@ -4,7 +4,7 @@
 
 #include "../../Map.h"
 #include "../GameUnit.h"
-
+#include "../../GameConstants.h"
 
 class Warrior: public GameUnit {
 public:

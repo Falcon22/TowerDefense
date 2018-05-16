@@ -5,8 +5,8 @@
 
 Castle::Castle()
     : enemy_(nullptr),
-      gold_(kInitGold_),
-      health_(kInitHealth_),
+      gold_(gameConst.cCASTLE_INIT_GOLD()),
+      health_(gameConst.cCASTLE_HP()),
       towers_(),
       warriors_(),
       numWarriorsToWave_(0),
@@ -40,38 +40,26 @@ const std::list<std::shared_ptr<Warrior>>& Castle::getWarriorsBuffer() const {
     return warriorsBuffer_;
 }
 
-Type Castle::getFarmLvl() const {
-    return farm_.getLvl();
-}
-
-Type Castle::getBarracksLvl() const {
-    return barracks_.getLvl();
-}
-
-Type Castle::getWeaponsLvl() const {
-    return weapons_.getLvl();
-}
-
 void Castle::upgradeTower(int index) {
-    Tower::upgrade(towers_[index]);
+    gold_ -= Tower::upgrade(towers_[index]);
 }
 
 void Castle::upgradeBuilding(char type) {
     switch (type) {
         case 'f':
-            farm_.upgrade();
+            gold_ -= farm_.upgrade();
             break;
         case 'b':
-            barracks_.upgrade();
+            gold_ -= barracks_.upgrade();
             break;
         case 'w':
-            weapons_.upgrade();
+            gold_ -= weapons_.upgrade();
             break;
     }
 }
 
 void Castle::addWarrior(Type type, const Map::LogicMap& logicMap) {
-    if (numWarriorsInBuffer_ >= kBufferSize_) {
+    if (numWarriorsInBuffer_ >= gameConst.cWARRIORS_BUFFER_SIZE()) {
         return;
     }
     switch (type) {
@@ -125,7 +113,7 @@ void Castle::addTower(const sf::Vector2f& position, std::list<std::shared_ptr<Wa
 void Castle::makeWave(const sf::Time& dTime) {
     waveDuration_ -= dTime.asMilliseconds();
     if (waveDuration_ <= 0) {
-        waveDuration_ = kWaveDuration_;
+        waveDuration_ = gameConst.cCASTLE_WAVE_DURATION();
         if (numWarriorsToWave_ > 0) {
             --numWarriorsToWave_;
             warriors_.push_back(warriorsBuffer_.front());
@@ -163,3 +151,20 @@ std::string Castle::generateWaveString(const Castle& player) {
 size_t Castle::getWarriorsInBuffer() const {
     return numWarriorsInBuffer_;
 }
+
+bool Castle::checkValidUpgradeTower(const Type &towerLvl, unsigned char weaponsLvl) {
+    return  ((weaponsLvl == 3) || (towerLvl == Type::lvlZero && weaponsLvl >= 1) ||
+        (towerLvl == Type::lvlOne && weaponsLvl >= 2));
+}
+
+const Farm& Castle::getFarm() const {
+    return farm_;
+}
+
+const Barracks& Castle::getBarracks() const {
+    return barracks_;
+}
+const Weapons& Castle::getWeapons() const {
+    return weapons_;
+}
+

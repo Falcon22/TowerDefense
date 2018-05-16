@@ -3,19 +3,19 @@
 
 
 #include "../../GameContext.h"
+#include "../../GameConstants.h"
 
 class Building {
 public:
-    void upgrade();
-    Type getLvl() const;
+    virtual int upgrade() = 0;
+    unsigned char getLvl() const;
     int getUpgradeCost() const;
 
 protected:
-    Building(int upgradeCost, int costIncrement);
+    explicit Building(int upgradeCost);
 
     int upgradeCost_;
-    int costIncrement_;
-    Type lvl_;
+    unsigned char lvl_;
 };
 
 

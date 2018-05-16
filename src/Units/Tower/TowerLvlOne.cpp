@@ -3,7 +3,9 @@
 
 TowerLvlOne::TowerLvlOne(const sf::Vector2f& position, std::list<std::shared_ptr<Warrior>>& warriors,
                          std::vector<std::shared_ptr<Bullet>>& bullets)
-        : Tower(Type::lvlOne, position, kPrice_, kAttackRange_, kAttackCooldown_, warriors, bullets) {}
+        : Tower(Type::lvlOne, position, GameConstants::instance().cTOWER_1_UP_COST(),
+                GameConstants::instance().cTOWER_1_RANGE(), GameConstants::instance().cTOWER_1_COOLDOWN(),
+                warriors, bullets) {}
 
 std::shared_ptr<Bullet> TowerLvlOne::makeBullet() {
     double radAngle = angle_ * M_PI / 180 - M_PI / 2;

@@ -14,7 +14,6 @@ GameState::GameState(StateManager &stack, States::Context context) :
         gameData(),
         map(*context.window),
         clock(sf::Time::Zero),
-        waveTimer(kWaveTimer),
         gComponent(context, *lComponent.getPlayer1(), *lComponent.getPlayer2()) {
     map.analyze(towers1, towers2);
     initTower();
@@ -36,8 +35,7 @@ void GameState::initTower() {
             bt->setPosition(p);
             bt->setInd(i);
             bt->setCallback([this](int ind) {
-                if (lComponent.getPlayer1()->getGold() > lComponent.getPlayer1()->getTowers().at(ind)->getPrice() &&
-                        lComponent.getPlayer1()->getWeaponsLvl() != Type::lvlThree) {
+                if (lComponent.getPlayer1()->getGold() > lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) {
                     getContext().outcoming_events.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
                     std::cout << ind << std::endl;
                 }
@@ -58,8 +56,7 @@ void GameState::initTower() {
             bt->setPosition(p);
             bt->setInd(i);
             bt->setCallback([this](int ind) {
-                if (lComponent.getPlayer2()->getGold() > lComponent.getPlayer2()->getTowers().at(ind)->getPrice() &&
-                    (lComponent.getPlayer2()->getWeaponsLvl() != Type::lvlThree)) {
+                if (lComponent.getPlayer2()->getGold() > lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) {
                     getContext().outcoming_events.emplace_back(2, 't', std::to_string(ind),
                                                                clock + sf::milliseconds(2000));
                     std::cout << ind << std::endl;
@@ -88,24 +85,25 @@ bool GameState::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyReleased
         && event.key.code == sf::Keyboard::F)
     {
-        getContext().outcoming_events.emplace_back(1, 'c', "f", clock + sf::milliseconds(1000));
+        getContext().outcoming_events.emplace_back(2, 'c', "f", clock + sf::milliseconds(1000));
         std::cout << "pressed F " << std::endl;
     }
     if (event.type == sf::Event::KeyReleased
         && event.key.code == sf::Keyboard::B)
     {
-        getContext().outcoming_events.emplace_back(1, 'c', "b", clock + sf::milliseconds(1000));
+        getContext().outcoming_events.emplace_back(2, 'c', "b", clock + sf::milliseconds(1000));
         std::cout << "pressed B " << std::endl;
     }
     if (event.type == sf::Event::KeyReleased
         && event.key.code == sf::Keyboard::C)
     {
-        getContext().outcoming_events.emplace_back(1, 'c', "w", clock + sf::milliseconds(1000));
+        getContext().outcoming_events.emplace_back(2, 'c', "w", clock + sf::milliseconds(1000));
         std::cout << "pressed C " << std::endl;
     }
 }
 
 bool GameState::update(sf::Time dt) {
+    //std::cout << gameConst.cWAVE_TIMER() << std::endl;
 //    std::cout << clock.asMilliseconds() << std::endl;
 
 //    std::cout << getContext().incoming_events.size() << std::endl;
@@ -118,7 +116,7 @@ bool GameState::update(sf::Time dt) {
     }
 
     if (waveTimer <= clock.asSeconds()) {
-        waveTimer += kWaveTimer;
+        waveTimer += gameConst.cWAVE_TIMER();
         getContext().outcoming_events.emplace_back(
                     /*getContext().id*/1, 'w', Castle::generateWaveString(*lComponent.getPlayer1()), clock + sf::milliseconds(2000));//Что здесь дожно происходить? ЧТо такое ID?
         //std::cout << "Wave go!" << std::endl;
@@ -134,6 +132,10 @@ bool GameState::update(sf::Time dt) {
 
     lComponent.update(dt);
     gComponent.update(dt, getContext(), lComponent.getBullets());
+
+    std::cout << "Farm: " << (int)lComponent.getPlayer2().get()->getFarm().getLvl() << std::endl;
+    std::cout << "Barracks: " << (int)lComponent.getPlayer2().get()->getBarracks().getLvl() << std::endl;
+    std::cout << "Weapons: " << (int)lComponent.getPlayer2().get()->getWeapons().getLvl() << std::endl;
     //std::cout << bullets.size() << " | " << gComponent.getGBulletsSize() << std::endl;
 }
 
@@ -156,19 +158,30 @@ void GameState::manageEvents() {
             player = lComponent.getPlayer2().get();
         }
         switch (event->type) {
-            case 't':
-                player->upgradeTower(stoi(event->value));
+            case 't': {
+                int index = stoi(event->value);
+                if (player->getGold() >= player->getTowers().at(index).get()->getPrice()) {
+                    if (Castle::checkValidUpgradeTower(player->getTowers().at(index).get()->getType(),
+                                                       player->getWeapons().getLvl())) {
+                        player->upgradeTower(index);
+                    }
+                }
                 break;
+            }
             case 'w':
                 std::cout << "Wave go!" << std::endl;
                 if (event->id == 2) {
                     for (auto type : event->value) {
                         switch (type) {
                             case '1':
-                                player->addWarrior(Type::lvlOne, map.getRoadRect());
+                                if (player->getGold() > gameConst.cWARRIOR_1_COST() && player->getBarracks().getLvl() >= 1) {
+                                    player->addWarrior(Type::lvlOne, map.getRoadRect());
+                                }
                                 break;
                             case '2':
-                                player->addWarrior(Type::lvlTwo, map.getRoadRect());
+                                if (player->getGold() > gameConst.cWARRIOR_2_COST() && player->getBarracks().getLvl() >= 2) {
+                                    player->addWarrior(Type::lvlTwo, map.getRoadRect());
+                                }
                                 break;
                         }
                     }
@@ -176,7 +189,21 @@ void GameState::manageEvents() {
                 player->letsMakingWave();
                 break;
             case 'c':
-                player->upgradeBuilding(event->value[0]);
+                int upgradeCost = 0;
+                switch (event->value[0]) {
+                    case 'f':
+                        upgradeCost = player->getFarm().getUpgradeCost();
+                        break;
+                    case 'b':
+                        upgradeCost = player->getBarracks().getUpgradeCost();
+                        break;
+                    case 'w':
+                        upgradeCost = player->getWeapons().getUpgradeCost();
+                        break;
+                }
+                if (upgradeCost != 0 && player->getGold() >= upgradeCost) {
+                    player->upgradeBuilding(event->value[0]);
+                }
                 break;
         }
         event = events.erase(event);
