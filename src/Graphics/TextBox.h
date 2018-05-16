@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <functional>
 #include "Widget.h"
 namespace gui {
     class Textbox : public Widget {
