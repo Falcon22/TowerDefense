@@ -64,4 +64,3 @@ bool mp::Client::sendEvents() {
 bool mp::Client::isConnected() {
     return connected_;
 }
-

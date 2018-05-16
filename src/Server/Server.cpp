@@ -20,45 +20,45 @@ mp::master::~master() {
 void mp::master::work() {
     std::cout << msg::run << std::endl;
     while (running_) try {
-        if (selector_.wait(constants::waitTime())) {
-            if (selector_.isReady(listener_)) { // подключение нового игрока
-                player& new_player = pool_players_.create(); // добавление игрока в список
+            if (selector_.wait(constants::waitTime())) {
+                if (selector_.isReady(listener_)) { // подключение нового игрока
+                    player& new_player = pool_players_.create(); // добавление игрока в список
 
-                try {
-                    new_player.connect(listener_, selector_);
-                } catch (const std::exception& e) {
-                    // если ошибка при подключении
-                    std::cout << e.what();
-                    pool_players_.remove(new_player.getId());
-                }
+                    try {
+                        new_player.connect(listener_, selector_);
+                    } catch (const std::exception& e) {
+                        // если ошибка при подключении
+                        std::cout << e.what();
+                        pool_players_.remove(new_player.getId());
+                    }
 
-            } else {
-                for (auto &&player : pool_players_.getEntities()) {
-                    if (!player.isInGame() && selector_.isReady(player.getSocket())) {
-                        try {
-                            player.getEvents();
-                        } catch (const std::exception& e) {
-                            // сюда попадаем при проблемах с подключением игрока. Пока что просто удаляем его, в дальнейшем можно было бы обработать
-                            std::cout << e.what() << std::endl;
-                            selector_.remove(player.getSocket());
+                } else {
+                    for (auto &&player : pool_players_.getEntities()) {
+                        if (!player.isInGame() && selector_.isReady(player.getSocket())) {
+                            try {
+                                player.getEvents();
+                            } catch (const std::exception& e) {
+                                // сюда попадаем при проблемах с подключением игрока. Пока что просто удаляем его, в дальнейшем можно было бы обработать
+                                std::cout << e.what() << std::endl;
+                                selector_.remove(player.getSocket());
+                            }
+
+                            // обрабатываем создание новых игр и подключение к ним
+                            proceedEvents(player);
+                            player.from_client.clear();
                         }
-
-                        // обрабатываем создание новых игр и подключение к ним
-                        proceedEvents(player);
-                        player.from_client.clear();
+                    }
+                }
+            } else {
+                for (auto &&game : pool_games_) {
+                    if (game.isReady() && !game.isStarted()) {
+                        startWorker(game);
                     }
                 }
             }
-        } else {
-            for (auto &&game : pool_games_) {
-                if (game.isReady() && !game.isStarted()) {
-                    startWorker(game);
-                }
-            }
-        }
-    } catch (const std::exception& e) {
+        } catch (const std::exception& e) {
             std::cout << e.what() << std::endl;
-    }
+        }
 
     wait();
 }

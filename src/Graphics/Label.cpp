@@ -2,9 +2,8 @@
 
 using namespace gui;
 
-Label::Label(sf::Texture texture, std::string& textIn, sf::Font &font)  {
+Label::Label(sf::Texture texture, sf::Font &font)  {
     sprite.setTexture(texture);
-    text.setString(textIn);
     text.setFont(font);
 }
 

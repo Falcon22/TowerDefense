@@ -10,6 +10,7 @@
 #include "Map.h"
 #include "Units/Warrior/Warrior.h"
 #include "Graphics/Button.h"
+#include "Graphics/HUD.h"
 #include "Graphics/GraphicsUnits/GraphicsUnitManager.h"
 #include "Units/LogicUnitsManager.h"
 #include "GameConstants.h"
@@ -29,6 +30,7 @@ public:
 
 private:
     void initTower();
+    void initHUD();
 
     struct Event {
         Event(int id_, char type_, std::string value_, const sf::Time time_) :
@@ -49,8 +51,8 @@ private:
 
     Player::GameData gameData;
     gui::Gui containter;
+    gui::HUD hud;
     Map map;
-    std::vector<sf::IntRect> roadRect;
 
     LogicUnitsManager lComponent;
     GraphicsUnitManager gComponent;
@@ -58,6 +60,8 @@ private:
     std::vector<sf::Vector2f> towers1;
     std::vector<sf::Vector2f> towers2;
     gui::Gui container;
+    gui::Gui buttons;
+    std::vector<Map::LogicMap> roadRect;
 };
 
 

@@ -1,6 +1,5 @@
 #include "Warrior.h"
 
-
 Warrior::Warrior(Type type, const sf::Vector2f& position, const Map::LogicMap& logicMap, unsigned int cost,
                  float velocity, int hp)
     : GameUnit(type, position),
@@ -17,6 +16,7 @@ void Warrior::update(const sf::Time &dTime) {
     if (!alive_) {
         return;
     }
+
     if (logicMap_.finish.contains(position_)) {
         finished_ = true;
         return;

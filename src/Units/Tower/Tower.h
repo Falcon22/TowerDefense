@@ -7,7 +7,6 @@
 #include "../GameUnit.h"
 #include "../../GameConstants.h"
 
-
 class Warrior;
 class Bullet;
 
@@ -24,6 +23,7 @@ public:
 protected:
     Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
           std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets);
+
 
     bool inRange(const sf::Vector2f& pointPosition) const;
     float aim() const;

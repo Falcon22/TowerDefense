@@ -11,7 +11,7 @@
 
 
 namespace mp {
-    
+
     class Client {
     private:
         struct msg {

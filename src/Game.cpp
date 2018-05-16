@@ -6,14 +6,18 @@
 #include <thread>
 #include "Server/Server.h"
 
-Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
-        sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
+Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
+                                                     sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
                client(constants::ip),
                context(window, font, textureHolder, fontHolder, cursor, 2, client.incoming, client.outcoming),
                stateManager(context) {
+    std::cout << "start game constructor" << std::endl;
     loadAllResources();
+    std::cout << "load resources" << std::endl;
     registerStates();
-    stateManager.pushState(States::ID::Menu);
+    std::cout << "register state" << std::endl;
+    stateManager.pushState(States::ID::Game);
+    std::cout << "start game" << std::endl;
 }
 
 void Game::run() {
@@ -75,7 +79,7 @@ void Game::run() {
             passedTime -= frameTime;
             input();
 
-            if (client.isConnected()) 
+            if (client.isConnected())
                 try {
                     client.sendEvents();
                     client.askEvents();
@@ -111,7 +115,7 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::cursor, "Resources/cursor.png");
     textureHolder.load(Textures::panel, "Resources/panel.png");
     textureHolder.load(Textures::button, "Resources/button.png");
-    textureHolder.load(Textures::map, "Resources/map.png");
+    textureHolder.load(Textures::map, "Resources/map1.png");
     textureHolder.load(Textures::target, "Resources/target.png");
     textureHolder.load(Textures::gold, "Resources/diamond.png");
     textureHolder.load(Textures::star, "Resources/star.png");
@@ -141,6 +145,13 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::explosionOne, "Resources/explosionOne.png");
     textureHolder.load(Textures::explosionTwo, "Resources/explosionTwo.png");
     textureHolder.load(Textures::explosionThree, "Resources/explosionThree.png");
+    textureHolder.load(Textures::warriorIconOne, "Resources/warriorOne.png");
+    textureHolder.load(Textures::warriorIconTwo, "Resources/warriorTwo.png");
+    textureHolder.load(Textures::addWarriorOne, "Resources/addWarriorOne.png");
+    textureHolder.load(Textures::addWarriorTwo, "Resources/addWarrior.png");
+    textureHolder.load(Textures::addBarraks, "Resources/addBarraks.png");
+    textureHolder.load(Textures::addFarm, "Resources/addFarm.png");
+    textureHolder.load(Textures::addWeapons, "Resources/addWeapons.png");
 }
 
 

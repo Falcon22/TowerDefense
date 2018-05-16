@@ -1,4 +1,5 @@
 #include "GraphicsBullet.h"
+#include <cmath>
 
 GraphicsBullet::GraphicsBullet(std::shared_ptr<Bullet> bullet, States::Context& context)
         : explosionTime_(100),

@@ -7,32 +7,35 @@
 namespace gui {
     class Textbox : public Widget {
     public:
-        Textbox(sf::Font &font);
+        using Callback = std::function<void(int ind)>;
 
-        void setDimensons(double newX, double newY, double newWidth, double newHeight);
+        explicit Textbox(sf::Font &font);
 
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
         void update(sf::Time dt) override ;
-        void setString(std::string newString);
-
-        std::string getString();
-
         void handleEvent(const sf::Event& event) override ;
 
-        void setFocus(bool focus);
+        void setDimensons(float newX, float newY, float newWidth, float newHeight);
+        void setString(const std::string &newString);
+        void setInd(int i);
+        void setCallback(Callback callback);
 
-        void setReturnEvent(void (*newFunctionToCall)());
+        const std::string & getString();
 
     private:
-        bool isFocused;
-        double x;
-        double y;
-        double width;
-        double height;
-        std::string string = "";
+        bool is_focused;
+
+        float x;
+        float y;
+        float width;
+        float height;
+        std::string string;
         sf::Font &font;
         sf::RectangleShape background;
         sf::Text text;
+
+        int ind;
+        Callback callback;
 
         bool enterText(sf::Uint32 unicode);
     };

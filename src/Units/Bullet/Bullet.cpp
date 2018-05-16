@@ -4,13 +4,13 @@
 
 Bullet::Bullet(Type type, const sf::Vector2f& position, const std::shared_ptr<Warrior>& target, int damage, float velocity,
                float angle)
-    : GameUnit(type, position),
-      target_(target),
-      damage_(damage),
-      velocity_(velocity),
-      angle_(angle),
-      exploded_(false),
-      disappeared_(false) {
+        : GameUnit(type, position),
+          target_(target),
+          damage_(damage),
+          velocity_(velocity),
+          angle_(angle),
+          exploded_(false),
+          disappeared_(false) {
 }
 
 void Bullet::update(const sf::Time& dTime) {
@@ -55,4 +55,3 @@ bool Bullet::isExploded() const {
 bool Bullet::isDisappeared() const {
     return disappeared_;
 }
-

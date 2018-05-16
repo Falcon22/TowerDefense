@@ -48,7 +48,7 @@ namespace States {
                 , fontHolder(&fontHolder)
                 , cursor(&cursor)
                 , id(id)
-        , incoming_events(ie)
+                , incoming_events(ie)
                 , outcoming_events(oe)
 
 
