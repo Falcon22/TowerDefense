@@ -316,17 +316,25 @@ void GameState::manageEvents() {
             }
             case 'w':
                 std::cout << "Wave go!" << std::endl;
-                if (event->id == 2) {
+                if (event->id != *getContext().p_id) {
                     for (auto type : event->value) {
+                        int rect_num = 0;
+                        if (*getContext().p_id == 1) {
+                            rect_num = 0;
+                        } else {
+                            rect_num = 1;
+                        }
+
                         switch (type) {
                             case '1':
-                                if (player->getGold() > gameConst.cWARRIOR_1_COST() && player->getBarracks().getLvl() >= 1) {
-                                    player->addWarrior(Type::lvlOne, roadRect[0]);
+                                if (player->getGold() > gameConst.cWARRIOR_1_COST() && player->getBarracks().getLvl() >= 0) {
+                                    player->addWarrior(Type::lvlOne, roadRect[rect_num]);
                                 }
                                 break;
+
                             case '2':
                                 if (player->getGold() > gameConst.cWARRIOR_2_COST() && player->getBarracks().getLvl() >= 2) {
-                                    player->addWarrior(Type::lvlTwo, roadRect[1]);
+                                    player->addWarrior(Type::lvlTwo, roadRect[rect_num]);
                                 }
                                 break;
                         }
