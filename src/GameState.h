@@ -51,12 +51,13 @@ private:
 
     Player::GameData gameData;
     gui::Gui containter;
-    gui::HUD hud;
+
     Map map;
 
     LogicUnitsManager lComponent;
     GraphicsUnitManager gComponent;
 
+    gui::HUD hud;
     std::vector<sf::Vector2f> towers1;
     std::vector<sf::Vector2f> towers2;
     gui::Gui container;

@@ -133,9 +133,27 @@ void Castle::letsMakingWave() {
 std::string Castle::generateWaveString(const Castle& player) {
     std::string value;
 
-    for (const auto& warrior: player.getWarriorsBuffer()) {
-        if (warrior != nullptr) {
-            switch (warrior->getType()) {
+//    for (const auto& warrior: player.getWarriorsBuffer()) {
+//        if (warrior != nullptr) {
+//            switch (warrior->getType()) {
+//                case Type::lvlOne:
+//                    value.push_back('1');
+//                    break;
+//                case Type::lvlTwo:
+//                    value.push_back('2');
+//                    break;
+//            }
+//        }
+//    }
+    //const std::list<std::shared_ptr<Warrior>>& buffer = player.getWarriorsBuffer();
+    auto buffIterator = player.warriorsBuffer_.begin();
+    for (size_t i = 0; i < player.numWarriorsToWave_; i++) {
+        buffIterator++;
+    }
+
+    for (;buffIterator != player.warriorsBuffer_.end(); buffIterator++) {
+        if ((*buffIterator) != nullptr) {
+            switch ((*buffIterator)->getType()) {
                 case Type::lvlOne:
                     value.push_back('1');
                     break;
@@ -145,6 +163,7 @@ std::string Castle::generateWaveString(const Castle& player) {
             }
         }
     }
+
     return value;
 }
 
@@ -166,5 +185,9 @@ const Barracks& Castle::getBarracks() const {
 }
 const Weapons& Castle::getWeapons() const {
     return weapons_;
+}
+
+size_t Castle::getWarriorsToWave() const {
+    return numWarriorsToWave_;
 }
 

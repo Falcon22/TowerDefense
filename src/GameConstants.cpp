@@ -12,7 +12,7 @@ GameConstants &GameConstants::instance() {
     }
     initialized_ = true;
 
-    std::ifstream fin("../src/game_config.cfg");
+    std::ifstream fin("src/game_config.cfg");
     if (!fin.is_open()) {
         throw std::runtime_error(std::string("Config file doesn't open."));
     }
