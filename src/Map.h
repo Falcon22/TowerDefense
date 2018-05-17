@@ -19,6 +19,7 @@ public:
     void draw();
     void analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>& towers2);
 
+
     enum Direction {
         UP,
         DOWN,
@@ -34,17 +35,18 @@ public:
 
 private:
 
-    LogicMap roadRect;
+    std::vector<LogicMap> roadRect;
 public:
-    const LogicMap &getRoadRect() const;
+     void getRoadRect(std::vector<LogicMap>&) const;
 
 private:
     sf::RenderWindow &window;
     sf::Texture texture;
     std::vector<std::vector<Tile>> map;
+    int count;
     int width;
     int height;
-    std::pair<int, int> start;
+    std::vector<std::pair<int, int>> start;
     std::vector<sf::Vector2f> t1;
     std::vector<sf::Vector2f> t2;
 

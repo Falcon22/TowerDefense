@@ -7,15 +7,19 @@
 #include "Multiplayer/MultiplayerFacade/ServerMultiplayerFacade.h"
 #include <thread>
 
-Game::Game() : window({1000, 1000}, "Tower Defense", sf::Style::Titlebar |
-        sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
+Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
+                                                     sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
                context(window, font, textureHolder, fontHolder, cursor, new mp::ClientMultiplayerFacade),
                stateManager(context) {
+    std::cout << "start game constructor" << std::endl;
     loadAllResources();
+    std::cout << "load resources" << std::endl;
     registerStates();
-
-    window.setVerticalSyncEnabled(true);
+    std::cout << "register state" << std::endl;
     stateManager.pushState(States::ID::Menu);
+    std::cout << "start game" << std::endl;
+
+//    window.setVerticalSyncEnabled(true);
 }
 
 
@@ -78,7 +82,7 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::cursor, "Resources/cursor.png");
     textureHolder.load(Textures::panel, "Resources/panel.png");
     textureHolder.load(Textures::button, "Resources/button.png");
-    textureHolder.load(Textures::map, "Resources/map.png");
+    textureHolder.load(Textures::map, "Resources/map1.png");
     textureHolder.load(Textures::target, "Resources/target.png");
     textureHolder.load(Textures::gold, "Resources/diamond.png");
     textureHolder.load(Textures::star, "Resources/star.png");
@@ -90,15 +94,31 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::audioOn, "Resources/audioOn.png");
     textureHolder.load(Textures::musicOff, "Resources/musicOff.png");
     textureHolder.load(Textures::musicOn, "Resources/musicOn.png");
-    textureHolder.load(Textures::warriorLvlOne, "Resources/enemyOne.png");
-    textureHolder.load(Textures::warriorLvlTwo, "Resources/enemy.png");
+    textureHolder.load(Textures::warriorOne, "Resources/enemyOne.png");
+    textureHolder.load(Textures::warriorTwo, "Resources/enemy.png");
+    textureHolder.load(Textures::blood, "Resources/blood.png");
+    textureHolder.load(Textures::warriorExplosion, "Resources/warriorExplosion.png");
+    textureHolder.load(Textures::towerZeroRed, "Resources/redTarget.png");
+    textureHolder.load(Textures::towerZeroBlue, "Resources/blueTarget.png");
     textureHolder.load(Textures::towerOneTop, "Resources/towerOneTop.png");
-    textureHolder.load(Textures::towerTwoTop, "Resources/towerTopTwo.png");
     textureHolder.load(Textures::towerOneBase, "Resources/towerOneBase.png");
-    textureHolder.load(Textures::towerTwoBase, "Resources/towerBaseTwo.png");
+    textureHolder.load(Textures::towerTwoTop, "Resources/towerTwoTop.png");
+    textureHolder.load(Textures::towerTwoBase, "Resources/towerTwoBase.png");
+    textureHolder.load(Textures::towerThreeTop, "Resources/towerThreeTop.png");
+    textureHolder.load(Textures::towerThreeBase, "Resources/towerThreeBase.png");
     textureHolder.load(Textures::bulletOne, "Resources/bulletOne.png");
     textureHolder.load(Textures::bulletTwo, "Resources/bulletTwo.png");
-    textureHolder.load(Textures::warriorLvlOne, "Resources/enemyOne.png");
+    textureHolder.load(Textures::bulletThree, "Resources/bulletThree.png");
+    textureHolder.load(Textures::explosionOne, "Resources/explosionOne.png");
+    textureHolder.load(Textures::explosionTwo, "Resources/explosionTwo.png");
+    textureHolder.load(Textures::explosionThree, "Resources/explosionThree.png");
+    textureHolder.load(Textures::warriorIconOne, "Resources/warriorOne.png");
+    textureHolder.load(Textures::warriorIconTwo, "Resources/warriorTwo.png");
+    textureHolder.load(Textures::addWarriorOne, "Resources/addWarriorOne.png");
+    textureHolder.load(Textures::addWarriorTwo, "Resources/addWarrior.png");
+    textureHolder.load(Textures::addBarraks, "Resources/addBarraks.png");
+    textureHolder.load(Textures::addFarm, "Resources/addFarm.png");
+    textureHolder.load(Textures::addWeapons, "Resources/addWeapons.png");
 }
 
 

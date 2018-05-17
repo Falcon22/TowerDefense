@@ -4,16 +4,12 @@
 
 #include "Tower.h"
 #include "../../Constants.h"
-
+#include <list>
 class TowerLvlOne: public Tower {
 public:
-    TowerLvlOne(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
+    TowerLvlOne(const sf::Vector2f& position, std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets);
 
-    Bullet* makeBullet() override;
-
-    static const unsigned int kPrice_ = 1000;
-    constexpr static const float kAttackRange_ = 10000;
-    static const int kAttackCooldown_ = 10;
+    std::shared_ptr<Bullet> makeBullet() override;
 };
 
 

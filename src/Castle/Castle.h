@@ -8,47 +8,48 @@
 #include "Building/Farm.h"
 #include "Building/Barracks.h"
 #include "Building/Weapons.h"
+#include "../GameConstants.h"
 
 
 class Castle {
 public:
     Castle();
-    ~Castle();
 
     void updateCastle(const sf::Time& dTime);
     void upgradeTower(int index);
     void upgradeBuilding(char type);
     void addWarrior(Type type, const Map::LogicMap& logicMap);
-    void addTower(const sf::Vector2f& position, std::list<Warrior*>& warriors, std::vector<Bullet*>& bullets);
+    void addTower(const sf::Vector2f& position, std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets);
     void takeDamage(int damage);
-    void setEnemy(Castle* castle);
+    void setEnemy(const std::shared_ptr<Castle>& castle);
     void letsMakingWave();
     void makeWave(const sf::Time& dTime);
 
     static std::string generateWaveString(const Castle& player);
+    static bool checkValidUpgradeTower(const Type& towerLvl, unsigned char weaponsLvl);
 
     int getGold() const;
     int getHealth() const;
-    const std::vector<Tower*>& getTowers() const;
-    std::list<Warrior*>& getWarriors();
-    const std::vector<Warrior*>& getWarriorsBuffer() const;
+    const std::vector<std::shared_ptr<Tower>>& getTowers() const;
+    std::list<std::shared_ptr<Warrior>>& getWarriors();
+    const std::list<std::shared_ptr<Warrior>>& getWarriorsBuffer() const;
     size_t getWarriorsInBuffer() const;
-    Type getFarmLvl() const;
-    Type getBarracksLvl() const;
-    Type getWeaponsLvl() const;
+
+    const Farm& getFarm() const;
+    const Barracks& getBarracks() const;
+    const Weapons& getWeapons() const;
+
+    GameConstants& gameConst = GameConstants::instance();
 
 private:
-    static const int kInitGold_ = 1000;
-    static const int kInitHealth_ = 1000;
-    static const int kWaveDuration_ = 2000;//mseconds
-
     int gold_;
     int health_;
-    Castle* enemy_;
-    std::vector<Tower*> towers_;
-    std::list<Warrior*> warriors_;
-    size_t numRealWarriors;
-    std::vector<Warrior*> warriorsBuffer_;
+    std::shared_ptr<Castle> enemy_;
+    std::vector<std::shared_ptr<Tower>> towers_;
+    std::list<std::shared_ptr<Warrior>> warriors_;
+    size_t numWarriorsInBuffer_;
+    size_t numWarriorsToWave_;
+    std::list<std::shared_ptr<Warrior>> warriorsBuffer_;
 
     Farm farm_;
     Barracks barracks_;
