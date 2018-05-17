@@ -3,21 +3,32 @@
 #include "PauseState.h"
 #include "GameState.h"
 #include "ConnectGameState.h"
+#include "Multiplayer/MultiplayerFacade/ClientMultiplayerFacade.h"
+#include "Multiplayer/MultiplayerFacade/ServerMultiplayerFacade.h"
 #include <thread>
-#include "Server/Server.h"
 
 Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
                                                      sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
-               client(constants::ip),
-               context(window, font, textureHolder, fontHolder, cursor, 2, client.incoming, client.outcoming),
+               context(window, font, textureHolder, fontHolder, cursor, new mp::ClientMultiplayerFacade),
                stateManager(context) {
     std::cout << "start game constructor" << std::endl;
     loadAllResources();
     std::cout << "load resources" << std::endl;
     registerStates();
     std::cout << "register state" << std::endl;
-    stateManager.pushState(States::ID::Game);
+    stateManager.pushState(States::ID::Menu);
     std::cout << "start game" << std::endl;
+
+//    window.setVerticalSyncEnabled(true);
+}
+
+
+Game::Game(mp::player &first, mp::player &second)
+        : context(window, font, textureHolder, fontHolder, cursor, new mp::ServerMultiplayerFacade(first, second)),
+          stateManager(context)
+{
+    registerStates();
+    stateManager.pushState(States::ID::Game); // TODO MultiplayerGame
 }
 
 void Game::run() {
@@ -25,74 +36,30 @@ void Game::run() {
     sf::Clock clock;
     sf::Time passedTime = sf::Time::Zero;
 
-    if (client.isConnected()) {
-        // TODO мультиплеерная мутота
-        while (true) {
-            char operation;
-            std::cin >> operation;
-            switch (operation) {
-                case 'n': {
-                    std::string game_name;
-                    std::cin >> game_name;
-                    client.outcoming.emplace_back(0, 'n', game_name, sf::microseconds(0)); //
-                    break;
-                }
-
-                case 'j': {
-                    std::string game_id;
-                    std::cin >> game_id;
-                    client.outcoming.emplace_back(0, 'j', game_id, sf::microseconds(0)); // Просим пустить в игру
-                    break;
-                }
-
-                default: break;
-            }
-
-            client.sendEvents();
-
-            if (operation == 'j')
-                break;
-
-            client.askEvents();
-            if (!client.incoming.empty()) {
-                std::cout << client.incoming[0].value << std::endl;
-            }
-            client.incoming.clear();
-        }
-
-        while (client.incoming.empty()) // тут мы запрашиваем айдишник
-            client.askEvents();
-
-        context.id = atoi(client.incoming[0].value.c_str());
-
-        std::cout << "[client] player id is " << context.id << std::endl;
-        client.incoming.clear();
-
-    } else {
-        std::cout << "[warning] no server connection" << std::endl;
-    }
-
+    auto mp = context.multiplayer;
     while (window.isOpen()) {
         sf::Time elapsedTime = clock.restart();
         passedTime += elapsedTime ;
         while (passedTime > frameTime) {
             passedTime -= frameTime;
             input();
+            update(frameTime);
 
-            if (client.isConnected())
+            mp->incoming.clear();
+            if (mp->isConnected()) {
                 try {
-                    client.sendEvents();
-                    client.askEvents();
-                    for (auto &&item : client.incoming) {
+                    mp->sendEvents();
+                    mp->askEvents();
+                    for (auto &&item : mp->incoming) {
                         if (item.type == 's' && item.value == "stop")
                             window.close();
                     }
                 } catch (const std::exception &e) {
                     std::cout << e.what() << std::endl;
                 }
-
-            update(frameTime);
-            client.incoming.clear();
+            } else {
+                mp->outcoming.clear();
+            }
         }
 
         draw();
@@ -171,4 +138,48 @@ void Game::registerStates() {
     stateManager.registerState<MenuState>(States::ID::Menu);
     stateManager.registerState<ConnectGameState>(States::ID::ConnectGame);
     stateManager.registerState<GameState>(States::ID::Game);
+}
+
+void Game::server_run(bool use_validation) {
+    const sf::Time frameTime = sf::seconds(1.f / 60.f);
+    sf::Clock clock;
+    sf::Time passedTime = sf::Time::Zero;
+
+    std::cout << "start multi game" << std::endl;
+
+    auto& mp = context.multiplayer;
+    while (true) {
+        if (!mp->isConnected()) {
+            mp->outcoming.emplace_back(0, 's', "stop", sf::microseconds(0));
+            mp->sendEvents();
+
+            break;
+        }
+
+        if (use_validation) {
+            sf::Time elapsedTime = clock.restart();
+            passedTime += elapsedTime ;
+            while (passedTime > frameTime) {
+                passedTime -= frameTime;
+                update(frameTime);
+
+                try {
+                    mp->incoming.clear();
+                    mp->sendEvents();
+                    mp->askEvents();
+                } catch (const std::exception &e) {
+                    std::cout << e.what() << std::endl;
+                }
+            }
+        } else {
+            try {
+                mp->incoming.clear();
+                mp->askEvents();
+                mp->outcoming = mp->incoming;
+                mp->sendEvents();
+            } catch (const std::exception &e) {
+                std::cout << e.what() << std::endl;
+            }
+        }
+    }
 }

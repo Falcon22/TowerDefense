@@ -1,22 +1,13 @@
 //
-// Created by silvman on 08.04.18.
+// Created by silvman on 16.05.18.
 //
 
-#ifndef TOWERDEFENSE_SERVER_HPP
-#define TOWERDEFENSE_SERVER_HPP
+#ifndef SERVER_MASTER_H
+#define SERVER_MASTER_H
 
 #include <SFML/Network.hpp>
-#include "Manager.h"
-
-class constants {
-public:
-    static inline sf::Time waitTime() {
-        return sf::milliseconds(5);
-    }
-
-    static const unsigned short port = 55001;
-    static constexpr const char * ip = "0.0.0.0";
-};
+#include "Entities/Game.h"
+#include "Manager/PlayerManager.h"
 
 namespace mp {
     class master { // TODO singleton?
@@ -45,26 +36,7 @@ namespace mp {
 
         void work();
     };
-
-    class worker {
-        struct msg {
-            static constexpr const char *success = "[worker:success] ";
-            static constexpr const char *run = "[worker:run] ";
-            static constexpr const char *end = "[worker:end] ";
-        };
-
-        sf::SocketSelector  selector_;
-        bool                running_;
-        pid_t               pid_;
-
-        player &            first_;
-        player &            second_;
-
-    public:
-        worker(player &first, player &second, pid_t pid);
-
-        void work();
-    };
 }
 
-#endif //TOWERDEFENSE_SERVER_HPP
+
+#endif //SERVER_MASTER_H

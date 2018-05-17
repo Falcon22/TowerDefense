@@ -1,18 +1,14 @@
 //
-// Created by silvman on 30.04.18.
+// Created by silvman on 16.05.18.
 //
 
-#ifndef TOWERDEFENSE_CLIENT_H
-#define TOWERDEFENSE_CLIENT_H
+#ifndef SERVER_CLIENTCONNECTIONFACADE_H
+#define SERVER_CLIENTCONNECTIONFACADE_H
 
-#include <SFML/Network.hpp>
-#include <utility>
-#include "Entities.h"
-
+#include "AbstractConnectionFacade.h"
 
 namespace mp {
-
-    class Client {
+    class ClientConnectionFacade : public AbstractConnectionFacade {
     private:
         struct msg {
             static constexpr const char *waiting_connection = "[client:process] connecting to server";
@@ -23,28 +19,22 @@ namespace mp {
 
         sf::TcpSocket       socket_;
         sf::SocketSelector  selector_;
-        bool                connected_;
+        bool                connected_ = false;
 
     public:
-        explicit Client(const std::string &ip, unsigned short port = 55001);
-
+        void connect() override;
+        bool hasNewData() override;
+        bool isConnected() override;
 
         /*
          * Эти два метода кидаются исключениями std::logic_error в случаях,
          * когда с соединением что-то не так
          */
-        bool askEvents();
-        bool sendEvents();
-
-        bool isConnected();
-
-        // эвенты
-        std::vector<mp::Event> incoming;
-        std::vector<mp::Event> outcoming;
+        void getData(std::vector<mp::Event> &to) override;
+        void sendData(std::vector<mp::Event> &from) override;
 
     };
-
 }
 
 
-#endif //TOWERDEFENSE_CLIENT_H
+#endif //SERVER_CLIENTCONNECTIONFACADE_H
