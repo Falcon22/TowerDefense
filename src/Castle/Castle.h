@@ -34,7 +34,7 @@ public:
     std::list<std::shared_ptr<Warrior>>& getWarriors();
     const std::list<std::shared_ptr<Warrior>>& getWarriorsBuffer() const;
     size_t getWarriorsInBuffer() const;
-
+    size_t getWarriorsToWave() const;
     const Farm& getFarm() const;
     const Barracks& getBarracks() const;
     const Weapons& getWeapons() const;

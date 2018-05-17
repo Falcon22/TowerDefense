@@ -41,8 +41,8 @@ void GameState::initTower() {
     sf::IntRect rect{ TILE_SIZE, TILE_SIZE, TILE_SIZE, TILE_SIZE};
     sf::Vector2f p;
     for (int i = 0; i < towers1.size(); i++) {
-        lComponent.getPlayer1()->addTower(towers1[i], lComponent.getPlayer1()->getWarriors(), lComponent.getBullets());
-        //if (*getContext().p_id == 1) {
+        lComponent.getPlayer1()->addTower(towers1[i], lComponent.getPlayer2()->getWarriors(), lComponent.getBullets());
+        if (*getContext().p_id == 1) {
             auto bt = std::make_shared<gui::Button>();
             bt->setTexture(b);
             bt->setTextureRect(rect);
@@ -52,17 +52,18 @@ void GameState::initTower() {
             bt->setPosition(p);
             bt->setInd(i);
             bt->setCallback([this](int ind) {
-                if (lComponent.getPlayer1()->getGold() > lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) {
-                    getContext().multiplayer->outcoming.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
+                if ((lComponent.getPlayer1()->getGold() > lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) &&
+                    (Castle::checkValidUpgradeTower(lComponent.getPlayer1()->getTowers().at(ind)->getType(), lComponent.getPlayer1()->getWeapons().getLvl()))) {
+                    getContext().multiplayer->outcoming.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(500));
                     std::cout << ind << std::endl;
                 }
             });
             container.addWidget(bt);
-        //}
+        }
     }
 
     for (int i = 0; i < towers2.size(); i++) {
-        lComponent.getPlayer2()->addTower(towers2[i], lComponent.getPlayer2()->getWarriors(), lComponent.getBullets());
+        lComponent.getPlayer2()->addTower(towers2[i], lComponent.getPlayer1()->getWarriors(), lComponent.getBullets());
         auto bt = std::make_shared<gui::Button>();
         if (*getContext().p_id == 2) {
             bt->setTexture(b);
@@ -73,9 +74,10 @@ void GameState::initTower() {
             bt->setPosition(p);
             bt->setInd(i);
             bt->setCallback([this](int ind) {
-                if (lComponent.getPlayer2()->getGold() > lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) {
+                if ((lComponent.getPlayer2()->getGold() > lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) &&
+                        (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(), lComponent.getPlayer2()->getWeapons().getLvl()))) {
                     getContext().multiplayer->outcoming.emplace_back(2, 't', std::to_string(ind),
-                                                               clock + sf::milliseconds(2000));
+                                                               clock + sf::milliseconds(500));
                     std::cout << ind << std::endl;
                 }
             });
@@ -95,9 +97,15 @@ void GameState::initHUD() {
 
     addLvlOne->setCallback([this](int ind) {
         if (*getContext().p_id == 1) {
-            lComponent.getPlayer1()->addWarrior(Type::lvlOne, roadRect[1]);
+            if (lComponent.getPlayer1()->getBarracks().getLvl() >= 1) {
+                std::cout << "button warrior id 1" << std::endl;
+                lComponent.getPlayer1()->addWarrior(Type::lvlOne, roadRect[0]);
+            }
         } else {
-            lComponent.getPlayer2()->addWarrior(Type::lvlOne, roadRect[0]);
+            if (lComponent.getPlayer2()->getBarracks().getLvl() >= 2) {
+                std::cout << "button warrior id 2" << std::endl;
+                lComponent.getPlayer2()->addWarrior(Type::lvlOne, roadRect[1]);
+            }
         }
     });
 
@@ -108,9 +116,15 @@ void GameState::initHUD() {
     addLvlOne->setPosition(860.f, 705.f);
     addLvlTwo->setCallback([this](int ind) {
         if (*getContext().p_id == 1) {
-            lComponent.getPlayer1()->addWarrior(Type::lvlTwo, roadRect[1]);
+           if (lComponent.getPlayer1()->getBarracks().getLvl() >= 2) {
+               std::cout << "button warrior id 1" << std::endl;
+               lComponent.getPlayer1()->addWarrior(Type::lvlTwo, roadRect[0]);
+           }
         } else {
-            lComponent.getPlayer2()->addWarrior(Type::lvlTwo, roadRect[0]);
+            if (lComponent.getPlayer2()->getBarracks().getLvl() >= 2) {
+                std::cout << "button warrior id 2" << std::endl;
+                lComponent.getPlayer2()->addWarrior(Type::lvlTwo, roadRect[1]);
+            }
         }
     });
 
@@ -319,7 +333,7 @@ void GameState::manageEvents() {
                 if (event->id != *getContext().p_id) {
                     for (auto type : event->value) {
                         int rect_num = 0;
-                        if (*getContext().p_id == 1) {
+                        if (*getContext().p_id == 2) {
                             rect_num = 0;
                         } else {
                             rect_num = 1;
