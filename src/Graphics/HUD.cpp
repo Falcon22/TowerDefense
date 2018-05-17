@@ -12,7 +12,7 @@ HUD::HUD(States::Context context, std::shared_ptr<Castle>& player1, std::shared_
           liveFoe(context.textureHolder->get(Textures::lives), context.fontHolder->get(Fonts::font1)),
           player(player1),
           foe(player2) {
-//    if (context.id == 1) {
+//    if (*context.p_id == 1) {
 //        player = player1;
 //        foe = player2;
 //    } else {
@@ -110,7 +110,7 @@ void HUD::init()
     gold.setTexture(context.textureHolder->get(Textures::gold));
     gold.setPosition(535.f, 0.f);
 
-    if (context.id == 1) {
+    if (*context.p_id == 1) {
         livePlayer.setPosition(0.f, 5.f);
         liveFoe.setPosition(970.f, 5.f);
     } else {
@@ -150,7 +150,7 @@ void HUD::init()
     totalPlayerLives.setString(std::to_string(player->getHealth()));
     totalFoeLives.setString(std::to_string(foe->getHealth()));
 
-    if (context.id == 1) {
+    if (*context.p_id == 1) {
         totalFoeLives.setPosition(50.f, 10.f);
         totalPlayerLives.setPosition(1020.f, 10.f);
     } else {

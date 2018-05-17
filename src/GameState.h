@@ -62,6 +62,8 @@ private:
     gui::Gui container;
     gui::Gui buttons;
     std::vector<Map::LogicMap> roadRect;
+
+    std::shared_ptr<Castle> curPlayer;
 };
 
 
