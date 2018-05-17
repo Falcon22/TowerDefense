@@ -39,8 +39,6 @@ public:
     const Barracks& getBarracks() const;
     const Weapons& getWeapons() const;
 
-    GameConstants& gameConst = GameConstants::instance();
-
 private:
     int gold_;
     int health_;

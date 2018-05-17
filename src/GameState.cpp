@@ -46,7 +46,6 @@ void GameState::initTower() {
             bt->setCallback([this](int ind) {
                 if (lComponent.getPlayer1()->getGold() > lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) {
                     getContext().outcoming_events.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(2000));
-                    std::cout << ind << std::endl;
                 }
             });
             container.addWidget(bt);
@@ -68,7 +67,6 @@ void GameState::initTower() {
                 if (lComponent.getPlayer2()->getGold() > lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) {
                     getContext().outcoming_events.emplace_back(2, 't', std::to_string(ind),
                                                                clock + sf::milliseconds(2000));
-                    std::cout << ind << std::endl;
                 }
             });
             container.addWidget(bt);
@@ -77,7 +75,6 @@ void GameState::initTower() {
 }
 
 void GameState::initHUD() {
-    std::cout << "start init HUD" << std::endl;
     hud.init();
     sf::IntRect rect{0, 0, TILE_SIZE, TILE_SIZE};
     auto addLvlOne = std::make_shared<gui::Button>();
@@ -182,8 +179,7 @@ void GameState::initHUD() {
     std::cout << "end init hud" << std::endl;
 }
 
-bool GameState::handleEvent(const sf::Event& event) {
-    std::cout << "handle event" << std::endl;
+bool GameState::handleEvent(const sf::Event& event) {http://shador.ru/metr/
     container.handleWidgetsEvent(event);
     buttons.handleWidgetsEvent(event);
     hud.handleEvent(event);
@@ -283,9 +279,7 @@ void GameState::draw() {
 }
 
 void GameState::manageEvents() {
-   // std::cout << "manageEvents" << std::endl;
     Castle* player = nullptr;
-    //std::cout << events.size() << std::endl;
     for(auto event = events.begin(); event != events.end();) {
         if (event->time > clock) {
             ++event;
@@ -348,4 +342,3 @@ void GameState::manageEvents() {
         event = events.erase(event);
     }
 }
-

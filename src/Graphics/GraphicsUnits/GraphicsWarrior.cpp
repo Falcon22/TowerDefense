@@ -2,10 +2,16 @@
 #include <utility>
 #include "GraphicsWarrior.h"
 
+#define FRAMES 4
+#define DEATH_DURATION 2000  //msec
+#define FINISHING_DURATION 200 //msec
+#define ANIMATION_SPEED 10
+
+
 GraphicsWarrior::GraphicsWarrior(std::shared_ptr<Warrior>& warrior, States::Context& context)
         : warrior_(warrior),
-          deathDuration_(2000),
-          finishedDuration_(200),
+          deathDuration_(DEATH_DURATION),
+          finishedDuration_(FINISHING_DURATION),
           died_(false),
           finishing_(false),
           finished_(false) {
@@ -18,7 +24,7 @@ GraphicsWarrior::GraphicsWarrior(std::shared_ptr<Warrior>& warrior, States::Cont
             break;
     }
     sprite_.setScale({0.5, 0.5});
-    warriorSpriteRect_.first = sprite_.getTextureRect().width / kFrames_;
+    warriorSpriteRect_.first = sprite_.getTextureRect().width / FRAMES;
     warriorSpriteRect_.second = sprite_.getTextureRect().height;
     sprite_.setTextureRect(sf::IntRect(0, 0, warriorSpriteRect_.first, warriorSpriteRect_.second));
     sprite_.setOrigin(warriorSpriteRect_.first / 2, warriorSpriteRect_.second / 2);
@@ -69,9 +75,9 @@ bool GraphicsWarrior::isFinished() const {
 }
 
 void GraphicsWarrior::lifeAnimation(const sf::Time& dTime) {
-    currentFrame_ += 10 * dTime.asSeconds();
-    if (currentFrame_ >= kFrames_)
-        currentFrame_ -= kFrames_;
+    currentFrame_ += ANIMATION_SPEED * dTime.asSeconds();
+    if (currentFrame_ >= FRAMES)
+        currentFrame_ -= FRAMES;
     sprite_.setTextureRect(sf::IntRect(warriorSpriteRect_.first * static_cast<int>(currentFrame_), 0,
                                        warriorSpriteRect_.first, warriorSpriteRect_.second));
     sprite_.setPosition(warrior_->getPosition());
@@ -90,7 +96,7 @@ bool GraphicsWarrior::isDied() const {
     return died_;
 }
 
-void GraphicsWarrior::finishedAnimation(const sf::Time &dTime) {
+void GraphicsWarrior::finishedAnimation(const sf::Time& dTime) {
     finishedDuration_ -= dTime.asMilliseconds();
     if (finishedDuration_ <= 0) {
         finished_ = true;
