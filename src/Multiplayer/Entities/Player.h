@@ -1,41 +1,15 @@
 //
-// Created by silvman on 08.04.18.
+// Created by silvman on 16.05.18.
 //
 
-#ifndef TOWERDEFENSE_PLAYER_HPP
-#define TOWERDEFENSE_PLAYER_HPP
+#ifndef SERVER_PLAYER_H
+#define SERVER_PLAYER_H
 
 #include <SFML/Network.hpp>
+#include "Entity.h"
+#include "Event.h"
 
 namespace mp {
-
-    struct Event {
-        int         id;
-        char        type;
-        std::string value;
-        sf::Time    time;
-
-        Event(int id, char type, const std::string &value, sf::Time time);
-        Event(const std::string &sId, const std::string &sType, const std::string &value, const std::string &sTime);
-    };
-
-    void parseEventString(const std::string& sEvents, std::vector<mp::Event>& vEvents);
-    void encodeEventsToString(std::string& sEvents, std::vector<mp::Event>& vEvents);
-
-    class entity {
-    protected:
-        int id;
-
-    public:
-        explicit entity(int id = 0);
-        virtual ~entity() = default;
-
-        int getId() const;
-        void setId(int id);
-    };
-
-
-
     class player : public entity {
     public:
         enum connection_state {
@@ -45,7 +19,7 @@ namespace mp {
         };
 
         explicit player(int id = 0);
-        ~player();
+        ~player() override;
 
         sf::TcpSocket& getSocket();
 
@@ -91,38 +65,9 @@ namespace mp {
         bool                in_game_;
     };
 
-
-
-    class game : public entity {
-    private:
-        struct msg {
-            static constexpr const char *game_running = "[game:fail] game already running" ;
-        };
-
-        std::string     name_;
-        int             player_id_first_;
-        int             player_id_second_;
-
-        bool            first_connected_;
-        bool            second_connected_;
-
-        bool            is_started_;
-
-    public:
-        explicit game(const std::string& name);
-
-        bool isReady() const;
-        void join(int player_id);
-        const std::string& getName() const;
-
-        int getFirstId() const;
-
-        int getSecondId() const;
-
-
-        bool isStarted() const;
-        void start();
-    };
 }
 
-#endif //TOWERDEFENSE_PLAYER_HPP
+
+
+
+#endif //SERVER_PLAYER_H
