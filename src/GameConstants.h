@@ -44,6 +44,13 @@ public:
     int cWARRIOR_2_HP() const;
     int cWAVE_TIMER() const;
 
+    // server
+
+    int cSELECTOR_WAIT_TIME() const;
+    int cDEBUG_MODE() const;
+    int cCONNECTION_PORT() const;
+    const std::string &cIP_ADDR_SERVER() const;
+
 private:
     GameConstants(){};
     GameConstants(const GameConstants&) = delete;
@@ -92,6 +99,11 @@ private:
     int WARRIOR_2_HP;
 
     int WAVE_TIMER;
+
+    int SELECTOR_WAIT_TIME;
+    int DEBUG_MODE;
+    int CONNECTION_PORT;
+    std::string IP_ADDR_SERVER;
 };
 
 
