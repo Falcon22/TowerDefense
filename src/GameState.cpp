@@ -24,8 +24,6 @@ GameState::GameState(StateManager &stack, States::Context context) :
     else
         curPlayer = lComponent.getPlayer2();
 
-
-
     map.analyze(towers1, towers2);
     std::cout << "Map analyze" << std::endl;
     map.getRoadRect(roadRect);
@@ -96,6 +94,9 @@ void GameState::initHUD() {
     std::cout << "1" << std::endl;
 
     addLvlOne->setCallback([this](int ind) {
+
+
+
         if (*getContext().p_id == 1) {
             if (lComponent.getPlayer1()->getBarracks().getLvl() >= 1) {
                 std::cout << "button warrior id 1" << std::endl;

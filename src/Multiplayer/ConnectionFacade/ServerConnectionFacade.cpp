@@ -3,10 +3,10 @@
 //
 
 #include "ServerConnectionFacade.h"
-#include "../Constants.h"
+#include "../../GameConstants.h"
 
 bool mp::ServerConnectionFacade::hasNewData() {
-    if (selector_.wait(constants::waitTime()))
+    if (selector_.wait(sf::milliseconds(GameConstants::instance().cSELECTOR_WAIT_TIME())))
         return first_.hasNewData(selector_) || second_.hasNewData(selector_);
 
     return false;

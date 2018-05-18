@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include "Master.h"
 #include "Worker.h"
-#include "Constants.h"
+#include "../GameConstants.h"
 
 mp::master::master(unsigned short port): running_(true) {
     if (listener_.listen(port) != sf::Socket::Status::Done) {
@@ -21,7 +21,7 @@ mp::master::~master() {
 void mp::master::work() {
     std::cout << msg::run << std::endl;
     while (running_) try {
-            if (selector_.wait(constants::waitTime())) {
+            if (selector_.wait(sf::milliseconds(GameConstants::instance().cSELECTOR_WAIT_TIME()))) {
                 if (selector_.isReady(listener_)) { // подключение нового игрока
                     player& new_player = pool_players_.create(); // добавление игрока в список
 

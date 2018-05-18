@@ -4,10 +4,10 @@
 
 #include <iostream>
 #include "ClientConnectionFacade.h"
-#include "../Constants.h"
+#include "../../GameConstants.h"
 
 bool mp::ClientConnectionFacade::hasNewData() {
-    if(selector_.wait(constants::waitTime()))
+    if(selector_.wait(sf::milliseconds(GameConstants::instance().cSELECTOR_WAIT_TIME())))
         return selector_.isReady(socket_);
 
     return false;
@@ -20,7 +20,7 @@ void mp::ClientConnectionFacade::getData(std::vector<mp::Event> &to) {
         std::string data = (char *)packet.getData();
         parseEventString(data, to);
 
-        if (constants::debug) for (auto &&event : to)
+        if (GameConstants::instance().cDEBUG_MODE()) for (auto &&event : to)
                 std::cout << "[get event] " << event.type << " " << event.value << std::endl;
 
     } else {
@@ -33,7 +33,7 @@ void mp::ClientConnectionFacade::sendData(std::vector<mp::Event> &from) {
     std::string message;
     encodeEventsToString(message, from);
 
-    if (constants::debug) for (auto &&event : from) {
+    if (GameConstants::instance().cDEBUG_MODE()) for (auto &&event : from) {
             std::cout << "[out event] " << event.type << " " << event.value << std::endl;
         }
 
@@ -49,7 +49,8 @@ void mp::ClientConnectionFacade::sendData(std::vector<mp::Event> &from) {
 
 void mp::ClientConnectionFacade::connect() {
     std::cout << msg::waiting_connection << std::endl;
-    if (socket_.connect(constants::ip, constants::port) == sf::Socket::Status::Done) {
+    if (socket_.connect(GameConstants::instance().cIP_ADDR_SERVER(),
+                        (unsigned short)GameConstants::instance().cCONNECTION_PORT()) == sf::Socket::Status::Done) {
         connected_ = true;
         selector_.add(socket_);
         std::cout << msg::connected << std::endl;
