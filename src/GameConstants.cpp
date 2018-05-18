@@ -93,9 +93,18 @@ GameConstants &GameConstants::instance() {
             fin >> gameConstants.WARRIOR_2_HP;
         } else if (name == "WAVE_TIMER") {
             fin >> gameConstants.WAVE_TIMER;
+        } else if (name == "SELECTOR_WAIT_TIME") {
+            fin >> gameConstants.SELECTOR_WAIT_TIME;
+        } else if (name == "DEBUG_MODE") {
+            fin >> gameConstants.DEBUG_MODE;
+        } else if (name == "CONNECTION_PORT") {
+            fin >> gameConstants.CONNECTION_PORT;
+        } else if (name == "IP_ADDR_SERVER") {
+            fin >> gameConstants.IP_ADDR_SERVER;
         } else {
             throw std::runtime_error(std::string("Unknown config parameter"));
         }
+
     }
     fin.close();
 
@@ -248,4 +257,20 @@ int GameConstants::cWARRIOR_2_HP() const {
 
 int GameConstants::cWAVE_TIMER() const {
     return WAVE_TIMER;
+}
+
+int GameConstants::cSELECTOR_WAIT_TIME() const {
+    return SELECTOR_WAIT_TIME;
+}
+
+int GameConstants::cDEBUG_MODE() const {
+    return DEBUG_MODE;
+}
+
+int GameConstants::cCONNECTION_PORT() const {
+    return CONNECTION_PORT;
+}
+
+const std::string &GameConstants::cIP_ADDR_SERVER() const {
+    return IP_ADDR_SERVER;
 }

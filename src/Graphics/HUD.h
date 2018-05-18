@@ -26,7 +26,7 @@ namespace gui
             Exit
         };
 
-        HUD(States::Context context,  std::shared_ptr<Castle>& player1, std::shared_ptr<Castle>& player2);
+        HUD(States::Context context,  std::shared_ptr<Castle> player1, std::shared_ptr<Castle> player2);
 
         void init();
 
@@ -44,8 +44,8 @@ namespace gui
         Gui container;
         States::Context context;
         //Player::GameData *gameData;
-        std::shared_ptr<Castle>& player;
-        std::shared_ptr<Castle>& foe;
+        std::shared_ptr<Castle> player;
+        std::shared_ptr<Castle> foe;
         sf::Texture texture;
         sf::Font font;
 

@@ -32,36 +32,39 @@ private:
     void initTower();
     void initHUD();
 
-    struct Event {
-        Event(int id_, char type_, std::string value_, const sf::Time time_) :
-                id(id_),
-                type(type_),
-                value(std::move(value_)),
-                time(time_) {}
-        int id;
-        char type;
-        std::string value;
-        sf::Time time;
-    };
+//    struct Event {
+//        Event(int id_, char type_, std::string value_, const sf::Time time_) :
+//                id(id_),
+//                type(type_),
+//                value(std::move(value_)),
+//                time(time_) {}
+//        int id;
+//        char type;
+//        std::string value;
+//        sf::Time time;
+//    };
 
-    std::vector<Event> events;
+    std::vector<mp::Event> events;
     sf::Time clock;
 
     float waveTimer;
 
     Player::GameData gameData;
     gui::Gui containter;
-    gui::HUD hud;
+
     Map map;
 
     LogicUnitsManager lComponent;
     GraphicsUnitManager gComponent;
 
+    gui::HUD hud;
     std::vector<sf::Vector2f> towers1;
     std::vector<sf::Vector2f> towers2;
     gui::Gui container;
     gui::Gui buttons;
     std::vector<Map::LogicMap> roadRect;
+
+    std::shared_ptr<Castle> curPlayer;
 };
 
 

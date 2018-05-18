@@ -1,10 +1,11 @@
 //
-// Created by silvman on 08.04.18.
+// Created by silvman on 16.05.18.
 //
 
-#include <iostream>
 #include <unistd.h>
-#include "Server.h"
+#include "Master.h"
+#include "Worker.h"
+#include "../GameConstants.h"
 
 mp::master::master(unsigned short port): running_(true) {
     if (listener_.listen(port) != sf::Socket::Status::Done) {
@@ -20,7 +21,7 @@ mp::master::~master() {
 void mp::master::work() {
     std::cout << msg::run << std::endl;
     while (running_) try {
-            if (selector_.wait(constants::waitTime())) {
+            if (selector_.wait(sf::milliseconds(GameConstants::instance().cSELECTOR_WAIT_TIME()))) {
                 if (selector_.isReady(listener_)) { // подключение нового игрока
                     player& new_player = pool_players_.create(); // добавление игрока в список
 
@@ -60,7 +61,7 @@ void mp::master::work() {
             std::cout << e.what() << std::endl;
         }
 
-    wait();
+//    wait();
 }
 
 void mp::master::proceedEvents(player &player) {
@@ -82,7 +83,7 @@ void mp::master::proceedEvents(player &player) {
         } else if (event.type == 'n') {
             pool_games_.emplace_back(event.value); // name - имя игры
 
-            player.to_send.emplace_back(0, 's', std::to_string(pool_games_.size() - 1),
+            player.to_send.emplace_back(0, 'n', std::to_string(pool_games_.size() - 1),
                                         sf::microseconds(0));
 
             std::cout << msg::add_game << event.value << std::endl;
@@ -120,77 +121,4 @@ void mp::master::startWorker(mp::game &game) {
         }
 
     }
-}
-
-
-mp::worker::worker(player &first, player &second, pid_t pid)
-        : first_(first), second_(second), pid_(pid), running_(false) {
-
-
-    std::cout << msg::success << pid << std::endl;
-
-    selector_.add(first.getSocket());
-    selector_.add(second.getSocket());
-
-    first_.setId(1);
-    second_.setId(2);
-}
-
-void mp::worker::work() {
-    std::cout << msg::run << pid_ << std::endl;
-
-    // Отсылаем сообщения о начале игры (включает в себя айдишники)
-    try {
-        first_.startGame();
-        second_.startGame();
-        running_ = true;
-    } catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
-    }
-
-    while (running_) {
-        if (!first_.isAvailable() && !second_.isAvailable()) {
-            break;
-        }
-
-        if (selector_.wait(constants::waitTime())) {
-            if (first_.hasNewData(selector_)) {
-                try {
-                    first_.getEvents();
-                } catch (const std::exception &e) {
-                    selector_.remove(first_.getSocket());
-                }
-            }
-
-            if (second_.hasNewData(selector_)) {
-                try {
-                    second_.getEvents();
-                } catch (const std::exception &e) {
-                    selector_.remove(second_.getSocket());
-                }
-            }
-        } else {
-            // TODO validation:
-            // здесь происходит вызов Game.servRun(player &first, player &second);
-
-            first_.to_send = second_.from_client;
-            if (!second_.isAvailable())
-                first_.to_send.emplace_back(0, 's', "stop", sf::microseconds(0)); // системный вызов, завершающий игру
-
-            second_.from_client.clear(); // в Game этот вектор после обработки должен быть очищен!
-
-
-            second_.to_send = first_.from_client;
-            if (!first_.isAvailable())
-                second_.to_send.emplace_back(0, 's', "stop", sf::microseconds(0)); // системный вызов, завершающий игру
-
-            first_.from_client.clear(); // в Game этот вектор после обработки должен быть очищен!
-
-
-            first_.sendEvents();
-            second_.sendEvents();
-        }
-    }
-
-    std::cout << msg::end << pid_ << std::endl;
 }

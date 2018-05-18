@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "Server/Server.h"
+#include "Multiplayer/Master.h"
 
 int main () {
     // TODO чтение порта из конфигов
