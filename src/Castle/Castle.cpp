@@ -11,6 +11,7 @@ Castle::Castle()
       warriors_(),
       numWarriorsToWave_(0),
       numWarriorsInBuffer_(0),
+      forDurationState_(0),
       warriorsBuffer_(),
       farm_(),
       barracks_(),
@@ -123,27 +124,19 @@ void Castle::makeWave(const sf::Time& dTime) {
 }
 
 void Castle::letsMakingWave() {
-    numWarriorsToWave_ += numWarriorsInBuffer_;
-    numWarriorsInBuffer_ = 0;
+    numWarriorsToWave_ += forDurationState_;
+    forDurationState_ = 0;
     makingWave_ = true;
+}
+
+void Castle::dropBuffer() {
+    forDurationState_ += numWarriorsInBuffer_;
+    numWarriorsInBuffer_ = 0;
 }
 
 std::string Castle::generateWaveString(const Castle& player) {
     std::string value;
 
-//    for (const auto& warrior: player.getWarriorsBuffer()) {
-//        if (warrior != nullptr) {
-//            switch (warrior->getType()) {
-//                case Type::lvlOne:
-//                    value.push_back('1');
-//                    break;
-//                case Type::lvlTwo:
-//                    value.push_back('2');
-//                    break;
-//            }
-//        }
-//    }
-    //const std::list<std::shared_ptr<Warrior>>& buffer = player.getWarriorsBuffer();
     auto buffIterator = player.warriorsBuffer_.begin();
     for (size_t i = 0; i < player.numWarriorsToWave_; i++) {
         buffIterator++;
@@ -188,4 +181,3 @@ const Weapons& Castle::getWeapons() const {
 size_t Castle::getWarriorsToWave() const {
     return numWarriorsToWave_;
 }
-

@@ -65,6 +65,7 @@ private:
     std::vector<Map::LogicMap> roadRect;
 
     std::shared_ptr<Castle> curPlayer;
+    int curPlayerRoad;
 };
 
 

@@ -8,6 +8,8 @@
 
 class GameUnit {
 public:
+    virtual ~GameUnit() = default;
+
     virtual void update(const sf::Time& dTime) = 0;
 
     Type getType() const;

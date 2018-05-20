@@ -23,6 +23,7 @@ public:
     void takeDamage(int damage);
     void setEnemy(const std::shared_ptr<Castle>& castle);
     void letsMakingWave();
+    void dropBuffer();
     void makeWave(const sf::Time& dTime);
 
     static std::string generateWaveString(const Castle& player);
@@ -47,6 +48,7 @@ private:
     std::list<std::shared_ptr<Warrior>> warriors_;
     size_t numWarriorsInBuffer_;
     size_t numWarriorsToWave_;
+    size_t forDurationState_;
     std::list<std::shared_ptr<Warrior>> warriorsBuffer_;
 
     Farm farm_;
