@@ -34,13 +34,13 @@ GraphicsWarrior::GraphicsWarrior(std::shared_ptr<Warrior>& warrior, States::Cont
     explosionSprite_.setOrigin(deadSprite_.getTextureRect().width / 2, deadSprite_.getTextureRect().height / 2);
 }
 
-void GraphicsWarrior::update(const sf::Time& dTime) {
+bool GraphicsWarrior::update(const sf::Time& dTime) {
     if (!finishing_ && !died_ && warrior_ != nullptr) {
         if (!warrior_->isAlive()) {
             deadSprite_.setPosition(warrior_->getPosition());
             died_ = true;
             warrior_.reset();
-            return;
+            return true;
         }
         if (warrior_->isFinished()) {
             explosionSprite_.setPosition(warrior_->getPosition());
@@ -49,7 +49,7 @@ void GraphicsWarrior::update(const sf::Time& dTime) {
             }
             finishing_ = true;
             warrior_.reset();
-            return;
+            return true;
         }
         lifeAnimation(dTime);
     } else if (died_) {
@@ -57,6 +57,7 @@ void GraphicsWarrior::update(const sf::Time& dTime) {
     } else {
         finishedAnimation(dTime);
     }
+    return false;
 
 }
 

@@ -10,7 +10,7 @@
 class GraphicsWarrior {
 public:
     explicit GraphicsWarrior(std::shared_ptr<Warrior>& warrior, States::Context& context);
-    void update(const sf::Time& dTime);
+    bool update(const sf::Time& dTime);
     void draw(const States::Context& context);
 
     bool isFinished() const;

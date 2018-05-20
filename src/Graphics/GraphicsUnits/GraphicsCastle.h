@@ -15,10 +15,13 @@ public:
     void update(const sf::Time& dTime, States::Context& context);
     void draw(States::Context& context, int id);
 
+    void decreaseAliveWarriors();
+
 private:
     Castle& castle_;
     std::list<std::shared_ptr<GraphicsWarrior>> gWarriors_;
     std::unique_ptr<GraphicsTower> gTower_;
+    size_t numAliveWarriors_;
 };
 
 
