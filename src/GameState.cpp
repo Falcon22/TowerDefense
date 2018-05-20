@@ -208,45 +208,6 @@ bool GameState::handleEvent(const sf::Event& event) {
         pushState(States::ID::Menu);
         hud.setAction(gui::HUD::Action::None);
     }
-
-//    if (event.type == sf::Event::KeyReleased
-//        && event.key.code == sf::Keyboard::P)
-//    {
-//        lComponent.getPlayer2()->addWarrior(Type::lvlTwo, roadRect[0]);
-//        std::cout << "pressed P " << lComponent.getPlayer1()->getWarriorsInBuffer() << std::endl;
-//    }
-//    if (event.type == sf::Event::KeyReleased
-//        && event.key.code == sf::Keyboard::U)
-//    {
-//        lComponent.getPlayer2()->addWarrior(Type::lvlOne, roadRect[0]);
-//        std::cout << "pressed U " << lComponent.getPlayer2()->getWarriorsInBuffer() << std::endl;
-//    }
-//    if (event.type == sf::Event::KeyReleased
-//        && event.key.code == sf::Keyboard::F)
-//    {
-//        getContext().multiplayer->outcoming.emplace_back(2, 'c', "f", clock + sf::milliseconds(1000));
-//        std::cout << "pressed F " << std::endl;
-//    }
-//    if (event.type == sf::Event::KeyReleased
-//        && event.key.code == sf::Keyboard::B)
-//    {
-//        getContext().multiplayer->outcoming.emplace_back(2, 'c', "b", clock + sf::milliseconds(1000));
-//        std::cout << "pressed B " << std::endl;
-//    }
-//    if (event.type == sf::Event::KeyReleased
-//        && event.key.code == sf::Keyboard::C)
-//    {
-//        getContext().multiplayer->outcoming.emplace_back(2, 'c', "w", clock + sf::milliseconds(1000));
-//        getContext().multiplayer->outcoming.emplace_back(1, 'c', "w", clock + sf::milliseconds(1000));
-//        std::cout << "pressed C " << std::endl;
-//    }
-//    if (event.type == sf::Event::KeyReleased
-//        && event.key.code == sf::Keyboard::L)
-//    {
-//
-//        getContext().multiplayer->outcoming.emplace_back(2, 't', "0", clock + sf::milliseconds(2000));
-//        std::cout << "pressed L " << std::endl;
-//    }
 }
 
 bool GameState::update(sf::Time dt) {

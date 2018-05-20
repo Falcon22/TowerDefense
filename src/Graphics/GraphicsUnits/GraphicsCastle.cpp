@@ -14,7 +14,6 @@ GraphicsCastle::GraphicsCastle(States::Context& context, Castle& castle)
 void GraphicsCastle::update(const sf::Time& dTime, States::Context& context) {
     size_t numRealWarriors = castle_.getWarriors().size();
     if (numRealWarriors != 0 || numAliveWarriors_ != 0) {
-        std::cout << "real: " << numRealWarriors << " | alive: " << numAliveWarriors_ << std::endl;
     }
     if (numRealWarriors > numAliveWarriors_) {
         auto realWarriorsIterator = castle_.getWarriors().end();
@@ -45,8 +44,4 @@ void GraphicsCastle::draw(States::Context& context, int id) {
     for (const auto &tower: castle_.getTowers()) {
         gTower_->draw(context, tower, id);
     }
-}
-
-void GraphicsCastle::decreaseAliveWarriors() {
-    --numAliveWarriors_;
 }
