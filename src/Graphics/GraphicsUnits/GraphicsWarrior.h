@@ -10,7 +10,7 @@
 class GraphicsWarrior {
 public:
     explicit GraphicsWarrior(std::shared_ptr<Warrior>& warrior, States::Context& context);
-    void update(const sf::Time& dTime);
+    bool update(const sf::Time& dTime);
     void draw(const States::Context& context);
 
     bool isFinished() const;
@@ -26,7 +26,6 @@ private:
     std::pair<int, int> warriorSpriteRect_;//<width, height>
     sf::Sprite deadSprite_;
     sf::Sprite explosionSprite_;
-    const char kFrames_ = 4;
     sf::Int32 deathDuration_;
     sf::Int32 finishedDuration_;
     float currentFrame_;

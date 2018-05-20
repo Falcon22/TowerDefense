@@ -24,9 +24,9 @@ void Bullet::update(const sf::Time& dTime) {
         return;
     }
     if (!checkCollisionWithTarget()) {
-        angle_ = static_cast<float>(atan2((target_->getPosition().x - position_.x), (target_->getPosition().y - position_.y)));
-        position_.x += velocity_ * dTime.asSeconds() * sin(angle_);
-        position_.y += velocity_ * dTime.asSeconds() * cos(angle_);
+        angle_ = std::atan2((target_->getPosition().x - position_.x), (target_->getPosition().y - position_.y));
+        position_.x += velocity_ * dTime.asSeconds() * std::sin(angle_);
+        position_.y += velocity_ * dTime.asSeconds() * std::cos(angle_);
     } else {
         exploded_ = true;
         damage();

@@ -1,6 +1,8 @@
 #include "GraphicsBullet.h"
 #include <cmath>
 
+#define RAD_IN_DEGREE (180 / M_PI)
+
 GraphicsBullet::GraphicsBullet(std::shared_ptr<Bullet> bullet, States::Context& context)
         : explosionTime_(100),
           exploded_(false),
@@ -42,7 +44,7 @@ bool GraphicsBullet::update(const sf::Time& dTime) {
             return true;
         }
         sprite_.setPosition(bullet_->getPosition());
-        sprite_.setRotation(static_cast<float>(-bullet_->getAngle() * 180 / M_PI + 180));
+        sprite_.setRotation(static_cast<float>(-bullet_->getAngle() * RAD_IN_DEGREE + 180));
     } else {
         explosionTime_ -= dTime.asMilliseconds();
         if (explosionTime_ < 0) {

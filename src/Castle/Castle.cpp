@@ -5,20 +5,19 @@
 
 Castle::Castle()
     : enemy_(nullptr),
-      gold_(gameConst.cCASTLE_INIT_GOLD()),
-      health_(gameConst.cCASTLE_HP()),
+      gold_(GameConstants::instance().cCASTLE_INIT_GOLD()),
+      health_(GameConstants::instance().cCASTLE_HP()),
       towers_(),
       warriors_(),
       numWarriorsToWave_(0),
       numWarriorsInBuffer_(0),
+      forDurationState_(0),
       warriorsBuffer_(),
       farm_(),
       barracks_(),
       weapons_(),
       makingWave_(false),
-      waveDuration_(0) {
-    std::cout << "Castle" << std::endl;
-}
+      waveDuration_(0) {}
 
 int Castle::getGold() const {
     return gold_;
@@ -59,7 +58,7 @@ void Castle::upgradeBuilding(char type) {
 }
 
 void Castle::addWarrior(Type type, const Map::LogicMap& logicMap) {
-    if (numWarriorsInBuffer_ >= gameConst.cWARRIORS_BUFFER_SIZE()) {
+    if (numWarriorsInBuffer_ >= GameConstants::instance().cWARRIORS_BUFFER_SIZE()) {
         return;
     }
     switch (type) {
@@ -90,7 +89,7 @@ void Castle::updateCastle(const sf::Time& dTime) {
         }
     }
 
-    for (const auto &tower : towers_) {
+    for (const auto& tower : towers_) {
         tower->update(dTime);
     }
     if (makingWave_) {
@@ -113,7 +112,7 @@ void Castle::addTower(const sf::Vector2f& position, std::list<std::shared_ptr<Wa
 void Castle::makeWave(const sf::Time& dTime) {
     waveDuration_ -= dTime.asMilliseconds();
     if (waveDuration_ <= 0) {
-        waveDuration_ = gameConst.cCASTLE_WAVE_DURATION();
+        waveDuration_ = GameConstants::instance().cCASTLE_WAVE_DURATION();
         if (numWarriorsToWave_ > 0) {
             --numWarriorsToWave_;
             warriors_.push_back(warriorsBuffer_.front());
@@ -125,27 +124,19 @@ void Castle::makeWave(const sf::Time& dTime) {
 }
 
 void Castle::letsMakingWave() {
-    numWarriorsToWave_ += numWarriorsInBuffer_;
-    numWarriorsInBuffer_ = 0;
+    numWarriorsToWave_ += forDurationState_;
+    forDurationState_ = 0;
     makingWave_ = true;
+}
+
+void Castle::dropBuffer() {
+    forDurationState_ += numWarriorsInBuffer_;
+    numWarriorsInBuffer_ = 0;
 }
 
 std::string Castle::generateWaveString(const Castle& player) {
     std::string value;
 
-//    for (const auto& warrior: player.getWarriorsBuffer()) {
-//        if (warrior != nullptr) {
-//            switch (warrior->getType()) {
-//                case Type::lvlOne:
-//                    value.push_back('1');
-//                    break;
-//                case Type::lvlTwo:
-//                    value.push_back('2');
-//                    break;
-//            }
-//        }
-//    }
-    //const std::list<std::shared_ptr<Warrior>>& buffer = player.getWarriorsBuffer();
     auto buffIterator = player.warriorsBuffer_.begin();
     for (size_t i = 0; i < player.numWarriorsToWave_; i++) {
         buffIterator++;
@@ -171,7 +162,7 @@ size_t Castle::getWarriorsInBuffer() const {
     return numWarriorsInBuffer_;
 }
 
-bool Castle::checkValidUpgradeTower(const Type &towerLvl, unsigned char weaponsLvl) {
+bool Castle::checkValidUpgradeTower(const Type& towerLvl, unsigned char weaponsLvl) {
     return  ((weaponsLvl == 3) || (towerLvl == Type::lvlZero && weaponsLvl >= 1) ||
         (towerLvl == Type::lvlOne && weaponsLvl >= 2));
 }
@@ -190,4 +181,3 @@ const Weapons& Castle::getWeapons() const {
 size_t Castle::getWarriorsToWave() const {
     return numWarriorsToWave_;
 }
-
