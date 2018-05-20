@@ -8,6 +8,7 @@
 #include "Graphics/GraphicsUnits/GraphicsCastle.h"
 #include "Graphics/GraphicsUnits/GraphicsBullet.h"
 
+#define DELAY 300
 
 GameState::GameState(StateManager &stack, States::Context context) :
         lComponent(),
@@ -57,7 +58,7 @@ void GameState::initTower() {
                     (Castle::checkValidUpgradeTower(lComponent.getPlayer1()->getTowers().at(ind)->getType(),
                                                     lComponent.getPlayer1()->getWeapons().getLvl()))) {
                     getContext().multiplayer->outcoming.emplace_back(1, 't', std::to_string(ind),
-                                                                     clock + sf::milliseconds(500));
+                                                                     clock + sf::milliseconds(DELAY));
                     std::cout << ind << std::endl;
                 }
             });
@@ -81,7 +82,7 @@ void GameState::initTower() {
                         (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
                                                         lComponent.getPlayer2()->getWeapons().getLvl()))) {
                     getContext().multiplayer->outcoming.emplace_back(2, 't', std::to_string(ind),
-                                                               clock + sf::milliseconds(500));
+                                                               clock + sf::milliseconds(DELAY));
                     std::cout << ind << std::endl;
                 }
             });
@@ -163,7 +164,7 @@ void GameState::initHUD() {
         if (curPlayer->getGold() >= curPlayer->getFarm().getUpgradeCost()) {
             std::cout << "farm" << std::endl;
             getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "f",
-                                                             clock + sf::milliseconds(2000));
+                                                             clock + sf::milliseconds(DELAY));
         }
     });
 
@@ -173,7 +174,7 @@ void GameState::initHUD() {
         if (curPlayer->getGold() >= curPlayer->getBarracks().getUpgradeCost()) {
             std::cout << "barraks" << std::endl;
             getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "b",
-                                                             clock + sf::milliseconds(2000));
+                                                             clock + sf::milliseconds(DELAY));
         }
     });
 
@@ -183,7 +184,7 @@ void GameState::initHUD() {
         if (curPlayer->getGold() >= curPlayer->getWeapons().getUpgradeCost()) {
             std::cout << "weapons" << std::endl;
             getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "w",
-                                                             clock + sf::milliseconds(2000));
+                                                             clock + sf::milliseconds(DELAY));
         }
     });
 
@@ -258,7 +259,7 @@ bool GameState::update(sf::Time dt) {
         if (curPlayer->getWarriorsInBuffer() > 0) {
             getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'w',
                                                              Castle::generateWaveString(*curPlayer),
-                                                             clock + sf::milliseconds(2000));
+                                                             clock + sf::milliseconds(DELAY));
             curPlayer->dropBuffer();
         }
     }
@@ -291,7 +292,7 @@ void GameState::manageEvents() {
     for(auto event = events.begin(); event != events.end();) {
         if (event->time > clock) {
             ++event;
-            break;
+            continue;
         }
         std::cout << "pr event " << event->id << " " << event->type << " " << event->value << std::endl;
 

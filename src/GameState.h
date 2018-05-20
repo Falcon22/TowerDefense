@@ -32,18 +32,6 @@ private:
     void initTower();
     void initHUD();
 
-//    struct Event {
-//        Event(int id_, char type_, std::string value_, const sf::Time time_) :
-//                id(id_),
-//                type(type_),
-//                value(std::move(value_)),
-//                time(time_) {}
-//        int id;
-//        char type;
-//        std::string value;
-//        sf::Time time;
-//    };
-
     std::vector<mp::Event> events;
     sf::Time clock;
 
