@@ -1,3 +1,4 @@
+#include <cmath>
 #include  <valarray>
 #include "Tower.h"
 #include "../Warrior/Warrior.h"
@@ -5,6 +6,7 @@
 #include "TowerLvlTwo.h"
 #include "TowerLvlThree.h"
 
+#define RAD_IN_DEGREE (180 / M_PI)
 
 Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
              std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets)
@@ -29,7 +31,7 @@ void Tower::update(const sf::Time& dTime) {
     } else {
         for (const auto& warrior : warriors_) {
             if (warrior != nullptr && inRange(warrior->getPosition()) && warrior->isAlive() && !warrior->isFinished()) {
-                target_ = warrior;////
+                target_ = warrior;
                 break;
             }
         }
@@ -46,8 +48,8 @@ bool Tower::inRange(const sf::Vector2f& pointPosition) const {
 }
 
 float Tower::aim() const {
-    return static_cast<float>((atan2((position_.y - target_->getPosition().y),
-                                     (position_.x - target_->getPosition().x)) * 180 / M_PI) - 90);
+    return static_cast<float>((std::atan2((position_.y - target_->getPosition().y),
+                                     (position_.x - target_->getPosition().x)) * RAD_IN_DEGREE) - 90);
 }
 
 void Tower::shoot(const sf::Time &dTime) {

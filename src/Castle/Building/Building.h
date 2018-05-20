@@ -7,6 +7,8 @@
 
 class Building {
 public:
+    virtual ~Building() = default;
+
     virtual int upgrade() = 0;
     unsigned char getLvl() const;
     int getUpgradeCost() const;

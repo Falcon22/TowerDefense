@@ -122,7 +122,12 @@ void HUD::draw(sf::RenderTarget &target, sf::RenderStates states) const
     }
 
     auto p = 0.f;
+
+    size_t i = 0;
     for (auto warrior : player->getWarriorsBuffer()) {
+        if (i++ < player->getWarriorsToWave()) {
+            continue;
+        }
         sf::Sprite tmp;
         sf::IntRect rect{ 0, 0, TILE_SIZE, TILE_SIZE };
         tmp.setTextureRect(rect);

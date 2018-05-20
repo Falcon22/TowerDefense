@@ -19,6 +19,7 @@ private:
     Castle& castle_;
     std::list<std::shared_ptr<GraphicsWarrior>> gWarriors_;
     std::unique_ptr<GraphicsTower> gTower_;
+    size_t numAliveWarriors_;
 };
 
 

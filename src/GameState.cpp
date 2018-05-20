@@ -8,6 +8,7 @@
 #include "Graphics/GraphicsUnits/GraphicsCastle.h"
 #include "Graphics/GraphicsUnits/GraphicsBullet.h"
 
+#define DELAY 300
 
 GameState::GameState(StateManager &stack, States::Context context) :
         lComponent(),
@@ -19,10 +20,13 @@ GameState::GameState(StateManager &stack, States::Context context) :
         hud(context, lComponent.getPlayer1(), lComponent.getPlayer2()) {
     std::cout << "start counstructor" << std::endl;
 
-    if (*context.p_id == 1)
+    if (*context.p_id == 1) {
         curPlayer = lComponent.getPlayer1();
-    else
+        curPlayerRoad = 0;
+    } else {
         curPlayer = lComponent.getPlayer2();
+        curPlayerRoad = 1;
+    }
 
     map.analyze(towers1, towers2);
     std::cout << "Map analyze" << std::endl;
@@ -50,9 +54,11 @@ void GameState::initTower() {
             bt->setPosition(p);
             bt->setInd(i);
             bt->setCallback([this](int ind) {
-                if ((lComponent.getPlayer1()->getGold() > lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) &&
-                    (Castle::checkValidUpgradeTower(lComponent.getPlayer1()->getTowers().at(ind)->getType(), lComponent.getPlayer1()->getWeapons().getLvl()))) {
-                    getContext().multiplayer->outcoming.emplace_back(1, 't', std::to_string(ind), clock + sf::milliseconds(500));
+                if ((lComponent.getPlayer1()->getGold() >= lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) &&
+                    (Castle::checkValidUpgradeTower(lComponent.getPlayer1()->getTowers().at(ind)->getType(),
+                                                    lComponent.getPlayer1()->getWeapons().getLvl()))) {
+                    getContext().multiplayer->outcoming.emplace_back(1, 't', std::to_string(ind),
+                                                                     clock + sf::milliseconds(DELAY));
                     std::cout << ind << std::endl;
                 }
             });
@@ -73,9 +79,10 @@ void GameState::initTower() {
             bt->setInd(i);
             bt->setCallback([this](int ind) {
                 if ((lComponent.getPlayer2()->getGold() > lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) &&
-                        (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(), lComponent.getPlayer2()->getWeapons().getLvl()))) {
+                        (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
+                                                        lComponent.getPlayer2()->getWeapons().getLvl()))) {
                     getContext().multiplayer->outcoming.emplace_back(2, 't', std::to_string(ind),
-                                                               clock + sf::milliseconds(500));
+                                                               clock + sf::milliseconds(DELAY));
                     std::cout << ind << std::endl;
                 }
             });
@@ -95,18 +102,10 @@ void GameState::initHUD() {
 
     addLvlOne->setCallback([this](int ind) {
 
-
-
-        if (*getContext().p_id == 1) {
-            if (lComponent.getPlayer1()->getBarracks().getLvl() >= 1) {
-                std::cout << "button warrior id 1" << std::endl;
-                lComponent.getPlayer1()->addWarrior(Type::lvlOne, roadRect[0]);
-            }
-        } else {
-            if (lComponent.getPlayer2()->getBarracks().getLvl() >= 2) {
-                std::cout << "button warrior id 2" << std::endl;
-                lComponent.getPlayer2()->addWarrior(Type::lvlOne, roadRect[1]);
-            }
+        if (curPlayer->getBarracks().getLvl() >= 1
+            && curPlayer->getGold() >= GameConstants::instance().cWARRIOR_1_COST()) {
+            std::cout << "button warrior id 1" << std::endl;
+            curPlayer->addWarrior(Type::lvlOne, roadRect[curPlayerRoad]);
         }
     });
 
@@ -116,16 +115,11 @@ void GameState::initHUD() {
     addLvlOne->setTextureRect(rect);
     addLvlOne->setPosition(860.f, 705.f);
     addLvlTwo->setCallback([this](int ind) {
-        if (*getContext().p_id == 1) {
-           if (lComponent.getPlayer1()->getBarracks().getLvl() >= 2) {
-               std::cout << "button warrior id 1" << std::endl;
-               lComponent.getPlayer1()->addWarrior(Type::lvlTwo, roadRect[0]);
-           }
-        } else {
-            if (lComponent.getPlayer2()->getBarracks().getLvl() >= 2) {
-                std::cout << "button warrior id 2" << std::endl;
-                lComponent.getPlayer2()->addWarrior(Type::lvlTwo, roadRect[1]);
-            }
+
+        if (curPlayer->getBarracks().getLvl() >= 2
+            && curPlayer->getGold() >= GameConstants::instance().cWARRIOR_2_COST()) {
+            std::cout << "button warrior id 2" << std::endl;
+            curPlayer->addWarrior(Type::lvlTwo, roadRect[curPlayerRoad]);
         }
     });
 
@@ -167,22 +161,31 @@ void GameState::initHUD() {
     std::cout << "9" << std::endl;
 
     addFarm->setCallback([this](int ind) {
-        std::cout << "farm" << std::endl;
-        getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "f", clock + sf::milliseconds(2000));
+        if (curPlayer->getGold() >= curPlayer->getFarm().getUpgradeCost()) {
+            std::cout << "farm" << std::endl;
+            getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "f",
+                                                             clock + sf::milliseconds(DELAY));
+        }
     });
 
     std::cout << "10" << std::endl;
 
     addBarraks->setCallback([this](int ind) {
-        std::cout << "barraks" << std::endl;
-        getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "b", clock + sf::milliseconds(2000));
+        if (curPlayer->getGold() >= curPlayer->getBarracks().getUpgradeCost()) {
+            std::cout << "barraks" << std::endl;
+            getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "b",
+                                                             clock + sf::milliseconds(DELAY));
+        }
     });
 
     std::cout << "11" << std::endl;
 
     addWeapons->setCallback([this](int ind) {
-        std::cout << "weapons" << std::endl;
-        getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "w", clock + sf::milliseconds(2000));
+        if (curPlayer->getGold() >= curPlayer->getWeapons().getUpgradeCost()) {
+            std::cout << "weapons" << std::endl;
+            getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "w",
+                                                             clock + sf::milliseconds(DELAY));
+        }
     });
 
     std::cout << "12" << std::endl;
@@ -205,74 +208,24 @@ bool GameState::handleEvent(const sf::Event& event) {
         pushState(States::ID::Menu);
         hud.setAction(gui::HUD::Action::None);
     }
-
-    if (event.type == sf::Event::KeyReleased
-        && event.key.code == sf::Keyboard::P)
-    {
-        lComponent.getPlayer2()->addWarrior(Type::lvlTwo, roadRect[0]);
-        std::cout << "pressed P " << lComponent.getPlayer1()->getWarriorsInBuffer() << std::endl;
-    }
-    if (event.type == sf::Event::KeyReleased
-        && event.key.code == sf::Keyboard::U)
-    {
-        lComponent.getPlayer2()->addWarrior(Type::lvlOne, roadRect[0]);
-        std::cout << "pressed U " << lComponent.getPlayer2()->getWarriorsInBuffer() << std::endl;
-    }
-    if (event.type == sf::Event::KeyReleased
-        && event.key.code == sf::Keyboard::F)
-    {
-        getContext().multiplayer->outcoming.emplace_back(2, 'c', "f", clock + sf::milliseconds(1000));
-        std::cout << "pressed F " << std::endl;
-    }
-    if (event.type == sf::Event::KeyReleased
-        && event.key.code == sf::Keyboard::B)
-    {
-        getContext().multiplayer->outcoming.emplace_back(2, 'c', "b", clock + sf::milliseconds(1000));
-        std::cout << "pressed B " << std::endl;
-    }
-    if (event.type == sf::Event::KeyReleased
-        && event.key.code == sf::Keyboard::C)
-    {
-        getContext().multiplayer->outcoming.emplace_back(2, 'c', "w", clock + sf::milliseconds(1000));
-        getContext().multiplayer->outcoming.emplace_back(1, 'c', "w", clock + sf::milliseconds(1000));
-        std::cout << "pressed C " << std::endl;
-    }
-    if (event.type == sf::Event::KeyReleased
-        && event.key.code == sf::Keyboard::L)
-    {
-
-        getContext().multiplayer->outcoming.emplace_back(2, 't', "0", clock + sf::milliseconds(2000));
-        std::cout << "pressed L " << std::endl;
-    }
 }
 
 bool GameState::update(sf::Time dt) {
-    //std::cout << "update" << std::endl;
-    //std::cout << gameConst.cWAVE_TIMER() << std::endl;
-//    std::cout << clock.asMilliseconds() << std::endl;
-
-//    std::cout << getContext().multiplayer->incoming.size() << std::endl;
-    //std::cout << getContext().multiplayer->outcoming.size() << std::endl;
-    //std::cout << "warriors:  " << player1->getWarriors().size() << std::endl;
-    //std::cout << "in buffer: " << player1->getWarriorsInBuffer() << std::endl;
-    //std::cout << bullets.size() << std::endl;
-    for (auto &&event : getContext().multiplayer->incoming) {
+    for (auto&& event : getContext().multiplayer->incoming) {
         events.emplace_back(event.id, event.type, event.value, event.time);
     }
 
     if (waveTimer <= clock.asSeconds()) {
         waveTimer += gameConst.cWAVE_TIMER();
-
-//        if (*getContext().p_id == )
-
-        if (!Castle::generateWaveString(*lComponent.getPlayer1()).empty())
-            getContext().multiplayer->outcoming.emplace_back(1, 'w', Castle::generateWaveString(*lComponent.getPlayer1()), clock + sf::milliseconds(2000));
-
-        if (!Castle::generateWaveString(*lComponent.getPlayer2()).empty())
-            getContext().multiplayer->outcoming.emplace_back(/**getContext().p_id*/2, 'w', Castle::generateWaveString(*lComponent.getPlayer2()), clock + sf::milliseconds(2000));
+        if (curPlayer->getWarriorsInBuffer() > 0) {
+            getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'w',
+                                                             Castle::generateWaveString(*curPlayer),
+                                                             clock + sf::milliseconds(DELAY));
+            curPlayer->dropBuffer();
+        }
     }
 
-    for (auto &&event : getContext().multiplayer->outcoming) {
+    for (auto&& event : getContext().multiplayer->outcoming) {
         events.emplace_back(event.id, event.type, event.value, event.time);
     }
 
@@ -284,33 +237,24 @@ bool GameState::update(sf::Time dt) {
     hud.update(dt);
     lComponent.update(dt);
     gComponent.update(dt, getContext(), lComponent.getBullets());
-
-   // std::cout << "Farm: " << (int)lComponent.getPlayer2().get()->getFarm().getLvl() << std::endl;
-    //std::cout << "Barracks: " << (int)lComponent.getPlayer2().get()->getBarracks().getLvl() << std::endl;
-    //std::cout << "Weapons: " << (int)lComponent.getPlayer2().get()->getWeapons().getLvl() << std::endl;
-    //std::cout << bullets.size() << " | " << gComponent.getGBulletsSize() << std::endl;
 }
 
 void GameState::draw() {
-    //std::cout << "draw" << std::endl;
     map.draw();
 
     getContext().window->draw(hud);
     getContext().window->draw(buttons);
     gComponent.draw(getContext());
-    //std::cout << "end draw" << std::endl;
 }
 
 void GameState::manageEvents() {
-   // std::cout << "manageEvents" << std::endl;
     Castle* player = nullptr;
-    //std::cout << events.size() << std::endl;
+
     for(auto event = events.begin(); event != events.end();) {
         if (event->time > clock) {
             ++event;
-            break;
+            continue;
         }
-
         std::cout << "pr event " << event->id << " " << event->type << " " << event->value << std::endl;
 
         if (event->id == 1) {
@@ -332,17 +276,16 @@ void GameState::manageEvents() {
             case 'w':
                 std::cout << "Wave go!" << std::endl;
                 if (event->id != *getContext().p_id) {
+                    int rect_num = 0;
+                    if (*getContext().p_id == 2) {
+                        rect_num = 0;
+                    } else {
+                        rect_num = 1;
+                    }
                     for (auto type : event->value) {
-                        int rect_num = 0;
-                        if (*getContext().p_id == 2) {
-                            rect_num = 0;
-                        } else {
-                            rect_num = 1;
-                        }
-
                         switch (type) {
                             case '1':
-                                if (player->getGold() > gameConst.cWARRIOR_1_COST() && player->getBarracks().getLvl() >= 0) {
+                                if (player->getGold() > gameConst.cWARRIOR_1_COST() && player->getBarracks().getLvl() >= 1) {
                                     player->addWarrior(Type::lvlOne, roadRect[rect_num]);
                                 }
                                 break;
@@ -354,6 +297,7 @@ void GameState::manageEvents() {
                                 break;
                         }
                     }
+                    player->dropBuffer();
                 }
                 player->letsMakingWave();
                 break;
