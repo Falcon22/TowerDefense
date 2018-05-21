@@ -1,6 +1,6 @@
 #include "Warrior.h"
 
-Warrior::Warrior(Type type, const sf::Vector2f& position, const Map::LogicMap& logicMap, unsigned int cost,
+Warrior::Warrior(Type type, const sf::Vector2f& position, const Map::LogicMap& logicMap, int cost,
                  float velocity, int hp)
     : GameUnit(type, position),
       logicMap_(logicMap),
@@ -59,7 +59,7 @@ int Warrior::getHp() const {
     return hp_;
 }
 
-const unsigned int Warrior::getCost() const {
+const int Warrior::getCost() const {
     return cost_;
 }
 
