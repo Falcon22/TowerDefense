@@ -195,11 +195,11 @@ int GameConstants::cBULLET_3_AOE() const {
     return BULLET_3_AOE;
 }
 
-unsigned int GameConstants::cTOWER_0_UP_COST() const {
+int GameConstants::cTOWER_0_UP_COST() const {
     return TOWER_0_UP_COST;
 }
 
-unsigned int GameConstants::cTOWER_1_UP_COST() const {
+int GameConstants::cTOWER_1_UP_COST() const {
     return TOWER_1_UP_COST;
 }
 
@@ -211,7 +211,7 @@ int GameConstants::cTOWER_1_COOLDOWN() const {
     return TOWER_1_COOLDOWN;
 }
 
-unsigned int GameConstants::cTOWER_2_UP_COST() const {
+int GameConstants::cTOWER_2_UP_COST() const {
     return TOWER_2_UP_COST;
 }
 
@@ -231,7 +231,7 @@ int GameConstants::cTOWER_3_COOLDOWN() const {
     return TOWER_3_COOLDOWN;
 }
 
-unsigned int GameConstants::cWARRIOR_1_COST() const {
+int GameConstants::cWARRIOR_1_COST() const {
     return WARRIOR_1_COST;
 }
 
@@ -243,7 +243,7 @@ int GameConstants::cWARRIOR_1_HP() const {
     return WARRIOR_1_HP;
 }
 
-unsigned int GameConstants::cWARRIOR_2_COST() const {
+int GameConstants::cWARRIOR_2_COST() const {
     return WARRIOR_2_COST;
 }
 

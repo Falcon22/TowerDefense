@@ -14,20 +14,20 @@ public:
 
     float getDirection() const;
     int getHp() const;
-    const unsigned int getCost() const;
+    const int getCost() const;
     bool isAlive() const;
     bool isFinished() const;
 
 
 protected:
-    Warrior(Type type, const sf::Vector2f& position, const Map::LogicMap& logicMap, unsigned int cost,
+    Warrior(Type type, const sf::Vector2f& position, const Map::LogicMap& logicMap, int cost,
             float velocity, int hp);
 
 private:
     float direction_;
     float velocity_;
     int hp_;
-    const unsigned int cost_;
+    const int cost_;
     bool alive_;
     bool finished_;
     const Map::LogicMap& logicMap_;

@@ -27,19 +27,19 @@ public:
     int cBULLET_3_DAMAGE() const;
     int cBULLET_3_VELOCITY() const;
     int cBULLET_3_AOE() const;
-    unsigned int cTOWER_0_UP_COST() const;
-    unsigned int cTOWER_1_UP_COST() const;
+    int cTOWER_0_UP_COST() const;
+    int cTOWER_1_UP_COST() const;
     int cTOWER_1_RANGE() const;
     int cTOWER_1_COOLDOWN() const;
-    unsigned int cTOWER_2_UP_COST() const;
+    int cTOWER_2_UP_COST() const;
     int cTOWER_2_RANGE() const;
     int cTOWER_2_COOLDOWN() const;
     int cTOWER_3_RANGE() const;
     int cTOWER_3_COOLDOWN() const;
-    unsigned int cWARRIOR_1_COST() const;
+    int cWARRIOR_1_COST() const;
     int cWARRIOR_1_VELOCITY() const;
     int cWARRIOR_1_HP() const;
-    unsigned int cWARRIOR_2_COST() const;
+    int cWARRIOR_2_COST() const;
     int cWARRIOR_2_VELOCITY() const;
     int cWARRIOR_2_HP() const;
     int cWAVE_TIMER() const;
@@ -81,20 +81,20 @@ private:
     int BULLET_3_VELOCITY;
     int BULLET_3_AOE;
 
-    unsigned int TOWER_0_UP_COST;
-    unsigned int TOWER_1_UP_COST;
+    int TOWER_0_UP_COST;
+    int TOWER_1_UP_COST;
     int TOWER_1_RANGE;
     int TOWER_1_COOLDOWN;
-    unsigned int TOWER_2_UP_COST;
+    int TOWER_2_UP_COST;
     int TOWER_2_RANGE;
     int TOWER_2_COOLDOWN;
     int TOWER_3_RANGE;
     int TOWER_3_COOLDOWN;
 
-    unsigned int WARRIOR_1_COST;
+    int WARRIOR_1_COST;
     int WARRIOR_1_VELOCITY;
     int WARRIOR_1_HP;
-    unsigned int WARRIOR_2_COST;
+    int WARRIOR_2_COST;
     int WARRIOR_2_VELOCITY;
     int WARRIOR_2_HP;
 
