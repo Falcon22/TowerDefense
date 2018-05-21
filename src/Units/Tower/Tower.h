@@ -16,12 +16,12 @@ public:
     void update(const sf::Time& dTime) override;
     static int upgrade(std::shared_ptr<Tower>& tower);
     float getAngle() const;
-    unsigned int getPrice();
+    int getPrice();
 
     GameConstants& gameConst = GameConstants::instance();
 
 protected:
-    Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
+    Tower(Type type, const sf::Vector2f& position, int price, float attackRange, float attackCooldown,
           std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets);
 
 
@@ -30,7 +30,7 @@ protected:
     void shoot(const sf::Time& dTime);
     virtual std::shared_ptr<Bullet> makeBullet() = 0;
 
-    unsigned int price_;
+    int price_;
     float angle_;
     float attackRange_;
     float cooldown_;

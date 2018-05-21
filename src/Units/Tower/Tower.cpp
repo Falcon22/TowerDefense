@@ -8,7 +8,7 @@
 
 #define RAD_IN_DEGREE (180 / M_PI)
 
-Tower::Tower(Type type, const sf::Vector2f& position, unsigned int price, float attackRange, float attackCooldown,
+Tower::Tower(Type type, const sf::Vector2f& position, int price, float attackRange, float attackCooldown,
              std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets)
         : GameUnit(type, position),
           price_(price),
@@ -38,7 +38,7 @@ void Tower::update(const sf::Time& dTime) {
     }
 }
 
-unsigned int Tower::getPrice() {
+int Tower::getPrice() {
     return price_;
 }
 
@@ -65,6 +65,7 @@ float Tower::getAngle() const {
 }
 
 int Tower::upgrade(std::shared_ptr<Tower>& tower) {
+    int price = tower->getPrice();
     switch (tower->type_) {
         case Type ::lvlZero:
             tower.reset(new TowerLvlOne(tower->position_, tower->warriors_, tower->bullets_));
@@ -78,5 +79,5 @@ int Tower::upgrade(std::shared_ptr<Tower>& tower) {
         default:
             return 0;
     }
-    return tower->getPrice();
+    return price;
 }

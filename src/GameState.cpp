@@ -78,9 +78,9 @@ void GameState::initTower() {
             bt->setPosition(p);
             bt->setInd(i);
             bt->setCallback([this](int ind) {
-                if ((lComponent.getPlayer2()->getGold() > lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) &&
-                    (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
-                                                    lComponent.getPlayer2()->getWeapons().getLvl()))) {
+                if ((lComponent.getPlayer2()->getGold() >= lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) &&
+                        (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
+                                                        lComponent.getPlayer2()->getWeapons().getLvl()))) {
                     getContext().multiplayer->outcoming.emplace_back(2, 't', std::to_string(ind),
                                                                      clock + sf::milliseconds(DELAY));
                     std::cout << ind << std::endl;
@@ -268,6 +268,7 @@ void GameState::manageEvents() {
                 if (player->getGold() >= player->getTowers().at(index).get()->getPrice()) {
                     if (Castle::checkValidUpgradeTower(player->getTowers().at(index).get()->getType(),
                                                        player->getWeapons().getLvl())) {
+                        std::cout << "gold: " << player->getGold() << " |cost: " << player->getTowers().at(index).get()->getPrice() << std::endl;
                         player->upgradeTower(index);
                     }
                 }
@@ -285,13 +286,13 @@ void GameState::manageEvents() {
                     for (auto type : event->value) {
                         switch (type) {
                             case '1':
-                                if (player->getGold() > gameConst.cWARRIOR_1_COST() && player->getBarracks().getLvl() >= 1) {
+                                if (player->getGold() >= gameConst.cWARRIOR_1_COST() && player->getBarracks().getLvl() >= 1) {
                                     player->addWarrior(Type::lvlOne, roadRect[rect_num]);
                                 }
                                 break;
 
                             case '2':
-                                if (player->getGold() > gameConst.cWARRIOR_2_COST() && player->getBarracks().getLvl() >= 2) {
+                                if (player->getGold() >= gameConst.cWARRIOR_2_COST() && player->getBarracks().getLvl() >= 2) {
                                     player->addWarrior(Type::lvlTwo, roadRect[rect_num]);
                                 }
                                 break;
