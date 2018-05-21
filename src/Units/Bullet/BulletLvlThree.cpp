@@ -1,7 +1,7 @@
 #include "BulletLvlThree.h"
 
 BulletLvlThree::BulletLvlThree(const sf::Vector2f &position, float angle, const std::shared_ptr<Warrior>& target,
-                           std::list<std::shared_ptr<Warrior>> &warriors)
+                               std::list<std::shared_ptr<Warrior>> &warriors)
         : Bullet(Type::lvlThree, position, target, GameConstants::instance().cBULLET_3_DAMAGE(),
                  GameConstants::instance().cBULLET_3_VELOCITY(), angle),
           warriors_(warriors),

@@ -112,7 +112,7 @@ void Map::analyze(std::vector<sf::Vector2f>& towers1, std::vector<sf::Vector2f>&
 //            roadRect.start = s;
         while ((this1.first == s.second || (this1.first != height && this1.first != -1)) &&
                (this1.second == s.first || (this1.second != width && this1.second != -1)) &&
-                (map[this1.first][this1.second].getTileNumber() != 16 || map[this2.first][this2.second].getTileNumber() != 16)) {
+               (map[this1.first][this1.second].getTileNumber() != 16 || map[this2.first][this2.second].getTileNumber() != 16)) {
             //std::cout << "(" << this1.first + 1 << ";" << this1.second + 1 << ") " << " (" << this2.first + 1 << ";"
             //          << this2.second + 1 << ")" << std::endl;
             switch (move) {
@@ -311,6 +311,6 @@ void Map::draw() {
 
 }
 
- void Map::getRoadRect(std::vector<LogicMap>& road) const {
+void Map::getRoadRect(std::vector<LogicMap>& road) const {
     road = roadRect;
 }

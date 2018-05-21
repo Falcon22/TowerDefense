@@ -79,10 +79,10 @@ void GameState::initTower() {
             bt->setInd(i);
             bt->setCallback([this](int ind) {
                 if ((lComponent.getPlayer2()->getGold() > lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) &&
-                        (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
-                                                        lComponent.getPlayer2()->getWeapons().getLvl()))) {
+                    (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
+                                                    lComponent.getPlayer2()->getWeapons().getLvl()))) {
                     getContext().multiplayer->outcoming.emplace_back(2, 't', std::to_string(ind),
-                                                               clock + sf::milliseconds(DELAY));
+                                                                     clock + sf::milliseconds(DELAY));
                     std::cout << ind << std::endl;
                 }
             });
@@ -322,4 +322,3 @@ void GameState::manageEvents() {
         event = events.erase(event);
     }
 }
-

@@ -1,7 +1,3 @@
-//
-// Created by Falcon on 20.04.2018.
-//
-
 #ifndef TOWERDEFENSE_MAP_H
 #define TOWERDEFENSE_MAP_H
 
@@ -37,7 +33,7 @@ private:
 
     std::vector<LogicMap> roadRect;
 public:
-     void getRoadRect(std::vector<LogicMap>&) const;
+    void getRoadRect(std::vector<LogicMap>&) const;
 
 private:
     sf::RenderWindow &window;

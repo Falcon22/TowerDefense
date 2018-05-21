@@ -8,7 +8,7 @@
 #include <thread>
 
 Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
-                                                     sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
+                                                    sf::Style::Default, sf::ContextSettings{0, 0, 8, 1, 1, 0}),
                context(window, font, textureHolder, fontHolder, cursor, new mp::ClientMultiplayerFacade),
                stateManager(context) {
     std::cout << "start game constructor" << std::endl;

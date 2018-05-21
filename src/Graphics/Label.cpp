@@ -38,5 +38,5 @@ void Label::centerText() {
     sf::FloatRect rect = text.getGlobalBounds();
     text.setOrigin(rect.left, rect.top);
     text.setPosition({sprite.getLocalBounds().width / 2 - rect.width,
-                     sprite.getLocalBounds().height / 2 - rect.height / 2});
+                      sprite.getLocalBounds().height / 2 - rect.height / 2});
 }

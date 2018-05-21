@@ -49,7 +49,7 @@ bool Tower::inRange(const sf::Vector2f& pointPosition) const {
 
 float Tower::aim() const {
     return static_cast<float>((std::atan2((position_.y - target_->getPosition().y),
-                                     (position_.x - target_->getPosition().x)) * RAD_IN_DEGREE) - 90);
+                                          (position_.x - target_->getPosition().x)) * RAD_IN_DEGREE) - 90);
 }
 
 void Tower::shoot(const sf::Time &dTime) {
