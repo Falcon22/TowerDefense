@@ -100,6 +100,8 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::warriorExplosion, "Resources/warriorExplosion.png");
     textureHolder.load(Textures::towerZeroRed, "Resources/redTarget.png");
     textureHolder.load(Textures::towerZeroBlue, "Resources/blueTarget.png");
+    textureHolder.load(Textures::castle1, "Resources/RedCastle.png");
+    textureHolder.load(Textures::castle2, "Resources/BlueCastle.png");
     textureHolder.load(Textures::towerOneTop, "Resources/towerOneTop.png");
     textureHolder.load(Textures::towerOneBase, "Resources/towerOneBase.png");
     textureHolder.load(Textures::towerTwoTop, "Resources/towerTwoTop.png");
@@ -119,6 +121,10 @@ void Game::loadAllResources() {
     textureHolder.load(Textures::addBarraks, "Resources/addBarraks.png");
     textureHolder.load(Textures::addFarm, "Resources/addFarm.png");
     textureHolder.load(Textures::addWeapons, "Resources/addWeapons.png");
+    textureHolder.load(Textures::farm, "Resources/farm.png");
+    textureHolder.load(Textures::weapons, "Resources/weapons.png");
+    textureHolder.load(Textures::barraks, "Resources/barraks.png");
+    textureHolder.load(Textures::logo, "Resources/logo.png");
 }
 
 

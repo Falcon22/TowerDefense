@@ -4,11 +4,33 @@ using namespace gui;
 
 Button::Button() : callback(),
                    toggle(false),
-                   selected(false)
+                   selected(false),
+                   isCost(false)
 {}
+
+void Button::setSprite(sf::Sprite newSprite) {
+    this->sprite = newSprite;
+}
 
 void Button::setCallback(Callback callback) {
     this->callback = std::move(callback);
+}
+
+void Button::setCostCallback(Callback callback) {
+    this->cost = std::move(callback);
+}
+
+
+void Button::setCost(bool cost) {
+    isCost = cost;
+}
+
+void Button::setPrintCost(bool print) {
+    printCost = print;
+}
+
+void Button::setCostText(sf::Text cost) {
+    costText = cost;
 }
 
 void Button::setTexture(const sf::Texture& texture) {
@@ -23,6 +45,7 @@ void Button::setTextureRect(sf::IntRect rect) {
 
 void Button::setText(const std::string& text) {
     this->text.setString(text);
+    this->text.setScale(2.f, 2.f);
     centerText();
 }
 
@@ -54,18 +77,17 @@ void Button::handleEvent(const sf::Event& event) {
                 }
             }
             break;
-//        case sf::Event::MouseMoved:
-//            if (rect.contains(static_cast<float>(event.mouseMove.x),
-//                              static_cast<float>(event.mouseMove.y))) {
-//                if (!selected) {
-//                            select();
-//                    }
-//            } else {
-//                if (selected) {
-//                    deselect();
-//                }
-//            }
-//            break;
+        case sf::Event::MouseMoved:
+            if (rect.contains(static_cast<float>(event.mouseMove.x),
+                              static_cast<float>(event.mouseMove.y))) {
+                if (isCost) {
+                    std::cout << "Tower " << ind << std::endl;
+                    cost(ind);
+                } else {
+                    std::cout << "Not is cost" << std::endl;
+                }
+            }
+            break;
     }
 }
 
@@ -106,7 +128,7 @@ void Button::changeTexture(Type type) {
 void Button::centerText() {
     sf::FloatRect rect = text.getGlobalBounds();
     text.setOrigin(rect.left, rect.top);
-    text.setPosition({sprite.getLocalBounds().width + 160,
-                      sprite.getLocalBounds().height + rect.height / 2});
+    text.setPosition({sprite.getLocalBounds().width + 35,
+                      sprite.getLocalBounds().height + rect.height});
 
 }

@@ -17,7 +17,8 @@ GameState::GameState(StateManager &stack, States::Context context) :
         map(*context.window),
         clock(sf::Time::Zero),
         gComponent(context, *lComponent.getPlayer1(), *lComponent.getPlayer2()),
-        hud(context, lComponent.getPlayer1(), lComponent.getPlayer2()) {
+        hud(context, lComponent.getPlayer1(), lComponent.getPlayer2()),
+        printCost(false){
     std::cout << "start counstructor" << std::endl;
 
     if (*context.p_id == 1) {
@@ -27,7 +28,8 @@ GameState::GameState(StateManager &stack, States::Context context) :
         curPlayer = lComponent.getPlayer2();
         curPlayerRoad = 1;
     }
-
+    timer.setFont(context.fontHolder->get(Fonts::font1));
+    timer.setPosition(990.f, 715.f);
     map.analyze(towers1, towers2);
     std::cout << "Map analyze" << std::endl;
     map.getRoadRect(roadRect);
@@ -36,6 +38,12 @@ GameState::GameState(StateManager &stack, States::Context context) :
     std::cout << "Init Tower" << std::endl;
     initHUD();
     std::cout << "Init HUD" << std::endl;
+    castle1.setTexture(context.textureHolder->get(Textures::castle1));
+    castle1.setScale(1.1, 1.1);
+    castle1.setPosition(-180.f, 173.f);
+    castle2.setTexture(context.textureHolder->get(Textures::castle2));
+    castle2.setScale(1.1, 1.1);
+    castle2.setPosition(940.f ,173.f);
 }
 
 void GameState::initTower() {
@@ -52,6 +60,7 @@ void GameState::initTower() {
             p.x -= TILE_SIZE / 2;
             p.y -= TILE_SIZE / 2;
             bt->setPosition(p);
+            bt->setCost(true);
             bt->setInd(i);
             bt->setCallback([this](int ind) {
                 if ((lComponent.getPlayer1()->getGold() >= lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) &&
@@ -60,6 +69,20 @@ void GameState::initTower() {
                     getContext().multiplayer->outcoming.emplace_back(1, 't', std::to_string(ind),
                                                                      clock + sf::milliseconds(DELAY));
                     std::cout << ind << std::endl;
+                }
+            });
+            bt->setCostCallback([this](int ind) {
+                printCost = true;
+                sf::Vector2f pos = lComponent.getPlayer1()->getTowers().at(ind)->getPosition();
+                cost.setFont(getContext().fontHolder->get(Fonts::font1));
+                cost.setString(std::to_string(lComponent.getPlayer1()->getTowers().at(ind)->getPrice()));
+
+                cost.setPosition(pos.x - TILE_SIZE, pos.y - TILE_SIZE);
+                cost.setOutlineThickness(1.f);
+                if (lComponent.getPlayer1()->getGold() >= lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) {
+                    cost.setFillColor(sf::Color::Green);
+                } else {
+                    cost.setFillColor(sf::Color::Red);
                 }
             });
             container.addWidget(bt);
@@ -77,6 +100,7 @@ void GameState::initTower() {
             p.y -= TILE_SIZE / 2;
             bt->setPosition(p);
             bt->setInd(i);
+            bt->setCost(true);
             bt->setCallback([this](int ind) {
                 if ((lComponent.getPlayer2()->getGold() >= lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) &&
                         (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
@@ -85,6 +109,21 @@ void GameState::initTower() {
                                                                clock + sf::milliseconds(DELAY));
                     std::cout << ind << std::endl;
                 }
+            });
+            bt->setCostCallback([this](int ind) {
+                std::cout << ind << std::endl;
+                printCost = true;
+                cost.setOutlineThickness(1.f);
+                sf::Vector2f pos = lComponent.getPlayer2()->getTowers().at(ind)->getPosition();
+                cost.setFont(getContext().fontHolder->get(Fonts::font1));
+                cost.setString(std::to_string(lComponent.getPlayer2()->getTowers().at(ind)->getPrice()));
+                cost.setPosition(pos.x - TILE_SIZE / 2, pos.y - TILE_SIZE);
+                if (lComponent.getPlayer2()->getGold() >= lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) {
+                    cost.setFillColor(sf::Color::Green);
+                } else {
+                    cost.setFillColor(sf::Color::Red);
+                }
+                getContext().window->draw(cost);
             });
             container.addWidget(bt);
         }
@@ -97,6 +136,8 @@ void GameState::initHUD() {
     sf::IntRect rect{0, 0, TILE_SIZE, TILE_SIZE};
     auto addLvlOne = std::make_shared<gui::Button>();
     auto addLvlTwo = std::make_shared<gui::Button>();
+    addLvlOne->setCost(true);
+    addLvlTwo->setCost(true);
 
     std::cout << "1" << std::endl;
 
@@ -109,17 +150,44 @@ void GameState::initHUD() {
         }
     });
 
+    addLvlOne->setCostCallback([this](int ind){
+        printCost = true;
+        cost.setFont(getContext().fontHolder->get(Fonts::font1));
+        cost.setString(std::to_string(GameConstants::instance().cWARRIOR_1_COST()));
+        cost.setPosition(860.f, 705.f - TILE_SIZE / 2);
+        cost.setOutlineThickness(1.f);
+        if (curPlayer->getGold() >= GameConstants::instance().cWARRIOR_1_COST()) {
+            cost.setFillColor(sf::Color::Green);
+        } else {
+            cost.setFillColor(sf::Color::Red);
+        }
+    });
+
     std::cout << "2" << std::endl;
 
     addLvlOne->setTexture(getContext().textureHolder->get(Textures::addWarriorOne));
     addLvlOne->setTextureRect(rect);
     addLvlOne->setPosition(860.f, 705.f);
-    addLvlTwo->setCallback([this](int ind) {
+    addLvlOne->setCost(true);
 
+    addLvlTwo->setCallback([this](int ind) {
         if (curPlayer->getBarracks().getLvl() >= 2
             && curPlayer->getGold() >= GameConstants::instance().cWARRIOR_2_COST()) {
             std::cout << "button warrior id 2" << std::endl;
             curPlayer->addWarrior(Type::lvlTwo, roadRect[curPlayerRoad]);
+        }
+    });
+
+    addLvlTwo->setCostCallback([this](int ind){
+        printCost = true;
+        cost.setFont(getContext().fontHolder->get(Fonts::font1));
+        cost.setString(std::to_string(GameConstants::instance().cWARRIOR_2_COST()));
+        cost.setPosition(920.f, 705.f - TILE_SIZE / 2);
+        cost.setOutlineThickness(1.f);
+        if (curPlayer->getGold() >= GameConstants::instance().cWARRIOR_2_COST()) {
+            cost.setFillColor(sf::Color::Green);
+        } else {
+            cost.setFillColor(sf::Color::Red);
         }
     });
 
@@ -158,6 +226,10 @@ void GameState::initHUD() {
     addWeapons->setTextureRect(rect);
     addWeapons->setPosition(160.f, 705.f);
 
+    addWeapons->setCost(true);
+    addBarraks->setCost(true);
+    addFarm->setCost(true);
+
     std::cout << "9" << std::endl;
 
     addFarm->setCallback([this](int ind) {
@@ -165,6 +237,19 @@ void GameState::initHUD() {
             std::cout << "farm" << std::endl;
             getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "f",
                                                              clock + sf::milliseconds(DELAY));
+        }
+    });
+
+    addFarm->setCostCallback([this](int ind) {
+        printCost = true;
+        cost.setFont(getContext().fontHolder->get(Fonts::font1));
+        cost.setString(std::to_string(curPlayer->getFarm().getUpgradeCost()));
+        cost.setPosition(290.f, 705.f - TILE_SIZE / 2);
+        cost.setOutlineThickness(1.f);
+        if (curPlayer->getGold() >= curPlayer->getFarm().getUpgradeCost()) {
+            cost.setFillColor(sf::Color::Green);
+        } else {
+            cost.setFillColor(sf::Color::Red);
         }
     });
 
@@ -178,13 +263,42 @@ void GameState::initHUD() {
         }
     });
 
+    addBarraks->setCostCallback([this](int ind) {
+        printCost = true;
+        cost.setFont(getContext().fontHolder->get(Fonts::font1));
+        cost.setString(std::to_string(curPlayer->getBarracks().getUpgradeCost()));
+
+        cost.setPosition(220.f, 705.f - TILE_SIZE / 2);
+        cost.setOutlineThickness(1.f);
+        if (curPlayer->getGold() >= curPlayer->getBarracks().getUpgradeCost()) {
+            cost.setFillColor(sf::Color::Green);
+        } else {
+            cost.setFillColor(sf::Color::Red);
+        }
+    });
+
     std::cout << "11" << std::endl;
 
     addWeapons->setCallback([this](int ind) {
+
         if (curPlayer->getGold() >= curPlayer->getWeapons().getUpgradeCost()) {
             std::cout << "weapons" << std::endl;
             getContext().multiplayer->outcoming.emplace_back(*getContext().p_id, 'c', "w",
                                                              clock + sf::milliseconds(DELAY));
+        }
+    });
+
+
+    addWeapons->setCostCallback([this](int ind) {
+        printCost = true;
+        cost.setFont(getContext().fontHolder->get(Fonts::font1));
+        cost.setString(std::to_string(curPlayer->getWeapons().getUpgradeCost()));
+        cost.setPosition(160.f, 705.f - TILE_SIZE / 2);
+        cost.setOutlineThickness(1.f);
+        if (curPlayer->getGold() >= curPlayer->getWeapons().getUpgradeCost()) {
+            cost.setFillColor(sf::Color::Green);
+        } else {
+            cost.setFillColor(sf::Color::Red);
         }
     });
 
@@ -198,6 +312,7 @@ void GameState::initHUD() {
 
 bool GameState::handleEvent(const sf::Event& event) {
 //    std::cout << "handle event" << std::endl;
+    printCost = false;
     container.handleWidgetsEvent(event);
     buttons.handleWidgetsEvent(event);
     hud.handleEvent(event);
@@ -211,6 +326,7 @@ bool GameState::handleEvent(const sf::Event& event) {
 }
 
 bool GameState::update(sf::Time dt) {
+    timer.setString("00:" + std::to_string(int(waveTimer - clock.asSeconds()) / 10) + std::to_string(int(waveTimer - clock.asSeconds()) % 10));
     for (auto&& event : getContext().multiplayer->incoming) {
         events.emplace_back(event.id, event.type, event.value, event.time);
     }
@@ -241,10 +357,15 @@ bool GameState::update(sf::Time dt) {
 
 void GameState::draw() {
     map.draw();
-
     getContext().window->draw(hud);
     getContext().window->draw(buttons);
     gComponent.draw(getContext());
+    getContext().window->draw(castle1);
+    getContext().window->draw(castle2);
+    if (printCost) {
+        getContext().window->draw(cost);
+    }
+    getContext().window->draw(timer);
 }
 
 void GameState::manageEvents() {

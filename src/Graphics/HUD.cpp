@@ -9,7 +9,10 @@ HUD::HUD(States::Context context, std::shared_ptr<Castle> player1, std::shared_p
         : context(context),
           gold(context.textureHolder->get(Textures::gold), context.fontHolder->get(Fonts::font1)),
           livePlayer(context.textureHolder->get(Textures::lives), context.fontHolder->get(Fonts::font1)),
-          liveFoe(context.textureHolder->get(Textures::lives), context.fontHolder->get(Fonts::font1)) {
+          liveFoe(context.textureHolder->get(Textures::lives), context.fontHolder->get(Fonts::font1)),
+          levelBarraks(context.textureHolder->get(Textures::barraks), context.fontHolder->get(Fonts::font1)),
+          levelFarm(context.textureHolder->get(Textures::farm), context.fontHolder->get(Fonts::font1)),
+          levelWeapons(context.textureHolder->get(Textures::weapons), context.fontHolder->get(Fonts::font1)){
 
     if (*context.p_id == 1) {
         player = player1;
@@ -47,7 +50,7 @@ void HUD::init()
     }
 
     gold.setTexture(context.textureHolder->get(Textures::gold));
-    gold.setPosition(535.f, 0.f);
+    gold.setPosition(785.f, 0.f);
 
     if (*context.p_id == 1) {
         livePlayer.setPosition(0.f, 5.f);
@@ -64,12 +67,34 @@ void HUD::init()
 
     totalGold.setFont(context.fontHolder->get(Fonts::font1));
     totalGold.setString(std::to_string(player->getGold()));
-    totalGold.setPosition(585.f, 10.f);
+    totalGold.setPosition(835.f, 10.f);
 //
     totalPlayerLives.setFont(context.fontHolder->get(Fonts::font1));
     totalFoeLives.setFont(context.fontHolder->get(Fonts::font1));
     totalPlayerLives.setString(std::to_string(player->getHealth()));
     totalFoeLives.setString(std::to_string(foe->getHealth()));
+    totalLevelFarm.setFont(context.fontHolder->get(Fonts::font1));
+    totalLevelBarraks.setFont(context.fontHolder->get(Fonts::font1));
+    totalLevelWeapons.setFont(context.fontHolder->get(Fonts::font1));
+
+    totalLevelBarraks.setString(std::to_string(player->getBarracks().getLvl()));
+    totalLevelFarm.setString(std::to_string(player->getFarm().getLvl()));
+    totalLevelWeapons.setString(std::to_string(player->getWeapons().getLvl()));
+
+    totalLevelWeapons.setPosition(285.f, 10.f);
+    totalLevelFarm.setPosition(590.f, 10.f);
+    totalLevelBarraks.setPosition(425.f, 10.f);
+
+    levelFarm.setTexture(context.textureHolder->get(Textures::farm));
+    levelBarraks.setTexture(context.textureHolder->get(Textures::barraks));
+    levelWeapons.setTexture(context.textureHolder->get(Textures::weapons));
+
+    levelBarraks.setPosition(370.f, 5.f);
+    levelFarm.setPosition(520.f, 5.f);
+    levelWeapons.setPosition(220.f, 5.f);
+
+    totalLevelFarm.setString(std::to_string(player->getFarm().getLvl()));
+    totalLevelWeapons.setString(std::to_string(player->getWeapons().getLvl()));
 
     if (*context.p_id == 1) {
         totalFoeLives.setPosition(50.f, 10.f);
@@ -88,10 +113,12 @@ void HUD::handleEvent(const sf::Event &event)
 void HUD::update(sf::Time dt)
 {
     totalGold.setString(std::to_string(player->getGold()));
+    totalPlayerLives.setString(std::to_string(foe->getHealth()));
+    totalFoeLives.setString(std::to_string(player->getHealth()));
 
-    totalPlayerLives.setString(std::to_string(player->getHealth()));
-    totalFoeLives.setString(std::to_string(foe->getHealth()));
-
+    totalLevelBarraks.setString(std::to_string(player->getBarracks().getLvl()));
+    totalLevelFarm.setString(std::to_string(player->getFarm().getLvl()));
+    totalLevelWeapons.setString(std::to_string(player->getWeapons().getLvl()));
 }
 
 
@@ -117,6 +144,13 @@ void HUD::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(totalPlayerLives);
     target.draw(totalFoeLives);
     target.draw(container);
+    target.draw(totalLevelWeapons);
+    target.draw(totalLevelBarraks);
+    target.draw(totalLevelFarm);
+    target.draw(levelFarm);
+    target.draw(levelWeapons);
+    target.draw(levelBarraks);
+
     for (auto i : buffer) {
         target.draw(i);
     }

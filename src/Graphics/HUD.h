@@ -53,11 +53,19 @@ namespace gui
         Label gold;
         Label livePlayer;
         Label liveFoe;
+
+        Label levelBarraks;
+        Label levelFarm;
+        Label levelWeapons;
+
 //        Label star;
 
         sf::Text totalGold;
         sf::Text totalPlayerLives;
         sf::Text totalFoeLives;
+        sf::Text totalLevelBarraks;
+        sf::Text totalLevelFarm;
+        sf::Text totalLevelWeapons;
         sf::Text currentLevel;
         sf::Text score;
         std::vector<sf::RectangleShape> buffer;

@@ -54,6 +54,11 @@ private:
 
     std::shared_ptr<Castle> curPlayer;
     int curPlayerRoad;
+    sf::Sprite castle1;
+    sf::Sprite castle2;
+    sf::Text cost;
+    bool printCost;
+    sf::Text timer;
 };
 
 

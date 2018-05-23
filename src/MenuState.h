@@ -3,7 +3,7 @@
 
 #include "Graphics/Gui.h"
 #include "State.h"
-
+#include "Tile.h"
 
 class MenuState : public State {
 public:
@@ -15,7 +15,12 @@ public:
 
     void initButtons();
 private:
+    sf::Texture texture;
+    Tile mapSprite;
+
     gui::Gui container;
+    sf::Text name;
+    sf::Sprite logo;
 };
 
 

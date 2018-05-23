@@ -3,6 +3,7 @@
 
 #include "Graphics/Gui.h"
 #include "State.h"
+#include "Tile.h"
 
 class ConnectGameState: public State {
 public:
@@ -15,7 +16,13 @@ public:
     void initButtons();
 
 private:
+    sf::Texture texture;
+    Tile mapSprite;
+
+    std::string gameID;
     gui::Gui container;
+    sf::Text textNew;
+    sf::Text textJoin;
 };
 
 

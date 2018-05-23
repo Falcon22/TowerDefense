@@ -54,6 +54,12 @@ namespace Textures {
         musicOff,
         musicOn,
         exit,
+        castle1,
+        castle2,
+        farm,
+        weapons,
+        barraks,
+        logo,
     };
 }
 
