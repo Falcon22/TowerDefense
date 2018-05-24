@@ -7,6 +7,7 @@
 #include "TowerLvlThree.h"
 
 #define RAD_IN_DEGREE (180 / M_PI)
+#define COOLDOWN 10
 
 Tower::Tower(Type type, const sf::Vector2f& position, int price, float attackRange, float attackCooldown,
              std::list<std::shared_ptr<Warrior>>& warriors, std::vector<std::shared_ptr<Bullet>>& bullets)
@@ -14,7 +15,7 @@ Tower::Tower(Type type, const sf::Vector2f& position, int price, float attackRan
           price_(price),
           angle_(0),
           attackRange_(attackRange),
-          attackCooldown_(attackCooldown),
+          attackCooldown_(attackCooldown / COOLDOWN),
           warriors_(warriors),
           bullets_(bullets),
           target_(nullptr),

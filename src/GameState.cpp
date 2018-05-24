@@ -29,16 +29,16 @@ GameState::GameState(StateManager &stack, States::Context context) :
     if (*context.p_id == 1) {
         curPlayer = lComponent.getPlayer1();
         curPlayerRoad = 0;
-        you.setFillColor(sf::Color(215, 50, 50));
-        foe.setFillColor(sf::Color(40, 146, 224));
+        you.setColor(sf::Color(215, 50, 50));
+        foe.setColor(sf::Color(40, 146, 224));
         you.setPosition(10.f, 350.f);
         foe.setPosition(1120.f, 350.f);
     } else {
         curPlayer = lComponent.getPlayer2();
         curPlayerRoad = 1;
         foe.setPosition(10.f, 350.f);
-        foe.setFillColor(sf::Color(215, 50, 50));
-        you.setFillColor(sf::Color(40, 146, 224));
+        foe.setColor(sf::Color(215, 50, 50));
+        you.setColor(sf::Color(40, 146, 224));
         you.setPosition(1120.f, 350.f);
     }
     timer.setFont(context.fontHolder->get(Fonts::font1));
@@ -94,13 +94,13 @@ void GameState::initTower() {
                 cost.setString(std::to_string(lComponent.getPlayer1()->getTowers().at(ind)->getPrice()));
 
                 cost.setPosition(pos.x - TILE_SIZE, pos.y - TILE_SIZE);
-                cost.setOutlineThickness(1.f);
+//                cost.setOutlineThickness(1.f);
                 if (lComponent.getPlayer1()->getGold() >= lComponent.getPlayer1()->getTowers().at(ind)->getPrice() &&
                     (Castle::checkValidUpgradeTower(lComponent.getPlayer1()->getTowers().at(ind)->getType(),
                                                         lComponent.getPlayer1()->getWeapons().getLvl()))) {
-                    cost.setFillColor(sf::Color::Green);
+                    cost.setColor(sf::Color::Green);
                 } else {
-                    cost.setFillColor(sf::Color::Red);
+                    cost.setColor(sf::Color::Red);
                 }
             });
             container.addWidget(bt);
@@ -134,7 +134,7 @@ void GameState::initTower() {
                 if (lComponent.getPlayer2()->getTowers().at(ind)->getPrice() == -1) {
                     printCost = false;
                 }
-                cost.setOutlineThickness(1.f);
+//                cost.setOutlineThickness(1.f);
                 sf::Vector2f pos = lComponent.getPlayer2()->getTowers().at(ind)->getPosition();
                 cost.setFont(getContext().fontHolder->get(Fonts::font1));
                 cost.setString(std::to_string(lComponent.getPlayer2()->getTowers().at(ind)->getPrice()));
@@ -142,9 +142,9 @@ void GameState::initTower() {
                 if (lComponent.getPlayer2()->getGold() >= lComponent.getPlayer2()->getTowers().at(ind)->getPrice() &&
                         (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
                                                         lComponent.getPlayer2()->getWeapons().getLvl()))) {
-                    cost.setFillColor(sf::Color::Green);
+                    cost.setColor(sf::Color::Green);
                 } else {
-                    cost.setFillColor(sf::Color::Red);
+                    cost.setColor(sf::Color::Red);
                 }
                 getContext().window->draw(cost);
             });
@@ -178,12 +178,12 @@ void GameState::initHUD() {
         cost.setFont(getContext().fontHolder->get(Fonts::font1));
         cost.setString(std::to_string(GameConstants::instance().cWARRIOR_1_COST()));
         cost.setPosition(860.f, 705.f - TILE_SIZE / 2);
-        cost.setOutlineThickness(1.f);
+//        cost.setOutlineThickness(1.f);
         if (curPlayer->getGold() >= GameConstants::instance().cWARRIOR_1_COST() &&
             (curPlayer->getBarracks().getLvl() >= 1)) {
-            cost.setFillColor(sf::Color::Green);
+            cost.setColor(sf::Color::Green);
         } else {
-            cost.setFillColor(sf::Color::Red);
+            cost.setColor(sf::Color::Red);
         }
     });
 
@@ -207,12 +207,12 @@ void GameState::initHUD() {
         cost.setFont(getContext().fontHolder->get(Fonts::font1));
         cost.setString(std::to_string(GameConstants::instance().cWARRIOR_2_COST()));
         cost.setPosition(920.f, 705.f - TILE_SIZE / 2);
-        cost.setOutlineThickness(1.f);
+//        cost.setOutlineThickness(1.f);
         if (curPlayer->getGold() >= GameConstants::instance().cWARRIOR_2_COST() &&
                 (curPlayer->getBarracks().getLvl() >= 2)) {
-            cost.setFillColor(sf::Color::Green);
+            cost.setColor(sf::Color::Green);
         } else {
-            cost.setFillColor(sf::Color::Red);
+            cost.setColor(sf::Color::Red);
         }
     });
 
@@ -270,11 +270,11 @@ void GameState::initHUD() {
         cost.setFont(getContext().fontHolder->get(Fonts::font1));
         cost.setString(std::to_string(curPlayer->getFarm().getUpgradeCost()));
         cost.setPosition(290.f, 705.f - TILE_SIZE / 2);
-        cost.setOutlineThickness(1.f);
+//        cost.setOutlineThickness(1.f);
         if (curPlayer->getGold() >= curPlayer->getFarm().getUpgradeCost()) {
-            cost.setFillColor(sf::Color::Green);
+            cost.setColor(sf::Color::Green);
         } else {
-            cost.setFillColor(sf::Color::Red);
+            cost.setColor(sf::Color::Red);
         }
     });
 
@@ -297,11 +297,11 @@ void GameState::initHUD() {
         cost.setString(std::to_string(curPlayer->getBarracks().getUpgradeCost()));
 
         cost.setPosition(220.f, 705.f - TILE_SIZE / 2);
-        cost.setOutlineThickness(1.f);
+//        cost.setOutlineThickness(1.f);
         if (curPlayer->getGold() >= curPlayer->getBarracks().getUpgradeCost()) {
-            cost.setFillColor(sf::Color::Green);
+            cost.setColor(sf::Color::Green);
         } else {
-            cost.setFillColor(sf::Color::Red);
+            cost.setColor(sf::Color::Red);
         }
     });
 
@@ -325,11 +325,11 @@ void GameState::initHUD() {
         cost.setFont(getContext().fontHolder->get(Fonts::font1));
         cost.setString(std::to_string(curPlayer->getWeapons().getUpgradeCost()));
         cost.setPosition(160.f, 705.f - TILE_SIZE / 2);
-        cost.setOutlineThickness(1.f);
+//        cost.setOutlineThickness(1.f);
         if (curPlayer->getGold() >= curPlayer->getWeapons().getUpgradeCost()) {
-            cost.setFillColor(sf::Color::Green);
+            cost.setColor(sf::Color::Green);
         } else {
-            cost.setFillColor(sf::Color::Red);
+            cost.setColor(sf::Color::Red);
         }
     });
 
@@ -360,6 +360,31 @@ bool GameState::update(sf::Time dt) {
     timer.setString("00:" + std::to_string(int(waveTimer - clock.asSeconds()) / 10) + std::to_string(int(waveTimer - clock.asSeconds()) % 10));
     for (auto&& event : getContext().multiplayer->incoming) {
         events.emplace_back(event.id, event.type, event.value, event.time);
+    }
+
+    int id = *getContext().p_id;
+    if (id == 1) {
+        if (lComponent.getPlayer1()->getHealth() < 0) {
+            popState();
+            pushState(States::ID::GameOverState); // Win Game
+        }
+
+        if (lComponent.getPlayer2()->getHealth() < 0) {
+            popState();
+            pushState(States::ID::WinState);
+        }
+    }
+    
+    if (id == 2) {
+        if (lComponent.getPlayer2()->getHealth() < 0) {
+            popState();
+            pushState(States::ID::GameOverState); // Win Game
+        }
+        
+        if (lComponent.getPlayer1()->getHealth() < 0) {
+            popState();
+            pushState(States::ID::WinState);
+        }
     }
 
     if (waveTimer <= clock.asSeconds()) {
@@ -456,6 +481,7 @@ void GameState::manageEvents() {
                 }
                 player->letsMakingWave();
                 break;
+
             case 'c':
                 int upgradeCost = 0;
                 switch (event->value[0]) {

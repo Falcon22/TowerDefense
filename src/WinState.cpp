@@ -16,13 +16,13 @@ WinState::WinState(StateManager &stack, States::Context context)
     sf::Font &font = *context.font;
 
     winText.setString("YOU WIN");
-    winText.setFillColor(sf::Color::White);
+    winText.setColor(sf::Color::White);
     winText.setCharacterSize(100);
     winText.setFont(context.fontHolder->get(Fonts::font1));
     winText.setPosition(375.f, 200.f);
 
     enterText.setString("ENTER Menu");
-    enterText.setFillColor(sf::Color::Black);
+    enterText.setColor(sf::Color::Black);
     enterText.setCharacterSize(30);
     enterText.setFont(context.fontHolder->get(Fonts::font1));
     enterText.setPosition(500.f, 400.f);

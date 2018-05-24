@@ -18,7 +18,7 @@ Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
     std::cout << "load resources" << std::endl;
     registerStates();
     std::cout << "register state" << std::endl;
-    stateManager.pushState(States::ID::WinState);
+    stateManager.pushState(States::ID::Menu);
     std::cout << "start game" << std::endl;
 
 //    window.setVerticalSyncEnabled(true);

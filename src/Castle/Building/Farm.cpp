@@ -5,6 +5,7 @@
 Farm::Farm()
     : Building(GameConstants::instance().cFARM_COST()),
       working(GameConstants::instance().cFARM_TIME_CYCLE()) {
+    lvl_ = 1;
 }
 
 int Farm::getBenefits(const sf::Time& dt) {

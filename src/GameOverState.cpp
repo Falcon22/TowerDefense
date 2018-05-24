@@ -20,13 +20,13 @@ GameOverState::GameOverState(StateManager &stack, States::Context context)
 //    sf::Font &font = *context.font;
 
     gameOvetText.setString("YOU LOSE");
-    gameOvetText.setFillColor(sf::Color::White);
+    gameOvetText.setColor(sf::Color::White);
     gameOvetText.setCharacterSize(100);
     gameOvetText.setFont(context.fontHolder->get(Fonts::font1));
     gameOvetText.setPosition(350.f, 200.f);
 
     enterText.setString("ENTER Menu");
-    enterText.setFillColor(sf::Color::Black);
+    enterText.setColor(sf::Color::Black);
     enterText.setCharacterSize(30);
     enterText.setFont(context.fontHolder->get(Fonts::font1));
     enterText.setPosition(500.f, 400.f);

@@ -46,7 +46,7 @@ void MenuState::initButtons() {
     play->setInd(0);
     play->setCallback([this](int ind) {
         popState();
-        pushState(States::ID::Game);
+        pushState(States::ID::ConnectGame);
     });
 
     container.addWidget(play);
