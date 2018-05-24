@@ -81,10 +81,10 @@ void Button::handleEvent(const sf::Event& event) {
             if (rect.contains(static_cast<float>(event.mouseMove.x),
                               static_cast<float>(event.mouseMove.y))) {
                 if (isCost) {
-                    std::cout << "Tower " << ind << std::endl;
+                    //std::cout << "Tower " << ind << std::endl;
                     cost(ind);
                 } else {
-                    std::cout << "Not is cost" << std::endl;
+                    //std::cout << "Not is cost" << std::endl;
                 }
             }
             break;

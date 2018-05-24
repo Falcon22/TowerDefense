@@ -59,6 +59,8 @@ private:
     sf::Text cost;
     bool printCost;
     sf::Text timer;
+    sf::Text you;
+    sf::Text foe;
 };
 
 

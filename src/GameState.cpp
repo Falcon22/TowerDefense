@@ -20,13 +20,26 @@ GameState::GameState(StateManager &stack, States::Context context) :
         hud(context, lComponent.getPlayer1(), lComponent.getPlayer2()),
         printCost(false){
     std::cout << "start counstructor" << std::endl;
-
+    you.setString("You");
+    you.setFont(context.fontHolder->get(Fonts::font1));
+    you.setCharacterSize(50);
+    foe.setString("Foe");
+    foe.setFont(context.fontHolder->get(Fonts::font1));
+    foe.setCharacterSize(50);
     if (*context.p_id == 1) {
         curPlayer = lComponent.getPlayer1();
         curPlayerRoad = 0;
+        you.setFillColor(sf::Color(215, 50, 50));
+        foe.setFillColor(sf::Color(40, 146, 224));
+        you.setPosition(10.f, 350.f);
+        foe.setPosition(1120.f, 350.f);
     } else {
         curPlayer = lComponent.getPlayer2();
         curPlayerRoad = 1;
+        foe.setPosition(10.f, 350.f);
+        foe.setFillColor(sf::Color(215, 50, 50));
+        you.setFillColor(sf::Color(40, 146, 224));
+        you.setPosition(1120.f, 350.f);
     }
     timer.setFont(context.fontHolder->get(Fonts::font1));
     timer.setPosition(990.f, 715.f);
@@ -73,13 +86,18 @@ void GameState::initTower() {
             });
             bt->setCostCallback([this](int ind) {
                 printCost = true;
+                if (lComponent.getPlayer1()->getTowers().at(ind)->getPrice() == -1) {
+                    printCost = false;
+                }
                 sf::Vector2f pos = lComponent.getPlayer1()->getTowers().at(ind)->getPosition();
                 cost.setFont(getContext().fontHolder->get(Fonts::font1));
                 cost.setString(std::to_string(lComponent.getPlayer1()->getTowers().at(ind)->getPrice()));
 
                 cost.setPosition(pos.x - TILE_SIZE, pos.y - TILE_SIZE);
                 cost.setOutlineThickness(1.f);
-                if (lComponent.getPlayer1()->getGold() >= lComponent.getPlayer1()->getTowers().at(ind)->getPrice()) {
+                if (lComponent.getPlayer1()->getGold() >= lComponent.getPlayer1()->getTowers().at(ind)->getPrice() &&
+                    (Castle::checkValidUpgradeTower(lComponent.getPlayer1()->getTowers().at(ind)->getType(),
+                                                        lComponent.getPlayer1()->getWeapons().getLvl()))) {
                     cost.setFillColor(sf::Color::Green);
                 } else {
                     cost.setFillColor(sf::Color::Red);
@@ -113,12 +131,17 @@ void GameState::initTower() {
             bt->setCostCallback([this](int ind) {
                 std::cout << ind << std::endl;
                 printCost = true;
+                if (lComponent.getPlayer2()->getTowers().at(ind)->getPrice() == -1) {
+                    printCost = false;
+                }
                 cost.setOutlineThickness(1.f);
                 sf::Vector2f pos = lComponent.getPlayer2()->getTowers().at(ind)->getPosition();
                 cost.setFont(getContext().fontHolder->get(Fonts::font1));
                 cost.setString(std::to_string(lComponent.getPlayer2()->getTowers().at(ind)->getPrice()));
                 cost.setPosition(pos.x - TILE_SIZE / 2, pos.y - TILE_SIZE);
-                if (lComponent.getPlayer2()->getGold() >= lComponent.getPlayer2()->getTowers().at(ind)->getPrice()) {
+                if (lComponent.getPlayer2()->getGold() >= lComponent.getPlayer2()->getTowers().at(ind)->getPrice() &&
+                        (Castle::checkValidUpgradeTower(lComponent.getPlayer2()->getTowers().at(ind)->getType(),
+                                                        lComponent.getPlayer2()->getWeapons().getLvl()))) {
                     cost.setFillColor(sf::Color::Green);
                 } else {
                     cost.setFillColor(sf::Color::Red);
@@ -156,7 +179,8 @@ void GameState::initHUD() {
         cost.setString(std::to_string(GameConstants::instance().cWARRIOR_1_COST()));
         cost.setPosition(860.f, 705.f - TILE_SIZE / 2);
         cost.setOutlineThickness(1.f);
-        if (curPlayer->getGold() >= GameConstants::instance().cWARRIOR_1_COST()) {
+        if (curPlayer->getGold() >= GameConstants::instance().cWARRIOR_1_COST() &&
+            (curPlayer->getBarracks().getLvl() >= 1)) {
             cost.setFillColor(sf::Color::Green);
         } else {
             cost.setFillColor(sf::Color::Red);
@@ -184,7 +208,8 @@ void GameState::initHUD() {
         cost.setString(std::to_string(GameConstants::instance().cWARRIOR_2_COST()));
         cost.setPosition(920.f, 705.f - TILE_SIZE / 2);
         cost.setOutlineThickness(1.f);
-        if (curPlayer->getGold() >= GameConstants::instance().cWARRIOR_2_COST()) {
+        if (curPlayer->getGold() >= GameConstants::instance().cWARRIOR_2_COST() &&
+                (curPlayer->getBarracks().getLvl() >= 2)) {
             cost.setFillColor(sf::Color::Green);
         } else {
             cost.setFillColor(sf::Color::Red);
@@ -265,6 +290,9 @@ void GameState::initHUD() {
 
     addBarraks->setCostCallback([this](int ind) {
         printCost = true;
+        if (curPlayer->getBarracks().getLvl() == 2) {
+            printCost = false;
+        }
         cost.setFont(getContext().fontHolder->get(Fonts::font1));
         cost.setString(std::to_string(curPlayer->getBarracks().getUpgradeCost()));
 
@@ -291,6 +319,9 @@ void GameState::initHUD() {
 
     addWeapons->setCostCallback([this](int ind) {
         printCost = true;
+        if (curPlayer->getWeapons().getLvl() == 3) {
+            printCost = false;
+        }
         cost.setFont(getContext().fontHolder->get(Fonts::font1));
         cost.setString(std::to_string(curPlayer->getWeapons().getUpgradeCost()));
         cost.setPosition(160.f, 705.f - TILE_SIZE / 2);
@@ -366,6 +397,8 @@ void GameState::draw() {
         getContext().window->draw(cost);
     }
     getContext().window->draw(timer);
+    getContext().window->draw(you);
+    getContext().window->draw(foe);
 }
 
 void GameState::manageEvents() {
