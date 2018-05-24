@@ -351,7 +351,7 @@ bool GameState::handleEvent(const sf::Event& event) {
 
     if (action == gui::HUD::Action::Exit) {
         popState();
-        pushState(States::ID::Menu);
+        pushState(States::ID::GameOverState);
         hud.setAction(gui::HUD::Action::None);
     }
 }

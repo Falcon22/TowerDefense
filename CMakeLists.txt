@@ -6,6 +6,7 @@ project(server)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(server src/server_main.cpp
+        src/GameOverState.h src/GameOverState.cpp src/WinState.cpp src/WinState.h
         src/Game.cpp src/Game.h src/ResourceManager/ResourcesHolder.h
         src/ResourceManager/ResourcesIdentifier.h src/Graphics/Button.cpp src/Graphics/Button.h src/GameContext.h
         src/GameState.cpp src/GameState.h src/GameStates.h src/Graphics/Gui.cpp src/Graphics/Gui.h src/Graphics/HUD.cpp src/Graphics/HUD.h
@@ -25,7 +26,7 @@ add_executable(server src/server_main.cpp
         src/Multiplayer/MultiplayerFacade/AbstractMultiplayerFacade.cpp src/Multiplayer/MultiplayerFacade/AbstractMultiplayerFacade.h src/Multiplayer/MultiplayerFacade/ClientMultiplayerFacade.cpp src/Multiplayer/MultiplayerFacade/ClientMultiplayerFacade.h src/Multiplayer/MultiplayerFacade/ServerMultiplayerFacade.cpp src/Multiplayer/MultiplayerFacade/ServerMultiplayerFacade.h src/Multiplayer/ConnectionFacade/AbstractConnectionFacade.cpp src/Multiplayer/ConnectionFacade/AbstractConnectionFacade.h src/Multiplayer/ConnectionFacade/ServerConnectionFacade.cpp src/Multiplayer/ConnectionFacade/ServerConnectionFacade.h src/Multiplayer/ConnectionFacade/ClientConnectionFacade.cpp src/Multiplayer/ConnectionFacade/ClientConnectionFacade.h src/Multiplayer/Entities/Event.cpp src/Multiplayer/Entities/Event.h src/Multiplayer/Entities/Entity.cpp src/Multiplayer/Entities/Entity.h src/Multiplayer/Entities/Player.cpp src/Multiplayer/Entities/Player.h src/Multiplayer/Entities/Game.cpp src/Multiplayer/Entities/Game.h src/Multiplayer/Manager/Manager.cpp src/Multiplayer/Manager/Manager.h src/Multiplayer/Manager/PlayerManager.cpp src/Multiplayer/Manager/PlayerManager.h src/Multiplayer/Worker.cpp src/Multiplayer/Worker.h src/Multiplayer/Master.cpp src/Multiplayer/Master.h)
 
 
-add_executable(TowerDefense src/main.cpp src/Game.cpp src/Game.h src/ResourceManager/ResourcesHolder.h
+add_executable(TowerDefense src/main.cpp src/GameOverState.h src/GameOverState.cpp src/WinState.cpp src/WinState.h src/Game.cpp src/Game.h src/ResourceManager/ResourcesHolder.h
         src/ResourceManager/ResourcesIdentifier.h src/Graphics/Button.cpp src/Graphics/Button.h src/GameContext.h
         src/GameState.cpp src/GameState.h src/GameStates.h src/Graphics/Gui.cpp src/Graphics/Gui.h src/Graphics/HUD.cpp src/Graphics/HUD.h
         src/Graphics/Icon.h src/Graphics/Icon.cpp src/Graphics/Label.cpp src/Graphics/Label.h src/MenuState.cpp src/MenuState.h

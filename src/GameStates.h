@@ -9,8 +9,8 @@ namespace States {
         ConnectGame,
         Menu,
         Pause,
-        GameOver,
-        Win
+        GameOverState,
+        WinState
     };
 }
 

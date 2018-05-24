@@ -5,6 +5,8 @@
 #include "ConnectGameState.h"
 #include "Multiplayer/MultiplayerFacade/ClientMultiplayerFacade.h"
 #include "Multiplayer/MultiplayerFacade/ServerMultiplayerFacade.h"
+#include "GameOverState.h"
+#include "WinState.h"
 #include <thread>
 
 Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
@@ -16,7 +18,7 @@ Game::Game() : window({1216, 768}, "Tower Defense", sf::Style::Titlebar |
     std::cout << "load resources" << std::endl;
     registerStates();
     std::cout << "register state" << std::endl;
-    stateManager.pushState(States::ID::Menu);
+    stateManager.pushState(States::ID::WinState);
     std::cout << "start game" << std::endl;
 
 //    window.setVerticalSyncEnabled(true);
@@ -144,6 +146,8 @@ void Game::registerStates() {
     stateManager.registerState<MenuState>(States::ID::Menu);
     stateManager.registerState<ConnectGameState>(States::ID::ConnectGame);
     stateManager.registerState<GameState>(States::ID::Game);
+    stateManager.registerState<GameOverState>(States::ID::GameOverState);
+    stateManager.registerState<WinState>(States::ID::WinState);
 }
 
 void Game::server_run(bool use_validation) {
