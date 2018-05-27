@@ -25,7 +25,7 @@ protected:
     void popState();
     void clearStates();
 
-    States::Context getContext() const;
+    States::Context& getContext() ;
 
 private:
     StateManager	 &stack;

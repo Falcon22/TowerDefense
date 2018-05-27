@@ -1,6 +1,7 @@
 #include "StateManager.h"
 
 #include <assert.h>
+#include <thread>
 
 StateManager::StateManager(States::Context context)
         : context(context)

@@ -3,11 +3,13 @@
 
 #include "ResourceManager/ResourcesIdentifier.h"
 #include "ResourceManager/ResourcesHolder.h"
+#include "Multiplayer/MultiplayerFacade/AbstractMultiplayerFacade.h"
 
 enum class Type {
     lvlZero,
     lvlOne,
     lvlTwo,
+    lvlThree,
 };
 
 namespace sf {
@@ -31,17 +33,22 @@ namespace Player {
 
 namespace States {
     struct Context {
-        explicit Context(sf::RenderWindow &window
-                , sf::Font &font
-                , TextureHolder &textureHolder
-                , FontHolder &fontHolder
-                , sf::Sprite &cursor)
+        explicit Context(
+                sf::RenderWindow &window,
+                sf::Font &font,
+                TextureHolder &textureHolder,
+                FontHolder &fontHolder,
+                sf::Sprite &cursor,
+                mp::AbstractMultiplayerFacade *p_mult
+        )
 
-                : window(&window)
-                , font(&font)
-                , textureHolder(&textureHolder)
-                , fontHolder(&fontHolder)
-                , cursor(&cursor)
+                : window(&window),
+                  font(&font),
+                  textureHolder(&textureHolder),
+                  fontHolder(&fontHolder),
+                  cursor(&cursor),
+                  p_id(new int(2)),
+                  multiplayer(p_mult)
 
         {};
 
@@ -51,6 +58,9 @@ namespace States {
         FontHolder *fontHolder;
         SoundManager *soundManager;
         sf::Sprite *cursor;
+
+        std::shared_ptr<int> p_id;
+        std::shared_ptr<mp::AbstractMultiplayerFacade> multiplayer;
     };
 }
 
